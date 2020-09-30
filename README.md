@@ -27,7 +27,7 @@ Drought:
 Changing the locations of the soldiers becomes harder. Only a limited number of soldiers can be moved. Occurrence chance increases if the current season is Summer or the climate of the region is Hot.
 
 Plague:
-If the number of soldiers in a region is larger than a predetermined value, the “Plague” effect will be activated with a chance that increases according to the number of soldiers. Chance also changes according to the season?
+If the number of soldiers in a region is larger than a predetermined value, the “Plague” effect will be activated with a chance that increases according to the number of soldiers. Chance also changes according to the season.
 
 Rocket launcher in a specific territory:
 There will be a rocket launcher in a territory that will be selected randomly. The
