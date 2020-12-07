@@ -94,6 +94,10 @@ public class TurnManager {
 
     }
 
+    public void attack() {
+
+    }
+
 
     public void oneTimeAttack() {
 

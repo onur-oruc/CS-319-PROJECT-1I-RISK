@@ -1,29 +1,33 @@
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Scanner;
+        import java.io.FileReader;
+        import java.io.IOException;
+        import java.lang.reflect.Array;
+        import java.util.ArrayList;
+        import java.util.Scanner;
 
 public class Region {
 
     // properties
+    private int continentID;
+    private String regionName;
     private int regionID;
     private int ownerID;
     private int numTroops;
     private boolean hasCommander;
-    private ClimateType climate;
     private int[] neighbors;
     private int locX;
     private int locY;
     private boolean hasGoldMine;
     private boolean troopMotivation;
-    ArrayList<Integer> neighborsByID; // her region icin sabit bu
 
-
+    ArrayList<Integer> neighborsByID; // olusturulduktan sonra her region icin sabit bu
 
     // constructors
-    public Region(int regionId){
+    public Region() {
+
+    }
+
+    /*public Region(int regionId) {
         this.regionID = regionId;
         this.ownerID = -1;
         BufferedReader rdr;
@@ -49,11 +53,14 @@ public class Region {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     // methods
 
 
+    public void setRegionID(int regionID) {this.regionID = regionID;}
+
+    public int getRegionID() {return regionID;}
 
     public void setNumTroops(int numTroops){
         this.numTroops = numTroops;
@@ -83,14 +90,6 @@ public class Region {
         return this.hasCommander;
     }
 
-    public void setClimate(ClimateType climate){
-        this.climate = climate;
-    }
-
-    public ClimateType getClimate(){
-        return this.climate;
-    }
-
     public void setTroopMotivation(boolean troopMotivation){
         this.troopMotivation = troopMotivation;
     }
@@ -107,6 +106,8 @@ public class Region {
         return this.hasGoldMine;
     }
 
+    public void setNeighbors(int[] neighbors) {this.neighbors = neighbors;}
+
     public int[] getNeighbors(){ return neighbors; }
 
     public int getLocX(){
@@ -117,4 +118,19 @@ public class Region {
         return this.locY;
     }
 
+    public int getContinentID() {
+        return continentID;
+    }
+
+    public void setContinentID(int continentID) {
+        this.continentID = continentID;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
 }
