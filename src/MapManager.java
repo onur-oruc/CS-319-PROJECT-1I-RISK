@@ -100,6 +100,7 @@ public class MapManager {
             playerID = (i % players.length);
             randomIndex = (int) (unowned.size() * Math.random());
             randomRegionID = unowned.remove(randomIndex);
+            System.out.println(randomRegionID); // test
             players[playerID].addRegion(randomRegionID);
         }
 
@@ -107,10 +108,20 @@ public class MapManager {
 
     public void distributeTroops( Region[] regions, Player[] players ) {
 
-        //players;
+        int remainingNumTroops, numEmptyRegions, numTroopsToPlace;
 
-        //regions[index].setNumTroops() = num;
+        for (Player player : players) {
+            ArrayList<Integer> list = player.getRegionsByID();
+            remainingNumTroops = 50 - (players.length * 5); // hmm
+            numEmptyRegions = list.size();
 
+            for (Integer integer : list) {
+                numTroopsToPlace = remainingNumTroops / numEmptyRegions;
+                regions[integer].setNumTroops(numTroopsToPlace);
+                remainingNumTroops -= numTroopsToPlace;
+                numEmptyRegions--;
+            }
+        }
     }
 
 }

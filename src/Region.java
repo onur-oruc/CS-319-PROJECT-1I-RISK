@@ -20,8 +20,6 @@ public class Region {
     private boolean hasGoldMine;
     private boolean troopMotivation;
 
-    ArrayList<Integer> neighborsByID; // olusturulduktan sonra her region icin sabit bu
-
     // constructors
     public Region() {
 
@@ -132,5 +130,26 @@ public class Region {
 
     public void setRegionName(String regionName) {
         this.regionName = regionName;
+    }
+
+    public void printRegion() {
+
+        System.out.println();
+        System.out.println("regionID: " + regionID);
+        System.out.println("regionName: " + regionName);
+        System.out.println("continentID: " + continentID);
+        System.out.println("ownerID: " + ownerID);
+        System.out.println("numTroops: " + numTroops);
+        System.out.println("hasCommander: " + hasCommander);
+        System.out.println("hasGoldMine: " + hasGoldMine);
+        System.out.println("troopMotivation: " + troopMotivation);
+        System.out.println("locX: " + locX);
+        System.out.println("locY: " + locY);
+
+        System.out.print("neighbors: ");
+        for (int neighbor : neighbors) {
+            System.out.print(neighbor + ", ");
+        }
+        System.out.println();
     }
 }

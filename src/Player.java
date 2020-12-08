@@ -1,3 +1,5 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.ArrayList;
 
 public class Player {
@@ -69,6 +71,36 @@ public class Player {
             return true;
         }
         return false;
+    }
+
+    // for testing purposes
+    public void printPlayer() {
+        System.out.println();
+        System.out.println("playerID: " + playerID);
+        System.out.println("name: " + name);
+        System.out.println("money: " + money);
+        System.out.println("turn: " + turn);
+        System.out.println("regionCount: " + regionCount);
+        System.out.println("isEliminated: " + isEliminated);
+
+        System.out.print("troopCards: ");
+        for (int troopCard : troopCards) {
+            System.out.print(troopCard + ", ");
+        }
+        System.out.println();
+
+        System.out.print("regionsByID: ");
+        for (Integer integer : regionsByID) {
+            System.out.print(integer + ", ");
+        }
+        System.out.println();
+
+        System.out.print("allies: ");
+        for (boolean ally : allies) {
+            System.out.print(ally + ", ");
+        }
+        System.out.println();
+
     }
 
 }

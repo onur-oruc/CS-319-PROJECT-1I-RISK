@@ -30,14 +30,27 @@ public class GameManager {
         numPlayers = 4;
         players = new Player[numPlayers];
         // setting player names etc
-        for ( int i = 0; i < numPlayers; i++) {
+        for ( int i = 0; i < players.length; i++) {
             players[i] = new Player( i, numPlayers, ("joe" + i));
+
+            players[i].printPlayer();
         }
+
+        System.out.println("BUT SADLY GENERAL IRONWOOD CANNOT BE TRUSTED");
 
         //
         MapManager mapManager = MapManager.getInstance();
         regions = mapManager.initMap("regions.txt");
         mapManager.distributeRegions(regions,players);
+        mapManager.distributeTroops(regions,players);
+
+        for (Player value : players) {
+            value.printPlayer();
+        }
+
+        for (Region region : regions) {
+            region.printRegion();
+        }
 
         /*
         // for terminal test
