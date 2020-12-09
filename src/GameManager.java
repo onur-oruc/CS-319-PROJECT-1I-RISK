@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,7 +37,7 @@ public class GameManager {
             players[i].printPlayer();
         }
 
-        System.out.println("BUT SADLY GENERAL IRONWOOD CANNOT BE TRUSTED");
+        System.out.println();
 
         //
         MapManager mapManager = MapManager.getInstance();
@@ -51,6 +52,13 @@ public class GameManager {
         for (Region region : regions) {
             region.printRegion();
         }
+
+        System.out.println("\ncompareDice testing");    // got correct results
+        ArrayList<Integer> a = new ArrayList<>(Arrays.asList(4,1,6,4,4));
+        ArrayList<Integer> b = new ArrayList<>(Arrays.asList(2,5,3,4,4));
+        int[] loss = Dice.compareDice(a,b);
+        System.out.println(loss[0]);
+        System.out.println(loss[1]);
 
         /*
         // for terminal test

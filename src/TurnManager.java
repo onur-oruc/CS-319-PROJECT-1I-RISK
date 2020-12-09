@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class TurnManager {
@@ -8,6 +11,7 @@ public class TurnManager {
     int turnCount;
     SeasonType season;
     boolean plague, weather;
+    boolean getsCard;
 
     StageType stage;
     int additionalTroops;
@@ -102,6 +106,8 @@ public class TurnManager {
     public void oneTimeAttack() {
 
     }
+
+
 
 
 

@@ -63,6 +63,11 @@ public class Player {
         turn = true;
     }
 
+    public int calculateBonusTroops() {
+        // todo
+        return 0;
+    }
+
     public boolean addRegion(int newRegionID) {
 
         if ( !regionsByID.contains(newRegionID)) {
