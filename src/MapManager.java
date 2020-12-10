@@ -1,3 +1,15 @@
+/**
+ * This class is designed according to Singleton design pattern.
+ * It will be used in MapManager class to initialize regions,
+ * distribute troops to each region, and
+ * distribute these regions to players.
+ *
+ * @author Ömer Yavuz Öztürk
+ * @author Onur Oruç
+ * @date 9.12.2020
+ *
+ */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -5,30 +17,50 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 public class MapManager {
 
-    // props
-    /*Region[] regions;
-    Player[] players;
-    Continent[] continents;
-    int totalNumTroops;*/
+    // create an instance of MapManager
+    private static MapManager instance;
 
-    //create an object of SingleObject
-    private static MapManager instance = new MapManager();
-
-    //make the constructor private so that this class cannot be
-    //instantiated
+    // make the constructor private so that this class cannot be instantiated
     private MapManager() {}
 
-    //Get the only object available
+    // Get the single instance of MapManager
     public static MapManager getInstance(){
+        if ( instance == null)
+            instance = new MapManager();
         return instance;
     }
 
-    public void showMessage() {
-        System.out.println("selamun aleykum");
+    /**
+     * This is the method that will be used in MapManager class to initialize regions,
+     * distribute regions to each player, and distribute troops to each region with at least
+     * one troop per region.
+     *
+     * @param  filepath  the path from which region information will be fetched
+     * @param  players   the player objects created in MapManager
+     * @return regions   regions created according to the information in filepath
+     * @throws Exception throw an exception if the file could not be found
+     */
+    public Region[] initializeMap(String filepath, Player[] players) throws Exception {
+        Region[] regions;
+        regions = initMap(filepath);
+        distributeRegions(regions,players);
+        distributeTroops(regions,players);
+
+        return regions;
     }
 
+    /**
+     * Fetches information related to the regions in the map in the
+     * text file located in the given file path
+     * Utilizes BufferedReader and File classes from java.io
+     *
+     * @param filePath the location in which the text file is.
+     * @return regions regions created according to the information in filepath
+     * @throws Exception throw an exception if the file could not be found
+     */
     public Region[] initMap(String filePath) throws Exception {
         Region[] regions;
 
@@ -74,20 +106,23 @@ public class MapManager {
                     // set regionID, it is the last element in a row.
                     regions[counter-1].setRegionID(Integer.parseInt(line[line.length-1]));
                 }
-
                 counter++;
             }
-        }
-        catch(FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             return null;
         }
 
         return regions;
     }
 
-
+    /**
+     * Distributes regions to each player
+     *
+     * @param regions the regions initialized with initMap()
+     * @param players the player objects created in MapManager
+     */
     public void distributeRegions( Region[] regions, Player[] players ) {
-        // random
+
         ArrayList<Integer> unowned = new ArrayList<>();
 
         for ( int i = 0; i < regions.length; i++ ) {
@@ -99,23 +134,38 @@ public class MapManager {
         for ( int i = 0; i < regions.length; i++ ) {
             playerID = (i % players.length);
             randomIndex = (int) (unowned.size() * Math.random());
+
+            // remove the region from unowned array after distributing it to a player
             randomRegionID = unowned.remove(randomIndex);
-            System.out.println(randomRegionID); // test
+            // System.out.println(randomRegionID); // test
             players[playerID].addRegion(randomRegionID);
         }
 
     }
 
+    /**
+     * Distributes troops to each region
+     * where each region has at least one troop
+     *
+     * @param regions the regions initialized with initMap()
+     * @param players the player objects created in MapManager
+     */
     public void distributeTroops( Region[] regions, Player[] players ) {
-
         int remainingNumTroops, numEmptyRegions, numTroopsToPlace;
 
         for (Player player : players) {
             ArrayList<Integer> list = player.getRegionsByID();
-            remainingNumTroops = 50 - (players.length * 5); // hmm
+
+            /*If there are two players, each player will have 40 troops
+              If there are three players, each player will have 35 troops
+              If there are four players, each player will have 30 troops*/
+            remainingNumTroops = 50 - (players.length * 5);
+
             numEmptyRegions = list.size();
 
             for (Integer integer : list) {
+                // calculate the number of troops in a way that each
+                // region will have the same number of troops (if possible)
                 numTroopsToPlace = remainingNumTroops / numEmptyRegions;
                 regions[integer].setNumTroops(numTroopsToPlace);
                 remainingNumTroops -= numTroopsToPlace;
@@ -123,5 +173,4 @@ public class MapManager {
             }
         }
     }
-
 }
