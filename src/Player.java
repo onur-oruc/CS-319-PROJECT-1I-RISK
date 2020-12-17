@@ -2,7 +2,22 @@ import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 
-public class Player {
+public class Player extends User{
+     private boolean [] ally;
+     Player( String name, int id, int [] regionIds){
+         super( name, id, regionIds);
+         ally = new boolean [ 5];
+         for( int i = 0; i < 5; i++)
+             ally[i] = false;
+     }
+     public void updateAlly( boolean [] alies ){
+         for( int i = 0; i < alies.length; i++){
+             this.ally[i] = alies[i];
+         }
+     }
+}
+
+/*public class Player {
 
     // properties
     private int playerID;
@@ -109,3 +124,4 @@ public class Player {
     }
 
 }
+*/
