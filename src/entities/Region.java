@@ -1,3 +1,5 @@
+package entities;
+
 import java.io.BufferedReader;
         import java.io.FileReader;
         import java.io.IOException;
@@ -25,7 +27,7 @@ public class Region {
 
     }
 
-    /*public Region(int regionId) {
+    /*public entities.Region(int regionId) {
         this.regionID = regionId;
         this.ownerID = -1;
         BufferedReader rdr;

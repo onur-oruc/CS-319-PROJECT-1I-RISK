@@ -1,6 +1,9 @@
+import entities.Player;
+import entities.Region;
+import enums.SeasonType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 public class GameManager {
@@ -64,7 +67,7 @@ public class GameManager {
         // for terminal test
         System.out.println("enter number of players");
         numPlayers = scan.nextInt();
-        players = new Player[numPlayers];
+        players = new entities.Player[numPlayers];
 
         System.out.println("enter player names");
         for ( int i = 0; i < numPlayers; i++ ) {
@@ -73,7 +76,7 @@ public class GameManager {
             for (int j = 0; j < NUMBER_OF_REGIONS; j+=numPlayers) {
                 startingRegions.add(j);
             }
-            players[i] = new Player( i, numPlayers, scan.nextLine(), startingRegions );
+            players[i] = new entities.Player( i, numPlayers, scan.nextLine(), startingRegions );
         }
 
         gameContinues = true;
@@ -89,16 +92,16 @@ public class GameManager {
             // season changes after every 2 full turns
             switch( ( turnCount / ( 2 * numPlayers)) % 4) {
                 case 0:
-                    season = SeasonType.SPRING;
+                    season = enums.SeasonType.SPRING;
                     break;
                 case 1:
-                    season = SeasonType.SUMMER;
+                    season = enums.SeasonType.SUMMER;
                     break;
                 case 2:
-                    season = SeasonType.FALL;
+                    season = enums.SeasonType.FALL;
                     break;
                 default:
-                    season = SeasonType.WINTER;
+                    season = enums.SeasonType.WINTER;
                     break;
             }
 
@@ -114,12 +117,12 @@ public class GameManager {
     }
 
     // farklı maplere gore grafları burada ayarlayabiliriz
-    /*public static Region[] createRegions() {
+    /*public static entities.Region[] createRegions() {
 
-        Region[] regions = new Region[NUMBER_OF_REGIONS];
+        entities.Region[] regions = new entities.Region[NUMBER_OF_REGIONS];
 
         for ( int i = 0; i < NUMBER_OF_REGIONS; i++) {
-            regions[i] =  new Region(i,"data/region.txt");
+            regions[i] =  new entities.Region(i,"data/region.txt");
         }
 
         return regions;

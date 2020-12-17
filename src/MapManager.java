@@ -1,14 +1,7 @@
-/**
- * This class is designed according to Singleton design pattern.
- * It will be used in MapManager class to initialize regions,
- * distribute troops to each region, and
- * distribute these regions to players.
- *
- * @author Ömer Yavuz Öztürk
- * @author Onur Oruç
- * @date 9.12.2020
- *
- */
+
+import entities.Continent;
+import entities.Player;
+import entities.Region;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +11,17 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
+/**
+ * This class is designed according to Singleton design pattern.
+ * It will be used in MapManager class to initialize regions,
+ * distribute troops to each region, and
+ * distribute these regions to players.
+ *
+ * @author Ömer Yavuz Öztürk
+ * @author Onur Oruç
+ * date: 16.12.2020
+ *
+ */
 public class MapManager {
 
     // create an instance of MapManager
@@ -114,35 +118,6 @@ public class MapManager {
 
         return regions;
     }
-
-    /**
-     * Distributes regions to each player
-     *
-     * @param regions the regions initialized with initMap()
-     * @param players the player objects created in MapManager
-     */
-    public void distributeRegions( Region[] regions, Player[] players ) {
-
-        ArrayList<Integer> unowned = new ArrayList<>();
-
-        for ( int i = 0; i < regions.length; i++ ) {
-            unowned.add(i);
-        }
-
-        int playerID, randomRegionID, randomIndex;
-
-        for ( int i = 0; i < regions.length; i++ ) {
-            playerID = (i % players.length);
-            randomIndex = (int) (unowned.size() * Math.random());
-
-            // remove the region from unowned array after distributing it to a player
-            randomRegionID = unowned.remove(randomIndex);
-            // System.out.println(randomRegionID); // test
-            players[playerID].addRegion(randomRegionID);
-        }
-
-    }
-
     /**
      * Distributes troops to each region
      * where each region has at least one troop
@@ -172,5 +147,102 @@ public class MapManager {
                 numEmptyRegions--;
             }
         }
+    }
+
+    /**
+     * Distributes regions to each player
+     *
+     * @param regions the regions initialized with initMap()
+     * @param players the player objects created in MapManager
+     */
+    public void distributeRegions( Region[] regions, Player[] players ) {
+
+        ArrayList<Integer> unowned = new ArrayList<>();
+
+        for ( int i = 0; i < regions.length; i++ ) {
+            unowned.add(i);
+        }
+
+        int playerID, randomRegionID, randomIndex;
+
+        for ( int i = 0; i < regions.length; i++ ) {
+            playerID = (i % players.length);
+            randomIndex = (int) (unowned.size() * Math.random());
+
+            // remove the region from unowned array after distributing it to a player
+            randomRegionID = unowned.remove(randomIndex);
+            // System.out.println(randomRegionID); // test
+            players[playerID].addRegion(randomRegionID);
+        }
+    }
+
+
+
+    /**
+     * Fetches information related to the continents in the map in the
+     * text file located in the given file path
+     * Utilizes BufferedReader and File classes from java.io
+     *
+     * @param filePath the location in which the text file is.
+     * @return continents created according to the information in filepath
+     * @throws Exception throw an exception if the file could not be found
+     */
+    public Continent[] initContinents(String filePath) throws Exception {
+        Continent[] continents;
+
+        try {
+            File file = new File(filePath);
+
+            // first count the number of continents
+            BufferedReader forNumLines = new BufferedReader(new FileReader(file));
+            int numLines = -1;
+
+            while( forNumLines.readLine() != null) {
+                numLines++;
+            }
+            forNumLines.close();
+
+            // initialize regions according to the number of continents calculated above.
+            continents = new Continent[numLines];
+
+            file = new File(filePath);
+            Scanner inputStream = new Scanner(file);
+            int counter = 0;
+            while(inputStream.hasNext()) {
+                String data = inputStream.nextLine();
+
+                // skip the first line since it contains only titles
+                if (counter != 0) {
+                    continents[counter-1] = new Continent();
+                    String[] line = data.split(",");
+
+                    // continent ID of the continent
+                    continents[counter - 1].setContinentId(Integer.parseInt(line[0]));
+
+                    // create regions array, between the first element and last three elements in a row
+                    int[] regionsIDs = new int[line.length-4];
+                    for(int i = 1; i < line.length-2; i++) {
+                        regionsIDs[i-1] = Integer.parseInt(line[i]);
+                    }
+                    continents[counter-1].setRegionIds(regionsIDs);
+
+                    // set continent name, it is the third-last element in a row
+                    continents[counter-1].setContinentName(line[line.length-3]);
+
+                    // set number of regions that a continent has, it is the second-last element in a row.
+                    continents[counter-1].setRegionCount(Integer.parseInt(line[line.length-2]));
+
+                    // set extra bonus troops that will be given to a player
+                    // when a player has the continent
+                    // it is the last element in a row.
+                    continents[counter-1].setBonusTroops(Integer.parseInt(line[line.length-1]));
+                }
+                counter++;
+            }
+        } catch(FileNotFoundException e) {
+            return null;
+        }
+
+        return continents;
     }
 }
