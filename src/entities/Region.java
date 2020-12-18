@@ -165,6 +165,24 @@ public class Region {
 
         return connectedOwnedRegions;
     }
+
+    public List <Integer> getEnemyRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
+        List<Integer> enemyRegions = new ArrayList <Integer> ();
+        boolean [] isEnemy;
+        isEnemy = new boolean [42];
+        for( int i = 0; i < 42; i++ ){
+            isEnemy[i] = true;
+        }
+        for( int i = 0; i < ownedRegionsByID.size(); i++){
+             isEnemy[ ownedRegionsByID.get(i) ] = false;
+        }
+        for( int i = 0; i < neighbors.length; i++ ){
+             if( isEnemy[neighbors[i]] )
+                 enemyRegions.add( neighbors[i]);
+        }
+
+        return enemyRegions;
+    }
     public void printRegion() {
 
         System.out.println();
