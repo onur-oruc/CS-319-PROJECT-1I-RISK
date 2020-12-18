@@ -8,10 +8,12 @@ package entities;
  * as parameter to this class' constructor
  *
  * @author Onur Oruç
- * date: 16.12.2020
  *
  */
 public class Continent {
+    // Asia, South America, Africa, North America, Australia, Europe
+    // id:0,       1            2        3             4         5
+
     // properties
     private String continentName;
     private int continentId;
@@ -21,7 +23,24 @@ public class Continent {
 
     // Constructor
     public Continent() {
+        continentName = "";
+        continentId = -1;
+        regionCount = -1;
+        regionIds = null;
+        bonusTroops = -1;
+    }
 
+    // Copy constructor
+    public Continent (Continent toCopy) {
+        this.continentName = toCopy.continentName;
+        this.continentId = toCopy.continentId;;
+        this.regionCount = toCopy.regionCount;
+        this.bonusTroops = toCopy.bonusTroops;
+
+        this.regionIds = new int[toCopy.regionIds.length];
+        for (int i = 0; i < regionIds.length; i++) {
+            regionIds[i] = toCopy.regionIds[i];
+        }
     }
 
 

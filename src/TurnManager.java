@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class TurnManager {
 
     // properties
+    // needs continents array
     Player player;
     Region[] regions;
     int turnCount;

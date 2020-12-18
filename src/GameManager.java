@@ -1,3 +1,4 @@
+import entities.Continent;
 import entities.Player;
 import entities.Region;
 import enums.SeasonType;
@@ -25,6 +26,7 @@ public class GameManager {
         Player[] players;
         Player player;
         Region[] regions;
+        Continent[] continents;
         boolean plague;
         boolean weather;
         SeasonType season;
@@ -45,8 +47,11 @@ public class GameManager {
         //
         MapManager mapManager = MapManager.getInstance();
         regions = mapManager.initMap("regions.txt");
+        System.out.println(regions[0].getContinentID());
+
         mapManager.distributeRegions(regions,players);
         mapManager.distributeTroops(regions,players);
+        continents = mapManager.initContinents("continents.txt");
 
         for (Player value : players) {
             value.printPlayer();

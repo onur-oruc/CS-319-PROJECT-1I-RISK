@@ -129,7 +129,7 @@ public class MapManager {
         int remainingNumTroops, numEmptyRegions, numTroopsToPlace;
 
         for (Player player : players) {
-            ArrayList<Integer> list = player.getRegionsByID();
+            ArrayList<Integer> list = player.getRegionIds();
 
             /*If there are two players, each player will have 40 troops
               If there are three players, each player will have 35 troops
@@ -216,25 +216,30 @@ public class MapManager {
                     continents[counter-1] = new Continent();
                     String[] line = data.split(",");
 
+
                     // continent ID of the continent
                     continents[counter - 1].setContinentId(Integer.parseInt(line[0]));
 
                     // create regions array, between the first element and last three elements in a row
                     int[] regionsIDs = new int[line.length-4];
-                    for(int i = 1; i < line.length-2; i++) {
+                    for(int i = 1; i < line.length-3; i++) {
                         regionsIDs[i-1] = Integer.parseInt(line[i]);
                     }
+
                     continents[counter-1].setRegionIds(regionsIDs);
 
                     // set continent name, it is the third-last element in a row
+
                     continents[counter-1].setContinentName(line[line.length-3]);
 
                     // set number of regions that a continent has, it is the second-last element in a row.
+
                     continents[counter-1].setRegionCount(Integer.parseInt(line[line.length-2]));
 
                     // set extra bonus troops that will be given to a player
                     // when a player has the continent
                     // it is the last element in a row.
+
                     continents[counter-1].setBonusTroops(Integer.parseInt(line[line.length-1]));
                 }
                 counter++;

@@ -38,8 +38,6 @@ public abstract class Challenger {
     }
 
     public boolean addRegion(int newRegionID) {
-
-        if ( !regionIds.contains(newRegionID)) {
         if (!regionIds.contains(newRegionID)) {
             regionIds.add(newRegionID);
             regionCount++;
@@ -48,7 +46,6 @@ public abstract class Challenger {
         return false;
     }
 
-    public void combineCards(){
     /**
      * This methods checks for the existence of the given continentID in given challenger
      * All continents are also given as a parameter to receive the regions of the continent
@@ -90,10 +87,8 @@ public abstract class Challenger {
         return false;
     }
 
-    public int calculateBonusTroop( Continent[] continents ){
     public void combineCards() {
 
-        return 0;
     }
 
     public int calculateBonusTroop (Continent[] continents) {
@@ -105,7 +100,6 @@ public abstract class Challenger {
         return mission;
     }
 
-    public void setMission(Mission mission) {
     public void setMission (Mission mission) {
         this.mission = mission;
     }
@@ -114,7 +108,6 @@ public abstract class Challenger {
         return isEliminated;
     }
 
-    public void setEliminated(boolean eliminated) {
     public void setEliminated (boolean eliminated) {
         isEliminated = eliminated;
     }
@@ -123,7 +116,6 @@ public abstract class Challenger {
         return name;
     }
 
-    public void setName(String name) {
     public void setName (String name) {
         this.name = name;
     }
@@ -132,7 +124,6 @@ public abstract class Challenger {
         return id;
     }
 
-    public void setId(int id) {
     public void setId (int id) {
         this.id = id;
     }
@@ -141,7 +132,6 @@ public abstract class Challenger {
         return isTurn;
     }
 
-    public void setTurn(boolean turn) {
     public void setTurn (boolean turn) {
         isTurn = turn;
     }
@@ -150,7 +140,6 @@ public abstract class Challenger {
         return troopCards;
     }
 
-    public void setTroopCards(TroopCardType[] troopCards) {
     public void setTroopCards (TroopCardType[] troopCards) {
         this.troopCards = troopCards;
     }
@@ -159,7 +148,6 @@ public abstract class Challenger {
         return money;
     }
 
-    public void setMoney(int money) {
     public void setMoney (int money) {
         this.money = money;
     }
@@ -168,7 +156,6 @@ public abstract class Challenger {
         return regionCount;
     }
 
-    public void setRegionCount(int regionCount) {
     public void setRegionCount (int regionCount) {
         this.regionCount = regionCount;
     }
@@ -177,7 +164,6 @@ public abstract class Challenger {
         return regionIds;
     }
 
-    public void setRegionIds(ArrayList<Integer> regionIds) {
     public void setRegionIds (ArrayList<Integer> regionIds) {
         this.regionIds = regionIds;
     }
