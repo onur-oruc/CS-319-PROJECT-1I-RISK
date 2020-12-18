@@ -5,7 +5,8 @@ import java.io.BufferedReader;
         import java.io.IOException;
         import java.lang.reflect.Array;
         import java.util.ArrayList;
-        import java.util.Scanner;
+import java.util.List;
+import java.util.Scanner;
 
 public class Region {
 
@@ -136,7 +137,7 @@ public class Region {
 
     public List <Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
         // todo
-        List <Integer> connectedOwnedRegions = new List <Integer> ();
+        List<Integer> connectedOwnedRegions = new ArrayList <Integer> ();
         connectedOwnedRegions.add( this.regionID );
         boolean [] visitedRegions, isOwnedRegion;
         isOwnedRegion = new boolean [42];
@@ -145,7 +146,7 @@ public class Region {
             isOwnedRegion[i] = visitedRegions[i] = false;
         }
         for( int i = 0; i < ownedRegionsByID.size(); i++){
-            isOwnedRegion[ ownedRegionsById.get(i) ] = true;
+            isOwnedRegion[ ownedRegionsByID.get(i) ] = true;
         }
         int i = 0;
         while( i < connectedOwnedRegions.size() ){
