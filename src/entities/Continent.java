@@ -21,7 +21,24 @@ public class Continent {
 
     // Constructor
     public Continent() {
+        continentName = "";
+        continentId = -1;
+        regionCount = -1;
+        regionIds = null;
+        bonusTroops = -1;
+    }
 
+    // Copy constructor
+    public Continent (Continent toCopy) {
+        this.continentName = toCopy.continentName;
+        this.continentId = toCopy.continentId;;
+        this.regionCount = toCopy.regionCount;
+        this.bonusTroops = toCopy.bonusTroops;
+
+        this.regionIds = new int[toCopy.regionIds.length];
+        for (int i = 0; i < regionIds.length; i++) {
+            regionIds[i] = toCopy.regionIds[i];
+        }
     }
 
 
