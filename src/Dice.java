@@ -11,16 +11,16 @@ public class Dice {
     // constructors
 
     // methods
-    public static List rollDice(int numDice, MotivationLevel mLevel ) {
+    public static ArrayList<Integer> rollDice(int numDice, MotivationLevel mLevel ) {
 
         int numMotivatedDice;
 
         // Determine the number of motivated dice according to motivation level
-        if ( mLevel == MotivationLevel.UNMOTIVATED )
+        if ( mLevel == MotivationLevel.NONE )
             numMotivatedDice = 0;
-        else if ( mLevel == MotivationLevel.LOWMOTIVATED )
+        else if ( mLevel == MotivationLevel.LOW )
             numMotivatedDice = 1;
-        else if ( mLevel == MotivationLevel.NORMALMOTIVATED )
+        else if ( mLevel == MotivationLevel.NORMAL )
             numMotivatedDice = 2;
         else // if ( mLevel == MotivationLevel.HIGH )
             numMotivatedDice = 3;

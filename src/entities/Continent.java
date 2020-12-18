@@ -24,7 +24,7 @@ public class Continent {
 
     }
 
-
+    // set methodları gereksiz
 
     public String getContinentName() {
         return continentName;

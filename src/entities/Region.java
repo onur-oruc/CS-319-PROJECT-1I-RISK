@@ -1,11 +1,14 @@
 package entities;
 
+import enums.MotivationLevel;
+
 import java.io.BufferedReader;
         import java.io.FileReader;
         import java.io.IOException;
         import java.lang.reflect.Array;
         import java.util.ArrayList;
-        import java.util.Scanner;
+import java.util.List;
+import java.util.Scanner;
 
 public class Region {
 
@@ -20,7 +23,9 @@ public class Region {
     private int locX;
     private int locY;
     private boolean hasGoldMine;
-    private boolean troopMotivation;
+    private MotivationLevel motivation;
+
+    private boolean plague, drought, frost;
 
     // constructors
     public Region() {
@@ -74,11 +79,11 @@ public class Region {
         numTroops = numTroops + numNewTroops;
     }
 
-    public void setOwnerId(int ownerId){
-        this.ownerID = ownerId;
+    public void setOwnerID(int ownerID){
+        this.ownerID = ownerID;
     }
 
-    public int getOwnerId(){
+    public int getOwnerID(){
         return this.ownerID;
     }
 
@@ -90,12 +95,12 @@ public class Region {
         return this.hasCommander;
     }
 
-    public void setTroopMotivation(boolean troopMotivation){
-        this.troopMotivation = troopMotivation;
+    public void setMotivation(MotivationLevel motivation){
+        this.motivation = motivation;
     }
 
-    public boolean getTroopMotivation(){
-        return this.troopMotivation;
+    public MotivationLevel getMotivation(){
+        return this.motivation;
     }
 
     public void setHasGoldMine(boolean hasGoldMine){
@@ -106,14 +111,12 @@ public class Region {
         return this.hasGoldMine;
     }
 
-    public void setNeighbors(int[] neighbors) {this.neighbors = neighbors;}
-
     public int[] getNeighbors(){ return neighbors; }
+    public void setNeighbors(int[] neighbors) {this.neighbors = neighbors;}
 
     public int getLocX(){
         return this.locX;
     }
-
     public int getLocY(){
         return this.locY;
     }
@@ -121,7 +124,6 @@ public class Region {
     public int getContinentID() {
         return continentID;
     }
-
     public void setContinentID(int continentID) {
         this.continentID = continentID;
     }
@@ -134,6 +136,22 @@ public class Region {
         this.regionName = regionName;
     }
 
+    public boolean hasDrought() { return drought; }
+    public void setDrought( boolean drought ) { this.drought = drought; }
+
+    public boolean hasPlague() { return plague; }
+    public void setPlague( boolean plague ) { this.plague = plague; }
+
+    public boolean hasFrost() { return frost; }
+    public void setFrost( boolean frost ) { this.frost = frost; }
+
+
+    public List<Integer> getConnectedOwnedRegions( Region[] allRegions, List<Integer> ownedRegionsByID ) {
+        // todo
+        return null;
+    }
+
+
     public void printRegion() {
 
         System.out.println();
@@ -144,7 +162,7 @@ public class Region {
         System.out.println("numTroops: " + numTroops);
         System.out.println("hasCommander: " + hasCommander);
         System.out.println("hasGoldMine: " + hasGoldMine);
-        System.out.println("troopMotivation: " + troopMotivation);
+        System.out.println("troopMotivation: " + motivation);
         System.out.println("locX: " + locX);
         System.out.println("locY: " + locY);
 

@@ -38,6 +38,8 @@ public class Player {
     }
 
     // methods
+    public int getPlayerID() { return playerID; }
+
     public ArrayList<Integer> getRegionsByID() {
         return regionsByID;
     }

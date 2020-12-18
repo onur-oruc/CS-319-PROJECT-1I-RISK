@@ -1,8 +1,8 @@
 package enums;
 
 public enum MotivationLevel {
-    HIGHMOTIVATED,
-    NORMALMOTIVATED,
-    LOWMOTIVATED,
-    UNMOTIVATED
+    HIGH,
+    NORMAL,
+    LOW,
+    NONE
 }

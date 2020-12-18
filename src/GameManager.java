@@ -32,12 +32,16 @@ public class GameManager {
 
         // DATA TO GET FROM USER
         numPlayers = 4;
+        plague = false;
+        weather = false;
+        season = SeasonType.SPRING;
+        turnCount = 1;
+
         players = new Player[numPlayers];
         // setting player names etc
         for ( int i = 0; i < players.length; i++) {
             players[i] = new Player( i, numPlayers, ("joe" + i));
-
-            players[i].printPlayer();
+            //players[i].printPlayer();
         }
 
         System.out.println();
@@ -49,7 +53,7 @@ public class GameManager {
         mapManager.distributeTroops(regions,players);
 
         for (Player value : players) {
-            value.printPlayer();
+            //value.printPlayer();
         }
 
         for (Region region : regions) {
@@ -62,6 +66,12 @@ public class GameManager {
         int[] loss = Dice.compareDice(a,b);
         System.out.println(loss[0]);
         System.out.println(loss[1]);
+
+        TurnManager turnManager = new TurnManager(players[0],regions,plague,weather,season,turnCount);
+
+        turnManager.buy();
+        turnManager.draft();
+        turnManager.attack();
 
         /*
         // for terminal test

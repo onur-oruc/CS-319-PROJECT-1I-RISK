@@ -173,6 +173,7 @@ public class MapManager {
             randomRegionID = unowned.remove(randomIndex);
             // System.out.println(randomRegionID); // test
             players[playerID].addRegion(randomRegionID);
+            regions[randomRegionID].setOwnerID(playerID);
         }
     }
 
