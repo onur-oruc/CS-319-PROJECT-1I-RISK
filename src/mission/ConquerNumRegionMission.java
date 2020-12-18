@@ -1,29 +1,54 @@
 package mission;
 
 import entities.Challenger;
-import entities.Player;
+import entities.Region;
 
-import java.util.ArrayList;
 
 /**
- * Occupy 18 territories with at least two armies in each territory
- *
+ * This class will be used to whether a challenger occupied
+ * 18 territories with at least two armies in each territory
+ * @author Onur Oruç
  */
-public class ConquerNumRegionMission implements Mission{
-    @Override
-    public boolean isCompleted(Challenger challenger) {
-        int regionCount = challenger.getRegionCount();
-        int regionWithAtLeast2Troops = 0;
-        ArrayList<Integer> regionIds = challenger.getRegionIds();
+public class ConquerNumRegionMission implements Mission {
+    // constants
+    private final int NUM_REGION_TO_OCCUPY = 18;
 
-        if (regionCount >= 18) {
-            for ()
+    // properties
+    private Region[] allRegions;
+
+    // all region's information should be passed as a parameter.
+    public ConquerNumRegionMission (Region[] regions) {
+        allRegions = new Region[regions.length];
+        for ( int i = 0; i < regions.length; i++) {
+            allRegions[i] = regions[i];
         }
-
-        return false;
     }
 
-    public ConquerNumRegionMission() {
+    // methods
+    public void updateRegions (Region[] regions) {
+        allRegions = new Region[regions.length];
+        for (int i = 0; i < regions.length; i++) {
+            allRegions[i] = new Region(regions[i]);
+        }
+    }
 
+    @Override
+    public boolean isCompleted (Challenger challenger) {
+        int regionCount = challenger.getRegionCount();
+        int regionWithAtLeast2Troops = 0;
+        // ArrayList<Integer> regionIds = challenger.getRegionIds();
+
+        int challengerID = challenger.getId();
+
+        if (regionCount >= NUM_REGION_TO_OCCUPY) {
+            for (int i = 0; i < allRegions.length; i++) {
+                if ( allRegions[i].getOwnerId() == challengerID && allRegions[i].getNumTroops() >= 2)
+                    regionWithAtLeast2Troops++;
+            }
+        }
+        if (regionWithAtLeast2Troops >= NUM_REGION_TO_OCCUPY)
+            return true;
+
+        return false;
     }
 }
