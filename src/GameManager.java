@@ -60,13 +60,6 @@ public class GameManager {
             region.printRegion();
         }
 
-        System.out.println("\ncompareDice testing");    // got correct results
-        ArrayList<Integer> a = new ArrayList<>(Arrays.asList(4,1,6,4,4));
-        ArrayList<Integer> b = new ArrayList<>(Arrays.asList(2,5,3,4,4));
-        int[] loss = Dice.compareDice(a,b);
-        System.out.println(loss[0]);
-        System.out.println(loss[1]);
-
         TurnManager turnManager = new TurnManager(players[0],regions,plague,weather,season,turnCount);
 
         turnManager.buy();

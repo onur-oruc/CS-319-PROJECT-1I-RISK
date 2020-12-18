@@ -156,10 +156,9 @@ public class TurnManager {
 
                 defenderRegion.setOwnerID(player.getPlayerID());
 
-                int troopsToMove = Math.max(scan.nextInt(),numAttackerDice);
-                moveTroops(attackerRegion,defenderRegion,troopsToMove);
+                int numTroopsToMove = Math.max(scan.nextInt(),numAttackerDice);    // the troops you attack with have to move to the conquered region
+                moveTroops(attackerRegion,defenderRegion,numTroopsToMove);
             }
-
 
             System.out.println("Choose an owned region to attack with OR enter -1 to quit pattern");
             attackerRegionID = scan.nextInt();
@@ -169,7 +168,12 @@ public class TurnManager {
     }
 
     public void fortify() {
+        Scanner scan = new Scanner(System.in);
+        Region origin, destination;
+        int numTroopsToMove;
 
+        System.out.println("Choose an owned region to move troops from OR -1 to end");
+        int attackerRegionID = scan.nextInt();
     }
 
     public void endTurnOps() {
