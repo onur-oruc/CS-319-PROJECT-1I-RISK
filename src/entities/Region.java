@@ -137,20 +137,24 @@ public class Region {
     public void setFrost( boolean frost ) { this.frost = frost; }
 
 
-    public List <Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
-        // todo
-        List<Integer> connectedOwnedRegions = new ArrayList <Integer> ();
+    public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
+
+        ArrayList<Integer> connectedOwnedRegions = new ArrayList <Integer> ();
         connectedOwnedRegions.add( this.regionID );
         boolean [] visitedRegions, isOwnedRegion;
         isOwnedRegion = new boolean [allRegions.length];
         visitedRegions = new boolean[allRegions.length];
+
         for( int i = 0; i < 42; i++ ){
             isOwnedRegion[i] = visitedRegions[i] = false;
         }
+
         for( int i = 0; i < ownedRegionsByID.size(); i++){
             isOwnedRegion[ ownedRegionsByID.get(i) ] = true;
         }
+
         int i = 0;
+
         while( i < connectedOwnedRegions.size() ){
             int currentRegion = connectedOwnedRegions.get( i );
             visitedRegions[ currentRegion] = true;
@@ -165,8 +169,6 @@ public class Region {
             }
             i++;
         }
-
-
         return connectedOwnedRegions;
     }
 

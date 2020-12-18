@@ -21,8 +21,6 @@ public abstract class Challenger {
     private ArrayList<Integer> regionIds;
     private Mission mission;
 
-
-
     Challenger(String name, int id) {
         this.name = name;
         this.id = id;

@@ -4,6 +4,8 @@ import enums.MotivationLevel;
 import enums.SeasonType;
 import enums.StageType;
 
+import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TurnManager {
@@ -21,8 +23,8 @@ public class TurnManager {
 
     final int MIN_ADDITIONAL_TROOPS = 3;
 
-    final int PRICE_OF_MERCENARY = 10;
-    final int PRICE_OF_ENTERTAINMENT = 5;
+    final int PRICE_OF_MERCENARY = 3;
+    final int PRICE_OF_ENTERTAINMENT = 7;
 
     final int DROUGHT_LIMIT = 5;
     final double FROST_AVG_SURVIVING_PROPORTION = 0.5;
@@ -48,27 +50,24 @@ public class TurnManager {
         additionalTroops = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
         getsCard = false;
 
-        stage = StageType.BUY;
+        stage = StageType.BEGIN;
     }
 
     // methods
     public void operate() {
         beginTurnOps();
-        System.out.println();
         buy();
-        System.out.println();
         draft();
-        System.out.println();
         attack();
-        System.out.println();
         fortify();
-        System.out.println();
         endTurnOps();
     }
 
     public void beginTurnOps() {
         System.out.println("***BEGIN");
-        System.out.println("BEGIN***");
+
+        stage = StageType.BUY;
+        System.out.println("BEGIN***\n");
     }
 
     public void buy() {
@@ -113,7 +112,7 @@ public class TurnManager {
         } while ( input != 0 );
 
         stage = StageType.DRAFT;
-        System.out.println("BUY***");
+        System.out.println("BUY***\n");
 
     }
 
@@ -141,7 +140,7 @@ public class TurnManager {
         }
 
         stage = StageType.ATTACK;
-        System.out.println("DRAFT***");
+        System.out.println("DRAFT***\n");
 
     }
 
@@ -160,7 +159,6 @@ public class TurnManager {
 
 
         while ( attackerRegionID >= 0 && attackerRegionID < regions.length && regions[attackerRegionID].getOwnerID() == player.getId() ) {
-
 
             // do whiles are for exceptions
             do {
@@ -199,7 +197,7 @@ public class TurnManager {
         }
 
         stage = StageType.FORTIFY;
-        System.out.println("ATTACK***");
+        System.out.println("ATTACK***\n");
     }
 
     public void fortify() {
@@ -214,22 +212,29 @@ public class TurnManager {
         do {
             System.out.println("Enter a region ID");
             origin = regions[scan.nextInt()];
-        } while ( origin.getOwnerID() != player.getId() );
+        } while ( origin.getOwnerID() != player.getId() && (origin.getNumTroops() == 1) );
 
+        System.out.println("Choose an owned connected region to move troops TO");
+        ArrayList<Integer> connectedOwnedRegions;
 
-        System.out.println("Choose an owned region to move troops TO");
         do {
-            System.out.println("Enter a region ID");
-            destination = regions[scan.nextInt()];
-        } while ( destination.getOwnerID() != player.getId() );
+            connectedOwnedRegions = origin.getConnectedOwnedRegions(regions, player.getRegionIds());
 
+            for ( Integer i : connectedOwnedRegions) {
+                System.out.print( i + ",");
+            }
+            System.out.println("\nEnter a region ID from above");
+            destination = regions[scan.nextInt()];
+
+        } while ( !connectedOwnedRegions.contains( destination.getRegionID() ));
+
+        System.out.println("How many troops should be moved? From 1 to " + (origin.getNumTroops() - 1));
         numTroopsToMove = scan.nextInt();
 
         moveTroops(origin,destination,numTroopsToMove);
 
         stage = StageType.END;
-        System.out.println("FORTIFY***");
-
+        System.out.println("FORTIFY***\n");
     }
 
     public void endTurnOps() {
@@ -259,7 +264,7 @@ public class TurnManager {
         // possible motivation updates
         // possible gold mine appearances
 
-        System.out.println("END TURN***");
+        System.out.println("END TURN***\n");
     }
 
 
@@ -286,8 +291,6 @@ public class TurnManager {
 
     public int moveTroops( Region origin, Region destination, int numTroops)
     {
-        System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops are sent.");
-
         if ( numTroops > 0 )
         {
             numTroops = Math.min( numTroops, origin.getNumTroops() - 1 );   // (EXCEPTION) max no of troops that can be moved from any region
@@ -296,6 +299,7 @@ public class TurnManager {
                 numTroops = Math.min( numTroops, DROUGHT_LIMIT );   // (EXCEPTION) max no of troops that can be moved from a region with drought
 
             origin.setNumTroops( origin.getNumTroops() - numTroops );   // troops depart from origin
+            System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops are sent.");
 
             if ( origin.hasFrost() )
                 numTroops = (int) (numTroops * FROST_AVG_SURVIVING_PROPORTION); // only a proportion survives the frost
@@ -303,8 +307,10 @@ public class TurnManager {
             if ( numTroops > 0 ) {
                 destination.setNumTroops( destination.getNumTroops() + numTroops ); // troops arrive at destination
 
-                if ( origin.hasPlague() )
+                if ( origin.hasPlague() ) {
                     destination.setPlague(true);    // plague is spread
+                    System.out.println("Region " + destination.getRegionID() + " has the plague now");
+                }
 
             }
 
