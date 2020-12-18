@@ -100,7 +100,7 @@ public class TurnManager {
             do {
                 System.out.println("Enter a region ID");
                 selectedRegion = regions[scan.nextInt()];
-            } while ( selectedRegion.getOwnerID() != player.getPlayerID() );
+            } while ( selectedRegion.getOwnerID() != player.getId() );
 
             System.out.println("Enter no of troops to draft on the chosen region");
             troopsToDraft = Math.min(scan.nextInt(), additionalTroops);
@@ -126,19 +126,19 @@ public class TurnManager {
         int attackerRegionID = scan.nextInt();
 
 
-        while ( attackerRegionID >= 0 && attackerRegionID < regions.length && regions[attackerRegionID].getOwnerID() == player.getPlayerID() ) {
+        while ( attackerRegionID >= 0 && attackerRegionID < regions.length && regions[attackerRegionID].getOwnerID() == player.getId() ) {
 
 
             // do whiles are for exceptions
             do {
                 System.out.println("Attacking with " + attackerRegionID);
                 attackerRegion = regions[attackerRegionID];
-            } while ( attackerRegion.getOwnerID() != player.getPlayerID() );
+            } while ( attackerRegion.getOwnerID() != player.getId() );
 
             do {
                 System.out.println("Choose an enemy region by ID");
                 defenderRegion = regions[scan.nextInt()];
-            } while ( defenderRegion.getOwnerID() == player.getPlayerID() );
+            } while ( defenderRegion.getOwnerID() == player.getId() );
 
 
             do {
@@ -154,7 +154,7 @@ public class TurnManager {
                 System.out.println("Enemy region with ID " + defenderRegion.getRegionID() + " is conquered!");
                 System.out.println("How many troops go there? At least " + numAttackerDice + " troops should go." );
 
-                defenderRegion.setOwnerID(player.getPlayerID());
+                defenderRegion.setOwnerID(player.getId());
 
                 int numTroopsToMove = Math.max(scan.nextInt(),numAttackerDice);    // the troops you attack with have to move to the conquered region
                 moveTroops(attackerRegion,defenderRegion,numTroopsToMove);

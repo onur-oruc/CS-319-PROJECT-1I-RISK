@@ -1,7 +1,8 @@
 package mission;
 
+import entities.Challenger;
 import entities.Player;
 
 public interface Mission {
-    boolean isCompleted(Player player);
+    boolean isCompleted(Challenger challenger);
 }

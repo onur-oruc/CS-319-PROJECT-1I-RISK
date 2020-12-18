@@ -32,6 +32,23 @@ public class Region {
 
     }
 
+    // copy constructor
+    public Region(Region toCopy) {
+        this.continentID = toCopy.continentID;
+        this.regionName = toCopy.regionName;
+        this.regionID = toCopy.regionID;
+        this.ownerID = toCopy.ownerID;
+        this.numTroops = toCopy.numTroops;
+        this.hasCommander = toCopy.hasCommander;
+        this.hasGoldMine = toCopy.hasGoldMine;
+        this.motivation = toCopy.motivation;
+
+        this.neighbors = new int[toCopy.neighbors.length];
+        for (int i = 0; i < neighbors.length; i++) {
+            neighbors[i] = toCopy.neighbors[i];
+        }
+    }
+
     /*public entities.Region(int regionId) {
         this.regionID = regionId;
         this.ownerID = -1;
@@ -111,12 +128,14 @@ public class Region {
         return this.hasGoldMine;
     }
 
-    public int[] getNeighbors(){ return neighbors; }
     public void setNeighbors(int[] neighbors) {this.neighbors = neighbors;}
+
+    public int[] getNeighbors(){ return neighbors; }
 
     public int getLocX(){
         return this.locX;
     }
+
     public int getLocY(){
         return this.locY;
     }
@@ -124,6 +143,7 @@ public class Region {
     public int getContinentID() {
         return continentID;
     }
+
     public void setContinentID(int continentID) {
         this.continentID = continentID;
     }
@@ -146,7 +166,7 @@ public class Region {
     public void setFrost( boolean frost ) { this.frost = frost; }
 
 
-    public List<Integer> getConnectedOwnedRegions( Region[] allRegions, List<Integer> ownedRegionsByID ) {
+    public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions, List<Integer> ownedRegionsByID ) {
         // todo
         return null;
     }
