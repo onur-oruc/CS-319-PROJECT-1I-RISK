@@ -1,5 +1,6 @@
 package mission;
 
+import entities.Challenger;
 import entities.Continent;
 import entities.Player;
 /**
