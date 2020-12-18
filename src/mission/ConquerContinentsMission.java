@@ -24,19 +24,24 @@ public class ConquerContinentsMission implements Mission {
     final int[] ASIA_AFRICA = {0, 2};
     final int[] NORTH_AMERICA_AFRICA = {3, 2};
     final int[] NORTH_AMERICA_AUSTRALIA = {3,4};
-    final int[] EUROPE_SOUTH_AMERICA = {5,1};
-    final int[] EUROPE_AUSTRALIA = {5,4};
+    final int[] EUROPE_SOUTH_AMERICA = {5,1}; // + one continent of Player's choice
+    final int[] EUROPE_AUSTRALIA = {5,4}; // + one continent of Player's choice
 
     // properties
     Continent[] continents;
     int missionNum;
     int[] continentIDs;
 
-    public ConquerContinentsMission( Continent[] continents) {
+    public ConquerContinentsMission (Continent[] cont) {
         int randomMission = (int)(Math.random() * 6);
         missionNum = randomMission + 1;
 
-        // TO DO initialize continents
+        // initialize continents
+        continents = new Continent[cont.length];
+        for (int i = 0; i < continents.length; i++) {
+            Continent continent = cont[i];
+            continents[i] = new Continent(continent);
+        }
     }
 
     @Override
