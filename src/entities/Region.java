@@ -134,6 +134,36 @@ public class Region {
         this.regionName = regionName;
     }
 
+    public List <Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
+        // todo
+        List <Integer> connectedOwnedRegions = new List <Integer> ();
+        connectedOwnedRegions.add( this.regionID );
+        boolean [] visitedRegions, isOwnedRegion;
+        isOwnedRegion = new boolean [42];
+        visitedRegions = new boolean[42];
+        for( int i = 0; i < 42; i++ ){
+            isOwnedRegion[i] = visitedRegions[i] = false;
+        }
+        for( int i = 0; i < ownedRegionsByID.size(); i++){
+            isOwnedRegion[ ownedRegionsById.get(i) ] = true;
+        }
+        int i = 0;
+        while( i < connectedOwnedRegions.size() ){
+            int currentRegion = connectedOwnedRegions.get( i );
+            visitedRegions[ currentRegion] = true;
+            int [] neighboursOfCurrentRegion = allRegions[ currentRegion ]. getNeighbors();
+            for( int j = 0; j < neighboursOfCurrentRegion.length; j++){
+                 int regionIdToCheckConnectivity = neighboursOfCurrentRegion[j];
+                 if( !visitedRegions[regionIdToCheckConnectivity] && isOwnedRegion[regionIdToCheckConnectivity] ){
+                     connectedOwnedRegions.add( regionIdToCheckConnectivity );
+                 }
+             }
+             i++;
+        }
+
+
+        return connectedOwnedRegions;
+    }
     public void printRegion() {
 
         System.out.println();
