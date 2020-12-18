@@ -45,28 +45,44 @@ public class ConquerContinentsMission implements Mission {
     }
 
     @Override
-    public boolean isCompleted(Player player) {
-
+    public boolean isCompleted(Challenger challenger) {
+        int totalContinentsOfChallenger = 0;
 
         if (missionNum == 1) {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, ASIA_SOUTH_AMERICA);
+            if (totalContinentsOfChallenger == 2)
+                return true;
         }
         else if (missionNum == 2) {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, ASIA_AFRICA);
+            if (totalContinentsOfChallenger == 2)
+                return true;
         }
         else if (missionNum == 3) {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, NORTH_AMERICA_AFRICA);
+            if (totalContinentsOfChallenger == 2)
+                return true;
         }
         else if (missionNum == 4) {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, NORTH_AMERICA_AUSTRALIA);
+            if (totalContinentsOfChallenger == 2)
+                return true;
         }
         else if (missionNum == 5) {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, EUROPE_SOUTH_AMERICA);
+            if (totalContinentsOfChallenger == 2) {
+                if (iterateFifthAndSixthMission(challenger, EUROPE_SOUTH_AMERICA))
+                    return true;
+            }
         }
         else {
-
+            totalContinentsOfChallenger = iterateMissionArrays(challenger, EUROPE_AUSTRALIA);
+            if (totalContinentsOfChallenger == 2) {
+                if (iterateFifthAndSixthMission(challenger, EUROPE_AUSTRALIA))
+                    return true;
+            }
         }
 
-        return true;
+        return false;
     }
 }
