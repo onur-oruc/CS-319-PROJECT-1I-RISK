@@ -1,5 +1,7 @@
 package entities;
 
+import enums.MotivationLevel;
+
 import java.io.BufferedReader;
         import java.io.FileReader;
         import java.io.IOException;
@@ -20,11 +22,28 @@ public class Region {
     private int locX;
     private int locY;
     private boolean hasGoldMine;
-    private boolean troopMotivation;
+    private MotivationLevel troopMotivation;
 
     // constructors
     public Region() {
 
+    }
+
+    // copy constructor
+    public Region(Region toCopy) {
+        this.continentID = toCopy.continentID;
+        this.regionName = toCopy.regionName;
+        this.regionID = toCopy.regionID;
+        this.ownerID = toCopy.ownerID;
+        this.numTroops = toCopy.numTroops;
+        this.hasCommander = toCopy.hasCommander;
+        this.hasGoldMine = toCopy.hasGoldMine;
+        this.troopMotivation = toCopy.troopMotivation;
+
+        this.neighbors = new int[toCopy.neighbors.length];
+        for (int i = 0; i < neighbors.length; i++) {
+            neighbors[i] = toCopy.neighbors[i];
+        }
     }
 
     /*public entities.Region(int regionId) {
@@ -90,11 +109,11 @@ public class Region {
         return this.hasCommander;
     }
 
-    public void setTroopMotivation(boolean troopMotivation){
+    public void setTroopMotivation(MotivationLevel troopMotivation){
         this.troopMotivation = troopMotivation;
     }
 
-    public boolean getTroopMotivation(){
+    public MotivationLevel getTroopMotivation(){
         return this.troopMotivation;
     }
 

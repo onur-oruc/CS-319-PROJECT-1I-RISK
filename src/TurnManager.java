@@ -1,5 +1,6 @@
 import entities.Player;
 import entities.Region;
+import enums.MotivationLevel;
 import enums.SeasonType;
 import enums.StageType;
 
@@ -71,7 +72,7 @@ public class TurnManager {
                     System.out.println("not enough money for entertainment");
                 else
                 {
-                    regions[scan.nextInt()].setTroopMotivation(true);
+                    regions[scan.nextInt()].setTroopMotivation(/*true*/MotivationLevel.NORMALMOTIVATED);
                     player.setMoney(money - PRICE_OF_ENTERTAINMENT);
                 }
             }

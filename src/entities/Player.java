@@ -21,11 +21,11 @@ public class Player extends Challenger{
     public Player (int playerID, int numPlayers, String name) {
         super(name,playerID);
 
-        money = STARTING_MONEY;
-        isTurn = false;   // not yet his turn
-        troopCards = null;
-        regionCount = 0;
-        isEliminated = false;
+        this.setMoney(STARTING_MONEY);
+        this.setTurn(false);   // not yet his turn
+        this.setTroopCards(null);
+        this.setRegionCount(0);
+        this.setEliminated(false);
 
         allies = new boolean[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
@@ -41,18 +41,18 @@ public class Player extends Challenger{
 
     public void printPlayer() {
         System.out.println();
-        System.out.println("playerID: " + id);
-        System.out.println("name: " + name);
-        System.out.println("money: " + money);
-        System.out.println("turn: " + isTurn);
-        System.out.println("regionCount: " + regionCount);
-        System.out.println("isEliminated: " + isEliminated);
+        System.out.println("playerID: " + getId());
+        System.out.println("name: " + getName());
+        System.out.println("money: " + getMoney());
+        //System.out.println("turn: " + isTurn);
+        System.out.println("regionCount: " + getRegionCount());
+       // System.out.println("isEliminated: " + isEliminated);
 
 
         System.out.println();
 
         System.out.print("regionsByID: ");
-        for (Integer integer : regionIds) {
+        for (Integer integer : this.getRegionIds()) {
             System.out.print(integer + ", ");
         }
         System.out.println();

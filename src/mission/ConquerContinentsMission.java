@@ -29,9 +29,9 @@ public class ConquerContinentsMission implements Mission {
     final int[] EUROPE_AUSTRALIA = {5,4}; // + one continent of Player's choice
 
     // properties
-    Continent[] continents;
-    int missionNum;
-    int[] continentIDs;
+    private Continent[] continents;
+    private int missionNum;
+    private int[] continentIDs;
 
     public ConquerContinentsMission (Continent[] cont) {
         int randomMission = (int)(Math.random() * 6);
