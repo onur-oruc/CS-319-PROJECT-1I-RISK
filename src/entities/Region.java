@@ -49,36 +49,7 @@ public class Region {
         }
     }
 
-    /*public entities.Region(int regionId) {
-        this.regionID = regionId;
-        this.ownerID = -1;
-        BufferedReader rdr;
-
-        try {
-            rdr = new BufferedReader(new FileReader("data/region.txt"));
-            for(int i = 0; i < regionId; i++){
-                rdr.readLine();
-            }
-            Scanner scan = new Scanner(rdr.readLine());
-            locX = scan.nextInt();
-            locY = scan.nextInt();
-
-            int neighborCount = scan.nextInt();
-
-            neighbors = new int[neighborCount];
-            for(int i = 0; i < neighborCount; i++){
-                neighbors[i] = scan.nextInt();
-            }
-
-            scan.close();
-            rdr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     // methods
-
 
     public void setRegionID(int regionID) {this.regionID = regionID;}
 
@@ -166,9 +137,37 @@ public class Region {
     public void setFrost( boolean frost ) { this.frost = frost; }
 
 
-    public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions, List<Integer> ownedRegionsByID ) {
+    public List <Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
         // todo
-        return null;
+        List<Integer> connectedOwnedRegions = new ArrayList <Integer> ();
+        connectedOwnedRegions.add( this.regionID );
+        boolean [] visitedRegions, isOwnedRegion;
+        isOwnedRegion = new boolean [allRegions.length];
+        visitedRegions = new boolean[allRegions.length];
+        for( int i = 0; i < 42; i++ ){
+            isOwnedRegion[i] = visitedRegions[i] = false;
+        }
+        for( int i = 0; i < ownedRegionsByID.size(); i++){
+            isOwnedRegion[ ownedRegionsByID.get(i) ] = true;
+        }
+        int i = 0;
+        while( i < connectedOwnedRegions.size() ){
+            int currentRegion = connectedOwnedRegions.get( i );
+            visitedRegions[ currentRegion] = true;
+            int [] neighboursOfCurrentRegion = allRegions[ currentRegion ]. getNeighbors();
+            for( int j = 0; j < neighboursOfCurrentRegion.length; j++){
+                int regionIdToCheckConnectivity = neighboursOfCurrentRegion[j];
+                if( !visitedRegions[regionIdToCheckConnectivity] && isOwnedRegion[regionIdToCheckConnectivity] ){
+                    connectedOwnedRegions.add( regionIdToCheckConnectivity );
+                    visitedRegions[regionIdToCheckConnectivity] = true;
+                }
+
+            }
+            i++;
+        }
+
+
+        return connectedOwnedRegions;
     }
 
 

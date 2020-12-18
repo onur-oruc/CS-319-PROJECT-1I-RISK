@@ -7,6 +7,7 @@ import entities.Challenger;
  * eliminated with an enemy with a specific id.
  *
  * @author Onur Oruç
+ * @author Ömer Yavuz Öztürk
  */
 public class EliminateColorMission implements Mission {
     // property(ies)

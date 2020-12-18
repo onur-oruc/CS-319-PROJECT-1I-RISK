@@ -8,6 +8,7 @@ import entities.Region;
  * This class will be used to check whether a challenger occupied
  * 18 territories with at least two armies in each territory
  * @author Onur Oruç
+ * @author Ömer Yavuz Öztürk
  */
 public class ConquerNumRegionMission implements Mission {
     // constants

@@ -19,6 +19,8 @@ public class TurnManager {
     StageType stage;
     int additionalTroops;
 
+    final int MIN_ADDITIONAL_TROOPS = 3;
+
     final int PRICE_OF_MERCENARY = 10;
     final int PRICE_OF_ENTERTAINMENT = 5;
 
@@ -28,6 +30,9 @@ public class TurnManager {
 
     final int MAX_NUM_ATTACKERS = 3;
     final int MAX_NUM_DEFENDERS = 2;
+
+    final int PLAGUE_LIMIT = 10;
+    final double PLAGUE_COEFFICIENT = 0.025;
 
 
     // constructor
@@ -40,18 +45,40 @@ public class TurnManager {
         this.season = season;
         this.turnCount = turnCount;
 
-        additionalTroops = Math.max(player.getRegionCount() / 3, 3);
+        additionalTroops = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
+        getsCard = false;
 
         stage = StageType.BUY;
     }
 
     // methods
+    public void operate() {
+        beginTurnOps();
+        System.out.println();
+        buy();
+        System.out.println();
+        draft();
+        System.out.println();
+        attack();
+        System.out.println();
+        fortify();
+        System.out.println();
+        endTurnOps();
+    }
+
+    public void beginTurnOps() {
+        System.out.println("***BEGIN");
+        System.out.println("BEGIN***");
+    }
+
     public void buy() {
 
-        Scanner scan = new Scanner(System.in);
-        int input = 3;
+        System.out.println("***BUY");
 
-        while ( input != 0 ) {
+        Scanner scan = new Scanner(System.in);
+        int input;
+
+        do {
 
             int money = player.getMoney();
             if (money < PRICE_OF_MERCENARY)
@@ -83,13 +110,16 @@ public class TurnManager {
                     player.setMoney(money - PRICE_OF_ENTERTAINMENT);
                 }
             }
-        }
+        } while ( input != 0 );
 
         stage = StageType.DRAFT;
+        System.out.println("BUY***");
 
     }
 
     public void draft() {
+        System.out.println("***DRAFT");
+
         Scanner scan = new Scanner(System.in);
         Region selectedRegion;
         int troopsToDraft;
@@ -111,10 +141,13 @@ public class TurnManager {
         }
 
         stage = StageType.ATTACK;
+        System.out.println("DRAFT***");
 
     }
 
     public void attack() {
+
+        System.out.println("***ATTACK");
 
         Scanner scan = new Scanner(System.in);
         Region attackerRegion;
@@ -155,6 +188,7 @@ public class TurnManager {
                 System.out.println("How many troops go there? At least " + numAttackerDice + " troops should go." );
 
                 defenderRegion.setOwnerID(player.getId());
+                getsCard = true;
 
                 int numTroopsToMove = Math.max(scan.nextInt(),numAttackerDice);    // the troops you attack with have to move to the conquered region
                 moveTroops(attackerRegion,defenderRegion,numTroopsToMove);
@@ -165,23 +199,67 @@ public class TurnManager {
         }
 
         stage = StageType.FORTIFY;
+        System.out.println("ATTACK***");
     }
 
     public void fortify() {
+
+        System.out.println("***FORTIFY");
+
         Scanner scan = new Scanner(System.in);
         Region origin, destination;
         int numTroopsToMove;
 
-        System.out.println("Choose an owned region to move troops from OR -1 to end");
-        int attackerRegionID = scan.nextInt();
+        System.out.println("Choose an owned region to move troops FROM");
+        do {
+            System.out.println("Enter a region ID");
+            origin = regions[scan.nextInt()];
+        } while ( origin.getOwnerID() != player.getId() );
+
+
+        System.out.println("Choose an owned region to move troops TO");
+        do {
+            System.out.println("Enter a region ID");
+            destination = regions[scan.nextInt()];
+        } while ( destination.getOwnerID() != player.getId() );
+
+        numTroopsToMove = scan.nextInt();
+
+        moveTroops(origin,destination,numTroopsToMove);
+
+        stage = StageType.END;
+        System.out.println("FORTIFY***");
+
     }
 
     public void endTurnOps() {
+        System.out.println("***END TURN");
+
         // possible season change
         // possible weather updates
+
         // possible plague updates
+        int numTroops;
+        double plagueRisk;
+
+        for ( Integer regionID : player.getRegionIds() ) {
+            numTroops = regions[regionID].getNumTroops();
+
+            if ( numTroops <= PLAGUE_LIMIT )
+                plagueRisk = 0;
+            else
+                plagueRisk = ((double) (numTroops)) * PLAGUE_COEFFICIENT;
+
+            if ( Math.random() < plagueRisk ) {
+                regions[regionID].setPlague(true);
+                System.out.println("PLAGUE appeared on region " + regionID);
+            }
+        }
+
         // possible motivation updates
-        //
+        // possible gold mine appearances
+
+        System.out.println("END TURN***");
     }
 
 
@@ -207,11 +285,6 @@ public class TurnManager {
 
 
     public int moveTroops( Region origin, Region destination, int numTroops)
-            /*throws NotEnoughTroops
-    {
-        if ( numTroops > origin.getNumTroops() )
-            throw new NotEnoughTroops(numTroops);
-    }*/
     {
         System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops are sent.");
 
@@ -236,9 +309,11 @@ public class TurnManager {
             }
 
         }
+
         System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops arrived alive");
         return numTroops; // troops that arrived at the destination
     }
+
 
     public boolean areRegionsConnected() {
         // who knows

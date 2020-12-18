@@ -53,6 +53,8 @@ public class MapManager {
         distributeRegions(regions,players);
         distributeTroops(regions,players);
 
+        // set missions for players todo
+
         return regions;
     }
 

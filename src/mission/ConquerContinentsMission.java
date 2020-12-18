@@ -17,6 +17,7 @@ import entities.Player;
  * 6. Europe and Australia and a 3rd continent of your choice
  *
  * @author Onur Oruç
+ * @author Ömer Yavuz Öztürk
  *
  */
 public class ConquerContinentsMission implements Mission {

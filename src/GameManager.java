@@ -34,8 +34,8 @@ public class GameManager {
 
         // DATA TO GET FROM USER
         numPlayers = 4;
-        plague = false;
-        weather = false;
+        plague = true;
+        weather = true;
         season = SeasonType.SPRING;
         turnCount = 1;
 
@@ -65,11 +65,35 @@ public class GameManager {
             region.printRegion();
         }
 
+        System.out.println();
+        /*
+        for ( Integer i : players[0].getRegionIds()) {
+            System.out.print(i + ",");
+        }*/
+
+        /*
+        while (false) {
+            for ( tum oyuncular) {
+                give turn
+            }
+            turncount++;
+        }
+        */
+
+        /*while (true) {
+
+
+            System.out.println("\nchoose one");
+
+            for (Integer i : regions[scan.nextInt()].getConnectedOwnedRegions(regions, players[0].getRegionIds())) {
+                System.out.print(i + ",");
+            }
+        }*/
+
+
         TurnManager turnManager = new TurnManager(players[0],regions,plague,weather,season,turnCount);
 
-        turnManager.buy();
-        turnManager.draft();
-        turnManager.attack();
+        turnManager.operate();
 
         /*
         // for terminal test
