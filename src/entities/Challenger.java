@@ -3,7 +3,8 @@ package entities;
 import enums.TroopCardType;
 import mission.Mission;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public abstract class Challenger {
     int money;
@@ -13,7 +14,10 @@ public abstract class Challenger {
     int id;
     int regionCount;
     boolean isEliminated;
-    ArrayList<Integer>regionIds;
+
+    ArrayList<Integer> eliminatedEnemyIds; // will be used for eliminate color mission
+
+    ArrayList<Integer> regionIds;
     Mission mission;
 
 
@@ -22,6 +26,7 @@ public abstract class Challenger {
         this.name = name;
         this.id = id;
         this.regionIds = new ArrayList<>();
+        this.eliminatedEnemyIds = new ArrayList<>();
     }
 
     public void updateRegionCount( int regionNum){
@@ -87,6 +92,27 @@ public abstract class Challenger {
         return false;
     }
 
+    /**
+     * This methods checks whether the enemy with enemyID
+     * was eliminated by the challenger
+     *
+     * @param enemyID
+     * @return
+     */
+    public boolean hasEliminatedEnemy(int enemyID) {
+        return eliminatedEnemyIds.contains(enemyID);
+    }
+
+    /**
+     * This methods add the eliminated enemy with eliminatedEnemyID
+     * to the eliminated enemy list of the challenger
+     *
+     * @param eliminatedEnemyID eliminated enemy by the challenger
+     */
+    public void updateEliminatedEnemies(int eliminatedEnemyID) {
+        eliminatedEnemyIds.add(eliminatedEnemyID);
+    }
+
     public void combineCards() {
 
     }
@@ -95,6 +121,7 @@ public abstract class Challenger {
 
         return 0;
     }
+
 
     public Mission getMission() {
         return mission;
