@@ -85,4 +85,50 @@ public class ConquerContinentsMission implements Mission {
 
         return false;
     }
+    
+    /**
+     * This method calculates the number of continents related to the mission that the challenger owns
+     * This method is private as it is an auxiliary method that is needed only in
+     * isCompleted() of this class.
+     * 
+     * @param challenger
+     * @param mission the mission that challenger has to complete to win the game.
+     * @return
+     */
+    private int iterateMissionArrays(Challenger challenger, int[] mission) {
+        int totalContinentsOfChallenger = 0;
+        for (int i = 0; i < mission.length; i++) {
+            if (challenger.hasContinent(challenger, mission[i], continents))
+                totalContinentsOfChallenger++;
+        }
+
+        return totalContinentsOfChallenger;
+    }
+
+    /**
+     * This method checks, when the challenger has to complete 5th or 6th mission,
+     * whether the challenger has one extra continent of choice.
+     * This method is private as it is an auxiliary method that is needed only in
+     * isCompleted() of this class.
+     *
+     * @param challenger
+     * @param mission   5th or 6th mission array with continent ids.
+     * @return true if challenger has one extra continent other than the continents belonging to the corresponding mission.
+     */
+    private boolean iterateFifthAndSixthMission(Challenger challenger, int[] mission) {
+        int firstContinentIdInMission = mission[0];
+        int secondContinentIdInMission = mission[1];
+
+        for (int i = 0; i < continents.length; i++) {
+            int continentID = continents[i].getContinentId();
+
+            // check challenger has an extra continent other than the continents in the mission
+            if ( continentID != firstContinentIdInMission && continentID != secondContinentIdInMission) {
+                if (challenger.hasContinent(challenger, continentID, continents))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }
