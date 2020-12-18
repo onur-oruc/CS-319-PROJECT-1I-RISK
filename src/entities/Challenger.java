@@ -195,3 +195,4 @@ public abstract class Challenger {
     public void setRegionIds (ArrayList<Integer> regionIds) {
         this.regionIds = regionIds;
     }
+}
