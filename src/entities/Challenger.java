@@ -7,18 +7,19 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public abstract class Challenger {
-    int money;
-    TroopCardType[] troopCards;
-    boolean isTurn;
-    String name;
-    int id;
-    int regionCount;
-    boolean isEliminated;
+    // make properties private
+    private int money;
+    private TroopCardType[] troopCards;
+    private boolean isTurn;
+    private String name;
+    private int id;
+    private int regionCount;
+    private boolean isEliminated;
 
-    ArrayList<Integer> eliminatedEnemyIds; // will be used for eliminate color mission
+    private ArrayList<Integer> eliminatedEnemyIds; // will be used for eliminate color mission
 
-    ArrayList<Integer> regionIds;
-    Mission mission;
+    private ArrayList<Integer> regionIds;
+    private Mission mission;
 
 
 
