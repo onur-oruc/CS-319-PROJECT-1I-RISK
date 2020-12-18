@@ -2,6 +2,7 @@ import entities.Player;
 import entities.Region;
 import enums.SeasonType;
 import enums.StageType;
+import java.lang.Math;
 
 import java.util.Scanner;
 
@@ -22,8 +23,8 @@ public class TurnManager {
     final int PRICE_OF_ENTERTAINMENT = 5;
 
     // constructor
-    public TurnManager( Player player, Region[] regions, boolean plague, boolean weather,
-                        SeasonType season, int turnCount ) {
+    public TurnManager(Player player, Region[] regions, boolean plague, boolean weather,
+                       SeasonType season, int turnCount) {
         this.player = player;
         this.regions = regions;
         this.plague = plague;
@@ -42,7 +43,7 @@ public class TurnManager {
         Scanner scan = new Scanner(System.in);
         int input = 3;
 
-        while ( input != 0 ) {
+        while (input != 0) {
 
             int money = player.getMoney();
             if (money < PRICE_OF_MERCENARY)
@@ -57,19 +58,16 @@ public class TurnManager {
             {
                 if (money < PRICE_OF_MERCENARY)
                     System.out.println("not enough money for mercenary");
-                else
-                {
+                else {
                     additionalTroops++;
                     player.setMoney(money - PRICE_OF_MERCENARY);
                 }
 
-            }
-            else if (input == 2) // if clicked on entertainment
+            } else if (input == 2) // if clicked on entertainment
             {
                 if (money < PRICE_OF_ENTERTAINMENT)
                     System.out.println("not enough money for entertainment");
-                else
-                {
+                else {
                     regions[scan.nextInt()].setTroopMotivation(true);
                     player.setMoney(money - PRICE_OF_ENTERTAINMENT);
                 }
@@ -91,7 +89,7 @@ public class TurnManager {
 
             troopsToDraft = Math.min(scan.nextInt(), additionalTroops);
 
-            selectedRegion.setNumTroops( selectedRegion.getNumTroops() + troopsToDraft);
+            selectedRegion.setNumTroops(selectedRegion.getNumTroops() + troopsToDraft);
 
             additionalTroops = additionalTroops - troopsToDraft;
         }
@@ -109,3 +107,23 @@ public class TurnManager {
 
     }
 
+    public void goldMineAppearance(){
+        final int numberOfRegionHavingMine = 5;
+        boolean [] distributedGoldMines = new boolean [regions.length];
+        for( int i = 0; i < numberOfRegionHavingMine; i++ )
+             distributedGoldMines[i] = true;
+        for( int i = numberOfRegionHavingMine; i < regions.length; i++)
+             distributedGoldMines[i] = false;
+        for( int i = 0; i < 10000; i++){
+             int swappedA = (int) ( Math.random() * regions.length) ;
+             int swappedB = (int) ( Math.random() * regions.length ) ;
+             if( swappedA != swappedB ){
+                 boolean temp = distributedGoldMines[swappedA];
+                 distributedGoldMines[swappedA] = distributedGoldMines[swappedB];
+                 distributedGoldMines[swappedB] = temp;
+             }
+        }
+        for( int i = 0; i < regions.length; i++)
+             regions[i].setHasGoldMine(distributedGoldMines[i]);
+    }
+}
