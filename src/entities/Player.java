@@ -1,6 +1,7 @@
 package entities;
 
 import jdk.swing.interop.SwingInterOpUtils;
+import mission.Mission;
 
 import java.util.ArrayList;
 
@@ -8,15 +9,15 @@ public class Player extends Challenger{
     private boolean [] allies;
     final int STARTING_MONEY = 0;
 
-    public Player( String name, int id, int [] regionIds){
-        super( name, id);
+    public Player( String name, int id, int [] regionIds, Mission mission){
+        super( name, id, mission);
         allies = new boolean [ 5];
         for( int i = 0; i < 5; i++)
             allies[i] = false;
     } //
 
-    public Player (int playerID, int numPlayers, String name) {
-        super(name,playerID);
+    public Player (int playerID, int numPlayers, String name, Mission mission) {
+        super(name,playerID,mission);
 
         this.setMoney(STARTING_MONEY);
         this.setTurn(false);   // not yet his turn
