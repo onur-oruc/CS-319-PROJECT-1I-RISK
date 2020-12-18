@@ -166,7 +166,7 @@ public class Region {
         return connectedOwnedRegions;
     }
 
-    public List <Integer> getEnemyRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
+    public List <Integer> getEnemyRegions( List<Integer> ownedRegionsByID ) {
         List<Integer> enemyRegions = new ArrayList <Integer> ();
         boolean [] isEnemy;
         isEnemy = new boolean [42];
