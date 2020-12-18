@@ -49,34 +49,6 @@ public class Region {
         }
     }
 
-    /*public entities.Region(int regionId) {
-        this.regionID = regionId;
-        this.ownerID = -1;
-        BufferedReader rdr;
-
-        try {
-            rdr = new BufferedReader(new FileReader("data/region.txt"));
-            for(int i = 0; i < regionId; i++){
-                rdr.readLine();
-            }
-            Scanner scan = new Scanner(rdr.readLine());
-            locX = scan.nextInt();
-            locY = scan.nextInt();
-
-            int neighborCount = scan.nextInt();
-
-            neighbors = new int[neighborCount];
-            for(int i = 0; i < neighborCount; i++){
-                neighbors[i] = scan.nextInt();
-            }
-
-            scan.close();
-            rdr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     // methods
 
 
