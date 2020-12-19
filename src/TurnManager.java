@@ -32,6 +32,7 @@ public class TurnManager {
 
     // properties
     private Player player;
+    private Player[] players;
     private Region[] regions;
     private Continent[] continents;
     private int turnCount;
@@ -42,7 +43,7 @@ public class TurnManager {
     private int additionalTroops;
 
     // constructor
-    public TurnManager (Player player, Region[] regions, Continent[] continents, boolean plague, boolean weather,
+    public TurnManager (Player player, Player[] players, Region[] regions, Continent[] continents, boolean plague, boolean weather,
                         SeasonType season, int turnCount) {
         this.player = player;
         this.regions = regions;
@@ -59,7 +60,7 @@ public class TurnManager {
     }
 
     // methods
-    public void operate() {
+    public void playTurn() {
         beginTurnOps();
         buy();
         draft();
@@ -71,25 +72,28 @@ public class TurnManager {
     public void beginTurnOps() {
         System.out.println("***BEGIN");
 
-            // reset weathers in all regions
-            for ( Region region: regions) {
-                region.setDrought(false);
-                region.setFrost(false);
-            }
+        // plague
+        blackDeath();
+        recoverFromPlague();
 
-            // update player's money according to the the gold mined owned
-            for ( Integer regionID : player.getRegionIds() ) {
-                if (regions[regionID].hasGoldMine()) {
-                    player.setMoney(player.getMoney() + GOLD_MINE_GAIN);
-                }
-            }
+        // reset weathers in all regions
 
-            // calculate extra regions in case the challenger has continent(s)
-            for (int i = 0; i < continents.length; i++) {
-                if (player.hasContinent(player, continents[i].getContinentId(),continents)) {
-                    additionalTroops += continents[i].getBonusTroops();
-                }
+
+
+
+        // update player's money according to the the gold mined owned
+        for ( Integer regionID : player.getRegionIds() ) {
+            if (regions[regionID].hasGoldMine()) {
+                player.setMoney(player.getMoney() + GOLD_MINE_GAIN);
             }
+        }
+
+        // calculate extra regions in case the challenger has continent(s)
+        for (int i = 0; i < continents.length; i++) {
+            if (player.hasContinent(player, continents[i].getContinentId(),continents)) {
+                additionalTroops += continents[i].getBonusTroops();
+            }
+        }
 
         stage = StageType.BUY;
         System.out.println("BEGIN***\n");
@@ -214,11 +218,27 @@ public class TurnManager {
                 System.out.println("Enemy region with ID " + defenderRegion.getRegionID() + " is conquered!");
                 System.out.println("How many troops go there? At least " + numAttackerDice + " troops should go." );
 
+                Player loser = players[defenderRegion.getOwnerID()];
+
                 defenderRegion.setOwnerID(player.getId());
+                player.addRegion(defenderRegion.getRegionID());
+                loser.removeRegion(defenderRegion.getRegionID());
+
+                if ( loser.isEliminated() )
+                {
+                    for ( TroopCardType card : loser.getTroopCards()) {
+                        player.addTroopCard(card);
+                    }
+
+                    loser.setTroopCards(null);
+                }
+
                 getsCard = true;
 
                 int numTroopsToMove = Math.max(scan.nextInt(),numAttackerDice);    // the troops you attack with have to move to the conquered region
                 moveTroops(attackerRegion,defenderRegion,numTroopsToMove);
+
+                // move commander on this stage todo
             }
 
             System.out.println("Choose an owned region to attack with OR enter -1 to quit pattern");
@@ -277,6 +297,8 @@ public class TurnManager {
         // possible motivation updates
         // possible gold mine appearances
         // possible gold mine appearances
+
+        giveTroopCard();
 
         System.out.println("END TURN***\n");
     }
@@ -397,7 +419,7 @@ public class TurnManager {
      * This method calculates the possibility of occurring
      * plague in the regions with troops more than plague limit
      */
-    public void spreadPlague() {
+    private void spreadPlague() {
         int numTroops;
         double plagueRisk;
 
@@ -416,19 +438,23 @@ public class TurnManager {
         }
     }
 
+    private void blackDeath() {
+
+    }
+
     /**
      * This method manages the recovery of a region with plague
      * If the troop number in the region with a plague becomes
      * less than plague recovery limit, they will recover
      */
-    public void recoverFromPlague() {
+    private void recoverFromPlague() {
         int numTroops;
 
         for (Integer regionID : player.getRegionIds()) {
             numTroops = regions[regionID].getNumTroops();
             if ( regions[regionID].hasPlague()) {
                 if (numTroops <= PLAGUE_RECOVER_LIMIT) {
-                    regions[regionID].setPlague(true);
+                    regions[regionID].setPlague(false);
                 }
             }
         }
@@ -509,7 +535,9 @@ public class TurnManager {
     }
 
 
-    public void moveCommander() {
-        // todo
+    public void moveCommander( Region destination ) {
+        regions[player.getCommanderLocation()].setHasCommander(false);
+        destination.setHasCommander(true);
+        player.setCommanderLocation(destination.getRegionID());
     }
 }

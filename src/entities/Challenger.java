@@ -19,6 +19,8 @@ public abstract class Challenger {
     private ArrayList<Integer> eliminatedEnemyIds; // will be used for eliminate color mission
 
     private ArrayList<Integer> regionIds;
+    private int commanderLocation;
+
     private Mission mission;
 
 
@@ -55,6 +57,10 @@ public abstract class Challenger {
             return true;
         }
         return false;
+    }
+
+    public boolean removeRegion(int regionIDtoRemove) {
+        return regionIds.remove( (Integer) regionIDtoRemove);
     }
 
     /**
@@ -133,6 +139,10 @@ public abstract class Challenger {
         this.troopCards = troopCards;
     }
 
+    public ArrayList<TroopCardType> getTroopCards() {
+        return troopCards;
+    }
+
     public void addTroopCard( TroopCardType troopCard) {
         troopCards.add(troopCard);
     }
@@ -148,6 +158,10 @@ public abstract class Challenger {
     }
 
     public boolean isEliminated() {
+
+        if ( regionCount == 0 ) {
+            isEliminated = true;
+        }
         return isEliminated;
     }
 
@@ -179,10 +193,6 @@ public abstract class Challenger {
         isTurn = turn;
     }
 
-    public ArrayList<TroopCardType> getTroopCards() {
-        return troopCards;
-    }
-
     public int getMoney() {
         return money;
     }
@@ -205,5 +215,12 @@ public abstract class Challenger {
 
     public void setRegionIds (ArrayList<Integer> regionIds) {
         this.regionIds = regionIds;
+    }
+
+    public int getCommanderLocation() {
+        return commanderLocation;
+    }
+    public void setCommanderLocation( int commanderLocation) {
+        this.commanderLocation = commanderLocation;
     }
 }

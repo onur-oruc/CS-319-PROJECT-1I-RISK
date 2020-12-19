@@ -2,7 +2,7 @@
 import entities.Continent;
 import entities.Player;
 import entities.Region;
-import mission.Mission;
+import mission.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,20 +45,28 @@ public class MapManager {
      * distribute regions to each player, and distribute troops to each region with at least
      * one troop per region.
      *
-     * @param  filepath  the path from which region information will be fetched
+     * @param  regionsFilepath  the path from which region information will be fetched
      * @param  players   the player objects created in MapManager
      * @return regions   regions created according to the information in filepath
      * @throws Exception throw an exception if the file could not be found
      */
-    public Region[] initializeMap(String filepath, Player[] players) throws Exception {
+    public ArrayList<Object> initializeMap(String regionsFilepath, String continentsFilepath, Player[] players, boolean secretMission) throws Exception {
+
+        ArrayList<Object> arr = new ArrayList<Object>();
         Region[] regions;
-        regions = initMap(filepath);
+        regions = initMap(regionsFilepath);
+        Continent[] continents;
+        continents = initContinents(continentsFilepath);
+
+        giveMissions(secretMission,players,regions,continents);
+
         distributeRegions(regions,players);
         distributeTroops(regions,players);
 
-        // set missions for players  createMissions()  todo
+        arr.add(regions);
+        arr.add(continents);
 
-        return regions;
+        return arr;
     }
 
     /**
@@ -255,5 +263,30 @@ public class MapManager {
         }
 
         return continents;
+    }
+
+    private void giveMissions( boolean secretMission, Player[] players, Region[] regions, Continent[] continents) {
+
+        if ( secretMission ) {
+
+            for ( Player player : players ) {
+
+                if ( Math.random() < 0.5 ) {
+                    player.setMission( new ConquerContinentsMission(continents) );
+                }
+                else if ( Math.random() < 0.7 ) {
+                    player.setMission( new EliminateColorMission(player,players,players.length)); //
+                }
+                else {
+                    player.setMission( new ConquerNumRegionMission(regions));
+                }
+            }
+        }
+        else {
+            for ( Player player : players ) {
+                player.setMission( new ConquerWorldMission( regions.length ));
+            }
+        }
+
     }
 }

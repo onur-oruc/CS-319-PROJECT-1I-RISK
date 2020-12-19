@@ -11,16 +11,129 @@ import java.util.Scanner;
 public class GameManager {
 
     // properties
-    private static final int NUMBER_OF_REGIONS = 20;
-    private static boolean gameContinues = false;
+    private final int NUMBER_OF_REGIONS = 42;
+    private boolean gameContinues = false;
+    private int SEASON_PERIOD = 2;
 
-    // constructor
-    public GameManager() {
-        // GUI'den player infosu mod infosu çek
+    private int numPlayers;
+    private String[] playerNames;
+    private Player[] players;
+    private Region[] regions;
+    private Continent[] continents;
+    private boolean plague;
+    private boolean weather;
+    private boolean secretMission;
+    private SeasonType season;
+    private int turnCount;
+    private int winnerID;
+    private int whoseTurn;
+
+    // constructors
+
+    // new game
+    public GameManager( int numPlayers, String[] playerNames, boolean plague, boolean weather, boolean secretMission) {
+
+        this.numPlayers = numPlayers;
+        this.playerNames = playerNames;
+        this.plague = plague;
+        this.weather = weather;
+        this.secretMission = secretMission;
+        this.season = SeasonType.SPRING;
+        this.turnCount = 1;
+
+        // invalid winner id
+        this.winnerID = -1;
+        this.whoseTurn = -1;
+
+    }
+
+    // from saved game
+    public GameManager( String filePath ) {
+
     }
 
     // methods
-    public static void main(String[] args) throws Exception {
+
+
+    public void startGame() throws Exception {
+
+        players = new Player[numPlayers];
+
+        for ( int i = 0; i < players.length; i++) {
+            players[i] = new Player( i, numPlayers, playerNames[i], null);
+        }
+
+        MapManager mapManager = MapManager.getInstance();
+        ArrayList<Object> regionsNcontinents = mapManager.initializeMap("regions.txt","continents.txt",players,secretMission);
+
+        regions = (Region[]) regionsNcontinents.get(0);
+        continents = (Continent[]) regionsNcontinents.get(1);
+
+    }
+
+    public void turns() {
+
+        while ( winnerID < 0 ) {
+
+            // reset weather effects
+            for ( Region region: regions) {
+                region.setDrought(false);
+                region.setFrost(false);
+            }
+
+            for (Player player : players) {
+                if ( !player.isEliminated() ) {
+                    whoseTurn = player.getId();
+
+                    TurnManager turnManager = new TurnManager(player, players, regions, continents, plague, weather, season, turnCount);
+                    player.printPlayer();
+                    turnManager.playTurn();
+
+                    if (player.getMission().isCompleted(player)) {
+                        winnerID = player.getId();
+                        break;
+                    }
+                }
+            }
+
+            if ( turnCount % SEASON_PERIOD == 0 )
+                nextSeason();
+
+            turnCount++;
+        }
+    }
+
+    public void nextSeason() {
+
+        if ( season == SeasonType.SPRING )
+            season = SeasonType.SUMMER;
+        else if ( season == SeasonType.SUMMER )
+            season = SeasonType.FALL;
+        else if ( season == SeasonType.FALL )
+            season = SeasonType.WINTER;
+        else // if ( season == SeasonType.WINTER )
+            season = SeasonType.SPRING;
+    }
+
+    public int[] getMoneyOfAll() {
+        int[] moneys = new int[numPlayers];
+
+        for ( int i = 0; i < numPlayers; i++ ) {
+            moneys[i] = players[i].getMoney();
+        }
+        return moneys;
+    }
+
+    public boolean[] getGoldMineOfAll() {
+        boolean[] goldMines = new boolean[regions.length];
+
+        for ( int i = 0; i < regions.length; i++ ) {
+            goldMines[i] = regions[i].hasGoldMine();
+        }
+        return goldMines;
+    }
+
+    /*public static void main(String[] args) throws Exception {
 
         Scanner scan = new Scanner(System.in);
         int numPlayers;
@@ -149,14 +262,7 @@ public class GameManager {
             turnCount++;
         }
         */
-    }
 
-    /*
-    public static Mission createMission( int playerID ) {
-        // todo
-        return null;
-    }
-    */
 
 
 }

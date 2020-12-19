@@ -12,8 +12,8 @@ import entities.Region;
  */
 public class ConquerNumRegionMission implements Mission {
     // constants
-    private final int NUM_REGION_TO_OCCUPY = 18;
-    private final int MIN_NUM_TROOPS_ON_EACH = 2;
+    private final int NUM_REGION_TO_OCCUPY = 24;
+    private final int MIN_NUM_TROOPS_ON_EACH = 1;
 
     // properties
     private final Region[] allRegions;

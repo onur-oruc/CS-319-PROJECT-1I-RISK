@@ -31,7 +31,7 @@ public class Player extends Challenger{
         }
     }
 
-    public void updateAlly( boolean[] allies ){
+    public void updateAlly( boolean[] allies ) {
         for( int i = 0; i < allies.length; i++){
             this.allies[i] = allies[i];
         }
