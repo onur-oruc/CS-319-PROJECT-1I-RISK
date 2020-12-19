@@ -29,6 +29,8 @@ public class Region {
 
     private boolean plague, drought, frost;
 
+    private int NUM_REGIONS = 42;
+
     // constructors
     public Region() {
 
@@ -148,13 +150,13 @@ public class Region {
 
     public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
 
-        ArrayList<Integer> connectedOwnedRegions = new ArrayList <Integer> ();
+        ArrayList<Integer> connectedOwnedRegions = new ArrayList<Integer>();
         connectedOwnedRegions.add( this.regionID );
         boolean [] visitedRegions, isOwnedRegion;
         isOwnedRegion = new boolean [allRegions.length];
         visitedRegions = new boolean[allRegions.length];
 
-        for( int i = 0; i < 42; i++ ){
+        for( int i = 0; i < allRegions.length; i++ ){
             isOwnedRegion[i] = visitedRegions[i] = false;
         }
 
@@ -181,6 +183,27 @@ public class Region {
         return connectedOwnedRegions;
     }
 
+    public ArrayList<Integer> getEnemyRegions( ArrayList<Integer> ownedRegionsByID ) {
+        ArrayList<Integer> enemyRegions = new ArrayList<Integer> ();
+        boolean [] isEnemy;
+        isEnemy = new boolean[42];
+
+        for( int i = 0; i < 42; i++ ){
+            isEnemy[i] = true;
+        }
+
+        for( int i = 0; i < ownedRegionsByID.size(); i++) {
+            isEnemy[ ownedRegionsByID.get(i) ] = false;
+        }
+
+        for( int i = 0; i < neighbors.length; i++ ) {
+            if( isEnemy[neighbors[i]] )
+                enemyRegions.add( neighbors[i]);
+        }
+
+        return enemyRegions;
+    }
+
 
     public void printRegion() {
 
@@ -193,6 +216,8 @@ public class Region {
         System.out.println("hasCommander: " + hasCommander);
         System.out.println("hasGoldMine: " + hasGoldMine);
         System.out.println("troopMotivation: " + motivation);
+        System.out.println("climate: " + climate);
+        System.out.println("continent: " + continentID);
         System.out.println("locX: " + locX);
         System.out.println("locY: " + locY);
 

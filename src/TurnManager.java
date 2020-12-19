@@ -186,16 +186,20 @@ public class TurnManager {
         while ( attackerRegionID >= 0 && attackerRegionID < regions.length && regions[attackerRegionID].getOwnerID() == player.getId() ) {
 
             // do whiles are for exceptions
-            do {
-                System.out.println("Attacking with " + attackerRegionID);
-                attackerRegion = regions[attackerRegionID];
-            } while ( attackerRegion.getOwnerID() != player.getId() );
+            System.out.println("Attacking with " + attackerRegionID);
+            attackerRegion = regions[attackerRegionID];
+
+            ArrayList<Integer> closeEnemies = attackerRegion.getEnemyRegions( player.getRegionIds() );
+
+            for ( Integer i : closeEnemies ) {
+                System.out.print(i + ",");
+            }
+            System.out.println();
 
             do {
                 System.out.println("Choose an enemy region by ID");
                 defenderRegion = regions[scan.nextInt()];
-            } while ( defenderRegion.getOwnerID() == player.getId() );
-
+            } while ( !closeEnemies.contains(defenderRegion.getRegionID()) );
 
             do {
                 System.out.println("Enter no of dice to use: 1 - " + Math.min(attackerRegion.getNumTroops() - 1, MAX_NUM_ATTACKERS));
@@ -505,8 +509,7 @@ public class TurnManager {
     }
 
 
-    public boolean areRegionsConnected() {
-        // who knows
-        return true;
+    public void moveCommander() {
+        // todo
     }
 }

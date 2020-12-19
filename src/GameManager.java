@@ -44,7 +44,7 @@ public class GameManager {
         // setting player names etc
         for ( int i = 0; i < players.length; i++) {
 
-            players[i] = new Player( i, numPlayers, ("joe" + i), createMission(i));
+            players[i] = new Player( i, numPlayers, ("joe" + i), null);
             //players[i].printPlayer();
         }
 
@@ -69,7 +69,13 @@ public class GameManager {
         }
 
         System.out.println();
-        /*
+
+
+        TurnManager turnManager = new TurnManager(players[0],regions,continents,plague,weather,season,turnCount);
+
+        players[0].printPlayer();
+        turnManager.operate();
+/*
         for ( Integer i : players[0].getRegionIds()) {
             System.out.print(i + ",");
         }*/
@@ -92,12 +98,6 @@ public class GameManager {
                 System.out.print(i + ",");
             }
         }*/
-
-
-        TurnManager turnManager = new TurnManager(players[0],regions,continents,plague,weather,season,turnCount);
-
-        turnManager.operate();
-
         /*
         // for terminal test
         System.out.println("enter number of players");
@@ -151,10 +151,12 @@ public class GameManager {
         */
     }
 
+    /*
     public static Mission createMission( int playerID ) {
         // todo
         return null;
     }
+    */
 
 
 }

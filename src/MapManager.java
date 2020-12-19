@@ -25,6 +25,8 @@ import java.util.Scanner;
  */
 public class MapManager {
 
+    // add non random distribution? todo
+
     // create an instance of MapManager
     private static MapManager instance;
 
@@ -54,7 +56,7 @@ public class MapManager {
         distributeRegions(regions,players);
         distributeTroops(regions,players);
 
-        // set missions for players todo
+        // set missions for players  createMissions()  todo
 
         return regions;
     }
