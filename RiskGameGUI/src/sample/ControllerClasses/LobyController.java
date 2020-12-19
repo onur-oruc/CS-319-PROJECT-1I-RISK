@@ -13,20 +13,30 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 import java.io.*;
 
 public class LobyController {
 
+    MediaPlayer music;
     ObservableList<String> playerNumber =
             FXCollections.observableArrayList(
                     "2",
                     "3",
                     "4"
             );
+    ObservableList<String> missions =
+            FXCollections.observableArrayList(
+                    "Global Domination",
+                    "Secret Mission"
+            );
     @FXML
-    private ComboBox playerCount;
+    ComboBox playerCount, missionChoice;
 
     private ComboBox combo;
     private ComboBox combo2;
@@ -34,36 +44,19 @@ public class LobyController {
     private ComboBox combo4;
 
     @FXML
-    private StackPane stackPane1;
-    @FXML
-    private StackPane stackPane2;
-    @FXML
-    private StackPane stackPane3;
-    @FXML
-    private StackPane stackPane4;
-    @FXML
-    private TextField playerName1;
-    @FXML
-    private TextField playerName2;
-    @FXML
-    private TextField playerName3;
-    @FXML
-    private TextField playerName4;
+    Rectangle color1, color2, color3, color4;
 
     @FXML
-    AnchorPane anc;
-
-    //Stage window;
-
-    /*public void onAnchorPane(MouseEvent event) throws IOException
-    {
-        window = (Stage) ((Node)event.getSource()).getScene().getWindow();
-    }*/
-
-
+    private StackPane stackPane1,stackPane2,stackPane3,stackPane4;
+    @FXML
+    private TextField playerName1, playerName2, playerName3, playerName4;
 
     public void onClickedBack(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+        FXMLLoader  loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("MainMenu.fxml"));
+        Parent root = loader.load();
+        MainMenuController mmc = loader.getController();
+        mmc.initialize( music);
         Scene ng =  new Scene(root);
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
         window.setScene(ng);
@@ -78,20 +71,32 @@ public class LobyController {
         loader.setLocation(getClass().getResource("GameMap.fxml"));
         Parent root = loader.load();
         GameMapController gmc = loader.getController();
-        gmc.initialize("adeeem");
+        String[] images = new String[4];
+        images[0] = ((Image)combo.getValue()).getUrl();
+        images[1] = ((Image)combo2.getValue()).getUrl();
+        images[2] = ((Image)combo3.getValue()).getUrl();
+        images[3] = ((Image)combo4.getValue()).getUrl();
+        System.out.println(images[0]);
+        gmc.initialize("adeeem", images, music);
         Scene ng =  new Scene(root);
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+
         //window.setUserData(new String("adeeem"));
         window.setScene(ng);
         window.show();
 
+
     }
 
-    public void initialize() throws FileNotFoundException {
+    public void initialize( MediaPlayer m) throws FileNotFoundException {
 
+        music = m;
 
         playerCount.setItems(playerNumber);
         playerCount.setValue("2");
+
+        missionChoice.setItems(missions);
+        missionChoice.setValue("Global Domination");
 
 
         ObservableList<Image> images = fetchImages();
@@ -125,6 +130,10 @@ public class LobyController {
             playerName3.setVisible(false);
             stackPane4.setVisible(false);
             playerName4.setVisible(false);
+            color1.setVisible(true);
+            color2.setVisible(true);
+            color3.setVisible(false);
+            color4.setVisible(false);
         }
         if(playerCount.getValue().equals("3"))
         {
@@ -136,6 +145,10 @@ public class LobyController {
             playerName3.setVisible(true);
             stackPane4.setVisible(false);
             playerName4.setVisible(false);
+            color1.setVisible(true);
+            color2.setVisible(true);
+            color3.setVisible(true);
+            color4.setVisible(false);
         }
         if(playerCount.getValue().equals("4"))
         {
@@ -147,6 +160,10 @@ public class LobyController {
             playerName3.setVisible(true);
             stackPane4.setVisible(true);
             playerName4.setVisible(true);
+            color1.setVisible(true);
+            color2.setVisible(true);
+            color3.setVisible(true);
+            color4.setVisible(true);
         }
 
     }
@@ -155,21 +172,19 @@ public class LobyController {
         final ObservableList<Image> data = FXCollections.observableArrayList();
         // icon license: CC Attribution-Noncommercial-Share Alike 3.0
         // iconset homepage: http://vincentburton.deviantart.com/art/Iconos-Diaguitas-216196385
-        String[] images = new String[]{"https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/andy-warhol-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/batman-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/robot-03-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/robot-02-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/traditional-african-man-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/donald-trump-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/traditiona-japanese-man-icon.png",
-                "https://icons.iconarchive.com/icons/diversity-avatars/avatars/72/native-man-icon.png"};
-        for (int i = 0; i < 8; i++) {
+        String[] images = new String[]{"andy-warhol-icon.png",
+                "batman-icon.png",
+                "robot-03-icon.png",
+                "robot-02-icon.png",
+                "traditional-african-man-icon.png",
+                "donald-trump-icon.png",
+                "traditiona-japanese-man-icon.png",
+                "native-man-icon.png" };
 
-            data.add(
-                    new Image( images[i]
-
-                    )
-            );
+        for (int i = 0; i < 8; i++)
+        {
+            File file = new File("src/sample/Images/" + images[i]);
+            data.add(new Image( file.toURI().toString()));
         }
         return data;
     }
@@ -202,6 +217,5 @@ public class LobyController {
                 setGraphic(view);
             }
         }
-
     }
 }

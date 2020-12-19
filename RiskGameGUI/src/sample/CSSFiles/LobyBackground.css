@@ -9,3 +9,11 @@
 .big-check-box > .box > .mark {
     -fx-padding: 1.3em 1.3em 1.3em 1.3em;
 }
+.combo-box .list-cell
+{
+    -fx-background: white;
+    -fx-background-color: transparent;
+    -fx-font: 20px Verdana;
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, red 0%, red 50%);
+}
+

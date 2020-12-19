@@ -10,3 +10,35 @@
 {
     -fx-stroke-dash-array: 7 7 7 7;
 }
+
+.playerpanel
+{
+    -fx-background-color: #34eb9b;
+}
+
+.big-check-box > .box > .mark {
+    -fx-padding: 1.3em 1.3em 1.3em 1.3em;
+}
+
+.buttonExit{
+    -fx-background-image: url('../Images/exit.jpg');
+    -fx-background-size: 100% 100%;
+}
+.label {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#61a2b1, #2A5058);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.buttonOk{
+    -fx-background-image: url('../Images/ok.jpeg');
+    -fx-background-size: 100% 100%;
+}

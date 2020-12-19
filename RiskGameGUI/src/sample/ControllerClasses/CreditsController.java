@@ -5,19 +5,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class CreditsController {
 
-
-
+    MediaPlayer music;
     public void backButtonClicked(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+        FXMLLoader  loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("MainMenu.fxml"));
+        Parent root = loader.load();
+        MainMenuController mmc = loader.getController();
+        mmc.initialize( music);
         Scene ng =  new Scene(root);
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
         window.setScene(ng);
         window.show();
+    }
+
+    public void initialize(MediaPlayer m)
+    {
+        music = m;
     }
 }
