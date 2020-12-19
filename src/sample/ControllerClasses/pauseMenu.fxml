@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="700.0" styleClass="bodybg" stylesheets="@../CSSFiles/pausedBackground.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ControllerClasses.PauseMenuController">
+   <children>
+      <Button fx:id="saveGameButton" layoutX="243.0" layoutY="83.0" mnemonicParsing="false" onAction="#onClickedSaveGame" prefHeight="50.0" prefWidth="178.0" text="Button" />
+      <Button fx:id="settingsButton" layoutX="243.0" layoutY="162.0" mnemonicParsing="false" onAction="#onClickedSettings" prefHeight="50.0" prefWidth="178.0" text="Button" />
+      <Button fx:id="rulesButton" layoutX="243.0" layoutY="244.0" mnemonicParsing="false" onAction="#onClickedRules" prefHeight="50.0" prefWidth="178.0" text="Button" />
+      <Button fx:id="resumeButton" layoutX="206.0" layoutY="325.0" mnemonicParsing="false" onAction="#onClickedResume" prefHeight="50.0" prefWidth="256.0" text="Button" />
+      <Pane fx:id="rulesPane" layoutX="75.0" layoutY="76.0" prefHeight="308.0" prefWidth="551.0">
+         <children>
+            <Button fx:id="closeSettings" layoutX="492.0" layoutY="14.0" mnemonicParsing="false" onAction="#onClickedCloseSettings" text="Close" />
+            <TextFlow layoutX="32.0" layoutY="30.0" prefHeight="248.0" prefWidth="439.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

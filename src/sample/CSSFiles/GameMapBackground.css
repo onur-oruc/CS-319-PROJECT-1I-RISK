@@ -1,0 +1,12 @@
+.bodybg{
+    -fx-background-image: url('../Images/backgroundGameMap.jpeg');
+    -fx-background-size: 100% 100%;
+}
+.csslabel{
+
+}
+
+.dashed
+{
+    -fx-stroke-dash-array: 7 7 7 7;
+}
