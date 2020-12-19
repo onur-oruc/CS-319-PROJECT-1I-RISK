@@ -9,7 +9,7 @@ import java.util.*;
 public abstract class Challenger {
     // make properties private
     private int money;
-    private TroopCardType[] troopCards;
+    private ArrayList<TroopCardType> troopCards;
     private boolean isTurn;
     private String name;
     private int id;
@@ -21,11 +21,18 @@ public abstract class Challenger {
     private ArrayList<Integer> regionIds;
     private Mission mission;
 
-    Challenger(String name, int id) {
+
+    Challenger(String name, int id, Mission mission) {
         this.name = name;
         this.id = id;
         this.regionIds = new ArrayList<>();
         this.eliminatedEnemyIds = new ArrayList<>();
+        this.troopCards = new ArrayList<>();
+        this.isEliminated = false;
+        this.isTurn = false;
+        this.money = 0;
+        this.regionCount = 0;
+        this.mission = mission;
     }
 
     public void updateRegionCount( int regionNum){
@@ -113,13 +120,23 @@ public abstract class Challenger {
     }
 
     public void combineCards() {
-
+        // TO DO
+        // troop cards will be removed from the array after combining
     }
 
     public int calculateBonusTroop (Continent[] continents) {
 
         return 0;
     }
+
+    public void setTroopCards(ArrayList<TroopCardType> troopCards) {
+        this.troopCards = troopCards;
+    }
+
+    public void addTroopCard( TroopCardType troopCard) {
+        troopCards.add(troopCard);
+    }
+
 
 
     public Mission getMission() {
@@ -162,12 +179,8 @@ public abstract class Challenger {
         isTurn = turn;
     }
 
-    public TroopCardType[] getTroopCards() {
+    public ArrayList<TroopCardType> getTroopCards() {
         return troopCards;
-    }
-
-    public void setTroopCards (TroopCardType[] troopCards) {
-        this.troopCards = troopCards;
     }
 
     public int getMoney() {

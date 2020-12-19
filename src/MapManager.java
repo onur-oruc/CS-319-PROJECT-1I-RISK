@@ -2,6 +2,7 @@
 import entities.Continent;
 import entities.Player;
 import entities.Region;
+import mission.Mission;
 
 import java.io.BufferedReader;
 import java.io.File;

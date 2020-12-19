@@ -1,5 +1,6 @@
 package entities;
 
+import enums.ClimateType;
 import enums.MotivationLevel;
 
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ public class Region {
     private int locY;
     private boolean hasGoldMine;
     private MotivationLevel motivation;
+    private ClimateType climate;
 
     private boolean plague, drought, frost;
 
@@ -135,6 +137,13 @@ public class Region {
 
     public boolean hasFrost() { return frost; }
     public void setFrost( boolean frost ) { this.frost = frost; }
+
+    public ClimateType getClimate() {
+        return climate;
+    }
+    public void setClimate( ClimateType climate) {
+        this.climate = climate;
+    }
 
 
     public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {

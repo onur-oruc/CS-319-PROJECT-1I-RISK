@@ -2,6 +2,7 @@ import entities.Continent;
 import entities.Player;
 import entities.Region;
 import enums.SeasonType;
+import mission.Mission;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,9 +43,11 @@ public class GameManager {
         players = new Player[numPlayers];
         // setting player names etc
         for ( int i = 0; i < players.length; i++) {
-            players[i] = new Player( i, numPlayers, ("joe" + i));
+
+            players[i] = new Player( i, numPlayers, ("joe" + i), createMission(i));
             //players[i].printPlayer();
         }
+
 
         System.out.println();
 
@@ -91,7 +94,7 @@ public class GameManager {
         }*/
 
 
-        TurnManager turnManager = new TurnManager(players[0],regions,plague,weather,season,turnCount);
+        TurnManager turnManager = new TurnManager(players[0],regions,continents,plague,weather,season,turnCount);
 
         turnManager.operate();
 
@@ -148,16 +151,10 @@ public class GameManager {
         */
     }
 
-    // farklı maplere gore grafları burada ayarlayabiliriz
-    /*public static entities.Region[] createRegions() {
+    public static Mission createMission( int playerID ) {
+        // todo
+        return null;
+    }
 
-        entities.Region[] regions = new entities.Region[NUMBER_OF_REGIONS];
-
-        for ( int i = 0; i < NUMBER_OF_REGIONS; i++) {
-            regions[i] =  new entities.Region(i,"data/region.txt");
-        }
-
-        return regions;
-    }*/
 
 }
