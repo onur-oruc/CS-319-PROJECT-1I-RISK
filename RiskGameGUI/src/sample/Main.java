@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import sample.ControllerClasses.CreditsController;
 import sample.ControllerClasses.MainMenuController;
+import sample.Entities.Continent;
+import sample.Entities.Region;
+import sample.Managers.GameManager;
 
 import java.io.File;
 
@@ -20,10 +23,9 @@ public class Main extends Application{
     {
         String musicFile = "src/sample/Images/music.mp3";
         File file = new File(musicFile);
-        System.out.println(file.isFile());
         Media sound = new Media(file.toURI().toString());
         MediaPlayer music = new MediaPlayer(sound);
-        music.play();
+        //music.play();
         primaryStage.setTitle("RiskGame");
         FXMLLoader  loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("ControllerClasses/MainMenu.fxml"));
@@ -34,6 +36,7 @@ public class Main extends Application{
         primaryStage.setMaximized(true);
         primaryStage.initStyle( StageStyle.UNDECORATED);
         primaryStage.show();
+
     }
     public static void main( String[] args)
     {

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="anc" prefHeight="1080.0" prefWidth="1920.0" styleClass="bodybg" stylesheets="@../CSSFiles/LobyBackground.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ControllerClasses.LobyController">
    <children>
@@ -14,8 +18,8 @@
          <effect>
             <ColorAdjust contrast="1.0" />
          </effect></ComboBox>
-      <CheckBox layoutX="1493.0" layoutY="288.0" mnemonicParsing="false" styleClass="big-check-box" stylesheets="@../CSSFiles/LobyBackground.css" />
-      <CheckBox layoutX="1493.0" layoutY="397.0" mnemonicParsing="false" styleClass="big-check-box" stylesheets="@../CSSFiles/LobyBackground.css" />
+      <CheckBox fx:id="plagueCheck" layoutX="1493.0" layoutY="288.0" mnemonicParsing="false" styleClass="big-check-box" stylesheets="@../CSSFiles/LobyBackground.css" />
+      <CheckBox fx:id="weatherCheck" layoutX="1493.0" layoutY="397.0" mnemonicParsing="false" styleClass="big-check-box" stylesheets="@../CSSFiles/LobyBackground.css" />
       <TextField fx:id="playerName1" layoutX="203.0" layoutY="288.0" prefHeight="86.0" prefWidth="383.0">
          <font>
             <Font size="36.0" />

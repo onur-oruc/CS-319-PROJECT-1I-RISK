@@ -18,8 +18,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
-
+import sample.Entities.*;
+import sample.Managers.*;
 import java.io.*;
+
 
 public class LobyController {
 
@@ -44,6 +46,9 @@ public class LobyController {
     private ComboBox combo4;
 
     @FXML
+    CheckBox plagueCheck, weatherCheck;
+
+    @FXML
     Rectangle color1, color2, color3, color4;
 
     @FXML
@@ -63,7 +68,7 @@ public class LobyController {
         window.show();
     }
 
-    public void startGameClicked(ActionEvent event) throws IOException {
+    public void startGameClicked(ActionEvent event) throws Exception {
 
         /*Parent root = FXMLLoader.load(getClass().getResource("GameMap.fxml"));*/
 
@@ -72,20 +77,69 @@ public class LobyController {
         Parent root = loader.load();
         GameMapController gmc = loader.getController();
         String[] images = new String[4];
-        images[0] = ((Image)combo.getValue()).getUrl();
-        images[1] = ((Image)combo2.getValue()).getUrl();
-        images[2] = ((Image)combo3.getValue()).getUrl();
-        images[3] = ((Image)combo4.getValue()).getUrl();
-        System.out.println(images[0]);
-        gmc.initialize("adeeem", images, music);
+
+        //get the properties of the game
+        GameManager gm = null;
+        String numPlayerString = (String)playerCount.getValue();
+        int numPlayer = Integer.parseInt(numPlayerString);
+        boolean plague = false;
+        boolean weather = false;
+        boolean secretMission = false;
+
+        if( plagueCheck.isSelected())
+            plague = true;
+        if( weatherCheck.isSelected())
+            weather = true;
+        if( missionChoice.getValue().equals("Secret Mission"))
+            secretMission = true;
+
+
+        if( numPlayer == 2)
+        {
+            //System.out.println("girdi1");
+            Player p0 = new Player( playerName1.getText(), 0, "#34abeb", ((Image)combo.getValue()).getUrl());
+            Player p1 = new Player( playerName2.getText(), 1, "#ee940c", ((Image)combo2.getValue()).getUrl());
+            Player[] players = new Player[2];
+            players[0]=p0;
+            players[1]=p1;
+            gm = new GameManager( 2, players, plague,weather,secretMission);
+        }
+        if( numPlayer == 3)
+        {
+            //System.out.println("girdi2");
+            Player p0 = new Player( playerName1.getText(), 0, "#34abeb", ((Image)combo.getValue()).getUrl());
+            Player p1 = new Player( playerName2.getText(), 1, "#ee940c", ((Image)combo2.getValue()).getUrl());
+            Player p2 = new Player( playerName3.getText(), 2, "#cf1fff", ((Image)combo3.getValue()).getUrl());
+            Player[] players = new Player[3];
+            players[0]=p0;
+            players[1]=p1;
+            players[2]=p2;
+            gm = new GameManager( 3, players, plague,weather,secretMission);
+        }
+        else if( numPlayer == 4)
+        {
+            //System.out.println("girdi3");
+            Player p0 = new Player( playerName1.getText(), 0, "#34abeb", ((Image)combo.getValue()).getUrl());
+            Player p1 = new Player( playerName2.getText(), 1, "#ee940c", ((Image)combo2.getValue()).getUrl());
+            Player p2 = new Player( playerName3.getText(), 2, "#cf1fff", ((Image)combo3.getValue()).getUrl());
+            Player p3 = new Player( playerName4.getText(), 3, "#1bc64c", ((Image)combo4.getValue()).getUrl());
+            Player[] players = new Player[4];
+            players[0]=p0;
+            players[1]=p1;
+            players[2]=p2;
+            players[3]=p3;
+            gm = new GameManager( 4, players, plague,weather,secretMission);
+        }
+
+        gm.startGame();
+
+
+        //System.out.println(images[0]);
+        gmc.initialize(gm,music);
         Scene ng =  new Scene(root);
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
-
-        //window.setUserData(new String("adeeem"));
         window.setScene(ng);
         window.show();
-
-
     }
 
     public void initialize( MediaPlayer m) throws FileNotFoundException {

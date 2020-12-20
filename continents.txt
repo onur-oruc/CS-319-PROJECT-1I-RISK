@@ -1,0 +1,7 @@
+continentID, regions, continentName, regionCount, bonusTroops
+0,21,22,30,29,28,27,26,23,24,25,0,31,"Asia",12,7
+1,10,11,12,13,"South America",4,2
+2,33,32,34,35,36,37,"Africa",6,3
+3,1,2,3,4,5,6,7,8,9,"North America",9,5
+4,38,39,40,41,"Australia",4,2
+5,14,15,16,17,18,19,20,"Europe",7,5
