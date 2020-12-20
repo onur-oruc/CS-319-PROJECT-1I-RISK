@@ -32,19 +32,6 @@ public class Continent implements Serializable {
         bonusTroops = -1;
     }
 
-    // Copy constructor
-    public Continent (Continent toCopy) {
-        this.continentName = toCopy.continentName;
-        this.continentId = toCopy.continentId;;
-        this.regionCount = toCopy.regionCount;
-        this.bonusTroops = toCopy.bonusTroops;
-
-        this.regionIds = new int[toCopy.regionIds.length];
-        for (int i = 0; i < regionIds.length; i++) {
-            regionIds[i] = toCopy.regionIds[i];
-        }
-    }
-
     // set methodları gereksiz
 
     public String getContinentName() {

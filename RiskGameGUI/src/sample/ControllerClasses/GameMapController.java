@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 /**
  * This class will be used to connect game map user interface and game logic
  * This class holds the game manager as an attribute and calls its functions
@@ -36,12 +35,12 @@ public class GameMapController {
     Region regionToPlace, regionToAttackWith, regionToAttack, regionToGetTroop;
     int troopNumToFortify;
     @FXML
-    AnchorPane gamerPanel, dicePanel, nextTurnPanel, buyPanel, pausePanel, savePanel, settingsPanel;
+    AnchorPane gamerPanel, dicePanel, nextTurnPanel, buyPanel, pausePanel, savePanel, settingsPanel, winnerPanel;
     @FXML
     Label instructionLabel, attackLabel, stageLabel, troopLabel,troopCard2, troopCard3,
             troopCard4,missionLabel, infoLabel1, infoLabel2,infoLabel3,infoLabel4,playerMoney, troopCard1;
     @FXML
-    ImageView troopImage, playerImg1, playerImg2,playerImg3, playerImg4, imageTurn,
+    ImageView troopImage, playerImg1, playerImg2,playerImg3, playerImg4, imageTurn, winnerImage,
             turn1, turn2, turn3, turn4, elim1, elim2, elim3, elim4, dice1, dice2, dice3, dice4, dice5;
     @FXML
     ChoiceBox troopNo;
@@ -97,6 +96,7 @@ public class GameMapController {
     {
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
         Scene s = window.getScene();
+
         instructionLabel.setText(gm.getInstruction());
         stageLabel.setText(gm.getStageString());
 
@@ -456,6 +456,24 @@ public class GameMapController {
     }
 
     /**
+     * This method check the status of the game
+     * and if the game is over winner is displayed
+     *
+     * This method is public as it is connected to fxml file
+     */
+    public void checkGameOver()
+    {
+        if(gm.didPlayerWin())
+        {
+            Player p = gm.getPlayers()[gm.getWhoseTurn()];
+            File f = new File( p.getImageUrl().substring(6));
+            Image a = new Image(f.toURI().toString());
+            winnerImage.setImage(a);
+            winnerPanel.setVisible(true);
+        }
+    }
+
+    /**
      * This method listens for the actions on the attack buttons
      * There are three different attack buttons in the game which are
      * Attack with 1 dice
@@ -531,7 +549,28 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
+            p = gm.getPlayers()[gm.getWhoseTurn()];
+            all = gm.getRegions();
+
+            for( int i = 0; i < all.length; i++)
+            {
+                if( !p.hasRegion(i))
+                {
+                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region.setDisable(true);
+                }
+                else {
+                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                }
+            }
+
             if( regionToAttack.getOwnerID() == p.getId()){
+
+                checkGameOver();
 
                 setDıceImageUnvisible();
 
@@ -564,6 +603,25 @@ public class GameMapController {
                 troopLabel.setText("" + (troopNumMax- troopNumMin));
 
                 setVisibilityTroopNumber(true);
+
+                p = gm.getPlayers()[gm.getWhoseTurn()];
+                all = gm.getRegions();
+
+                for( int i = 0; i < all.length; i++)
+                {
+                    if( !p.hasRegion(i))
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                    else {
+                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                        {
+                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                            region.setDisable(true);
+                        }
+                    }
+                }
             }
         }
         else if( e.getSource() == attackButton2 )
@@ -625,7 +683,29 @@ public class GameMapController {
             else {
                 setAttackButtonsAbility(true,true,true);
             }
+
+            p = gm.getPlayers()[gm.getWhoseTurn()];
+            all = gm.getRegions();
+
+            for( int i = 0; i < all.length; i++)
+            {
+                if( !p.hasRegion(i))
+                {
+                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region.setDisable(true);
+                }
+                else {
+                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                }
+            }
             if( regionToAttack.getOwnerID() == p.getId()){
+
+
+                checkGameOver();
 
                 setDıceImageUnvisible();
 
@@ -656,6 +736,25 @@ public class GameMapController {
                 troopNo.setItems(numbers);
                 troopNo.setValue(""+troopNumMin);
                 troopLabel.setText("" + (troopNumMax- troopNumMin));
+
+                p = gm.getPlayers()[gm.getWhoseTurn()];
+                all = gm.getRegions();
+
+                for( int i = 0; i < all.length; i++)
+                {
+                    if( !p.hasRegion(i))
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                    else {
+                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                        {
+                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                            region.setDisable(true);
+                        }
+                    }
+                }
 
                 setVisibilityTroopNumber(true);
             }
@@ -723,7 +822,29 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
+            p = gm.getPlayers()[gm.getWhoseTurn()];
+            all = gm.getRegions();
+
+            for( int i = 0; i < all.length; i++)
+            {
+                if( !p.hasRegion(i))
+                {
+                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region.setDisable(true);
+                }
+                else {
+                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                }
+            }
+
             if( regionToAttack.getOwnerID() == p.getId()){
+
+                checkGameOver();
+
                 setDıceImageUnvisible();
 
                 dicePanel.setVisible(false);
@@ -753,6 +874,25 @@ public class GameMapController {
                 troopNo.setItems(numbers);
                 troopNo.setValue(""+troopNumMin);
                 troopLabel.setText("" + (troopNumMax- troopNumMin));
+
+                p = gm.getPlayers()[gm.getWhoseTurn()];
+                all = gm.getRegions();
+
+                for( int i = 0; i < all.length; i++)
+                {
+                    if( !p.hasRegion(i))
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                    else {
+                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                        {
+                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                            region.setDisable(true);
+                        }
+                    }
+                }
 
                 setVisibilityTroopNumber(true);
             }
@@ -1217,6 +1357,25 @@ public class GameMapController {
             lbl = (Label)sc.lookup("#lbl"+regionToAttack.getRegionID());
             lbl.setText(""+regionToAttack.getNumTroops());
 
+            Player p = gm.getPlayers()[gm.getWhoseTurn()];
+            Region[] all = gm.getRegions();
+
+            for( int i = 0; i < all.length; i++)
+            {
+                if( !p.hasRegion(i))
+                {
+                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region.setDisable(true);
+                }
+                else {
+                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                    {
+                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                        region.setDisable(true);
+                    }
+                }
+            }
+
             pauseButton.setVisible(true);
         }
         else if( b == exitTurn)
@@ -1408,6 +1567,7 @@ public class GameMapController {
         {
             Player p = gm.getPlayers()[gm.getWhoseTurn()];
             Region[] all = gm.getRegions();
+
             for( int i = 0; i < all.length; i++)
             {
                 SVGPath region = (SVGPath) sc.lookup("#svg" + i);
@@ -1436,8 +1596,11 @@ public class GameMapController {
         }
         else if( stageLabel.getText().equals("DRAFT STAGE") )
         {
+            TurnManager tm = gm.getTm();
             Player p = gm.getPlayers()[gm.getWhoseTurn()];
             Region[] all = gm.getRegions();
+
+            tm.commanderEffect();
 
             //make all regions that player does not have disabled and other regions abled according to attack possibility of a region
             for( int i = 0; i < all.length; i++)
@@ -1489,15 +1652,22 @@ public class GameMapController {
         }
         else if( stageLabel.getText().equals("FORTIFY STAGE") )
         {
+            checkGameOver();
+
             Player[] players = gm.getPlayers();
             Player p = players[gm.getWhoseTurn()];
             Region[] allRegion = gm.getRegions();
 
+            TurnManager tm = gm.getTm();
+            tm.endTurnOps();
+
             //if player is the last player in a turn update game logic
             if( gm.isLast(p) ){
-                gm.operationsAfterLastPlayer(allRegion, gm.getTurnCount());
+                gm.operationsBeforeFirstPlayer(allRegion, gm.getTurnCount());
                 gm.setTurnCount(gm.getTurnCount() + 1);
             }
+
+
 
             //the turns of the player changes
             gm.nextTurn();

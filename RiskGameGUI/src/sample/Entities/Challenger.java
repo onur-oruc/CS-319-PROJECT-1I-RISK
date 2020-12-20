@@ -8,9 +8,10 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public abstract class Challenger implements Serializable {
-    // make properties private
-    private String imageUrl;
 
+    // make properties private
+    private final int STARTING_MONEY = 600;
+    private String imageUrl;
     private int money;
     private ArrayList<TroopCardType> troopCards;
     private boolean isTurn;
@@ -18,17 +19,11 @@ public abstract class Challenger implements Serializable {
     private int id;
     private int regionCount;
     private boolean isEliminated;
-
-
     private String color;
-
     private ArrayList<Integer> eliminatedEnemyIds; // will be used for eliminate color mission
-
     private ArrayList<Integer> regionIds;
     private int commanderLocation;
-
     private Mission mission;
-
 
     Challenger(String name, int id, String color, String url) {
         this.imageUrl = url;
@@ -40,23 +35,9 @@ public abstract class Challenger implements Serializable {
         this.troopCards = new ArrayList<>();
         this.isEliminated = false;
         this.isTurn = false;
-        this.money = 0;
+        this.money = STARTING_MONEY;
         this.regionCount = 0;
         this.mission = null;
-    }
-
-
-    public void updateRegionCount( int regionNum){
-        regionCount = regionNum;
-    }
-    public void updateMoney( int money ){
-        this.money = money;
-    }
-    public void updateRegions( int[] regionIds ) {
-//        this.regionIds = new int [regionIds.length];
-//        for( int i = 0; i < regionIds.length; i++){
-//            this.regionIds[i] = regionIds[i];
-//        }
     }
 
     public boolean addRegion(int newRegionID) {
@@ -107,63 +88,88 @@ public abstract class Challenger implements Serializable {
         }
 
         // if challenger has all the regions in the continent, return true
-        if (challengerNumReg == regionsInContinent.length)
-            return true;
-
-        return false;
+        return challengerNumReg == regionsInContinent.length;
     }
 
-    /**
-     * This methods checks whether the enemy with enemyID
-     * was eliminated by the challenger
-     *
-     * @param enemyID
-     * @return
-     */
-    public boolean hasEliminatedEnemy(int enemyID) {
-        return eliminatedEnemyIds.contains(enemyID);
-    }
 
-    /**
-     * This methods add the eliminated enemy with eliminatedEnemyID
-     * to the eliminated enemy list of the challenger
-     *
-     * @param eliminatedEnemyID eliminated enemy by the challenger
-     */
-    public void updateEliminatedEnemies(int eliminatedEnemyID) {
-        eliminatedEnemyIds.add(eliminatedEnemyID);
-    }
-
-    public void combineCards() {
-        // TO DO
-        // troop cards will be removed from the array after combining
-    }
-
-    public int calculateBonusTroop (Continent[] continents) {
-
-        return 0;
-    }
 
     public void setTroopCards(ArrayList<TroopCardType> troopCards) {
         this.troopCards = troopCards;
     }
-
     public ArrayList<TroopCardType> getTroopCards() {
         return troopCards;
     }
-
     public void addTroopCard( TroopCardType troopCard) {
         troopCards.add(troopCard);
     }
-
-
-
     public Mission getMission() {
         return mission;
     }
-
     public void setMission (Mission mission) {
         this.mission = mission;
+    }
+    public void removeCard(TroopCardType troop) {
+        troopCards.remove(troop);
+    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageurl) {
+        this.imageUrl = imageurl;
+    }
+    public void setEliminated (boolean eliminated) {
+        isEliminated = eliminated;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName (String name) {
+        this.name = name;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId (int id) {
+        this.id = id;
+    }
+    public boolean isTurn() {
+        return isTurn;
+    }
+    public void setTurn (boolean turn) {
+        isTurn = turn;
+    }
+    public int getMoney() {
+        return money;
+    }
+    public void setMoney (int money) {
+        this.money = money;
+    }
+    public int getRegionCount() {
+        return regionCount;
+    }
+    public void setRegionCount (int regionCount) {
+        this.regionCount = regionCount;
+    }
+    public ArrayList<Integer> getRegionIds() {
+        return regionIds;
+    }
+    public void setRegionIds (ArrayList<Integer> regionIds) {
+        this.regionIds = regionIds;
+    }
+    public int getCommanderLocation() {
+        return commanderLocation;
+    }
+    public void setCommanderLocation( int commanderLocation) {
+        this.commanderLocation = commanderLocation;
+    }
+    public String getColor() {
+        return color;
+    }
+    public boolean hasRegion( int regionID ) {
+        return regionIds.contains(regionID);
+    }
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public boolean isEliminated() {
@@ -172,85 +178,6 @@ public abstract class Challenger implements Serializable {
             isEliminated = true;
         }
         return isEliminated;
-    }
-
-    public void removeCard(TroopCardType troop) {
-        troopCards.remove(troop);
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageurl) {
-        this.imageUrl = imageurl;
-    }
-
-    public void setEliminated (boolean eliminated) {
-        isEliminated = eliminated;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName (String name) {
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId (int id) {
-        this.id = id;
-    }
-
-    public boolean isTurn() {
-        return isTurn;
-    }
-
-    public void setTurn (boolean turn) {
-        isTurn = turn;
-    }
-
-    public int getMoney() {
-        return money;
-    }
-
-    public void setMoney (int money) {
-        this.money = money;
-    }
-
-    public int getRegionCount() {
-        return regionCount;
-    }
-
-    public void setRegionCount (int regionCount) {
-        this.regionCount = regionCount;
-    }
-
-    public ArrayList<Integer> getRegionIds() {
-        return regionIds;
-    }
-
-    public void setRegionIds (ArrayList<Integer> regionIds) {
-        this.regionIds = regionIds;
-    }
-
-    public int getCommanderLocation() {
-        return commanderLocation;
-    }
-    public void setCommanderLocation( int commanderLocation) {
-        this.commanderLocation = commanderLocation;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public boolean hasRegion( int regionID ) {
-        return regionIds.contains(regionID);
     }
 
     public String getColorHexToStr() {
@@ -264,7 +191,24 @@ public abstract class Challenger implements Serializable {
             return "green";
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public int calculateBonusTroops( Region[] regions, Continent[] continents) {
+        boolean ownsContinent;
+        int bonusContTroops = 0;
+
+        for ( Continent cont : continents ) {
+            ownsContinent = true;
+
+            for ( Integer regionID : cont.getRegionIds() ) {
+                if ( regions[regionID].getOwnerID() != id )
+                    ownsContinent = false;
+            }
+
+            if ( ownsContinent )
+                bonusContTroops += cont.getBonusTroops();
+        }
+
+        return bonusContTroops;
     }
+
+
 }

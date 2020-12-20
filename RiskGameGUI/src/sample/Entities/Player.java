@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 public class Player extends Challenger implements Serializable {
     private boolean [] allies;
-    final int STARTING_MONEY = 100;
 
     public Player( String name, int id, String color, String url){
         super( name, id,color,url);
@@ -21,13 +20,11 @@ public class Player extends Challenger implements Serializable {
         allies = new boolean [ 5];
         for( int i = 0; i < 5; i++)
             allies[i] = false;
-        this.setMoney(STARTING_MONEY);
     } //
 
     public Player (int playerID, int numPlayers, String name, String color, String url) {
         super(name,playerID,color,url);
 
-        this.setMoney(STARTING_MONEY);
         this.setTurn(false);   // not yet his turn
         this.setTroopCards(null);
         this.setRegionCount(0);

@@ -34,7 +34,7 @@ public class EliminateColorMission implements Mission, Serializable {
             playerToBeEliminated = (int)(Math.random() * playerCount);
         } while ( playerToBeEliminated == challenger.getId());
 
-        Challenger target = allChallengers[playerToBeEliminated];
+        target = allChallengers[playerToBeEliminated];
         missionName = "Conquer the enemy with " + target.getColorHexToStr() + " color";
     }
 

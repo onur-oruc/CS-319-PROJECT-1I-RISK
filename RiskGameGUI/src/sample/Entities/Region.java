@@ -21,8 +21,6 @@ public class Region implements Serializable {
     private int numTroops;
     private boolean hasCommander;
     private int[] neighbors;
-    private int locX;
-    private int locY;
     private boolean hasGoldMine;
     private MotivationLevel motivation;
     private ClimateType climate;
@@ -31,122 +29,65 @@ public class Region implements Serializable {
 
     private int NUM_REGIONS = 42;
 
-    // constructors
-    public Region() {
-
-    }
-
-    // copy constructor
-    public Region(Region toCopy) {
-        this.continentID = toCopy.continentID;
-        this.regionName = toCopy.regionName;
-        this.regionID = toCopy.regionID;
-        this.ownerID = toCopy.ownerID;
-        this.numTroops = toCopy.numTroops;
-        this.hasCommander = toCopy.hasCommander;
-        this.hasGoldMine = toCopy.hasGoldMine;
-        this.motivation = toCopy.motivation;
-
-        this.neighbors = new int[toCopy.neighbors.length];
-        for (int i = 0; i < neighbors.length; i++) {
-            neighbors[i] = toCopy.neighbors[i];
-        }
-    }
+    // constructor
+    public Region() {}
 
     // methods
 
     public void setRegionID(int regionID) {this.regionID = regionID;}
-
     public int getRegionID() {return regionID;}
-
     public void setNumTroops(int numTroops){
         this.numTroops = numTroops;
     }
-
-    public int getNumTroops(){
+    public int getNumTroops() {
         return this.numTroops;
     }
-
-    public void increaseNumTroopsBy(int numNewTroops){
-        numTroops = numTroops + numNewTroops;
-    }
-
     public void setOwnerID(int ownerID){
         this.ownerID = ownerID;
     }
-
     public int getOwnerID(){
         return this.ownerID;
     }
-
     public void setHasCommander(boolean hasCommander){
         this.hasCommander = hasCommander;
     }
-
     public boolean hasCommander(){
         return this.hasCommander;
     }
-
     public void setMotivation(MotivationLevel motivation){
         this.motivation = motivation;
     }
-
     public MotivationLevel getMotivation(){
         return this.motivation;
     }
-
     public void setHasGoldMine(boolean hasGoldMine){
         this.hasGoldMine = hasGoldMine;
     }
-
     public boolean hasGoldMine(){
         return this.hasGoldMine;
     }
-
     public void setNeighbors(int[] neighbors) {this.neighbors = neighbors;}
-
     public int[] getNeighbors(){ return neighbors; }
-
-    public int getLocX(){
-        return this.locX;
-    }
-
-    public int getLocY(){
-        return this.locY;
-    }
-
-    public int getContinentID() {
-        return continentID;
-    }
-
-    public void setContinentID(int continentID) {
-        this.continentID = continentID;
-    }
 
     public String getRegionName() {
         return regionName;
     }
-
     public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
 
     public boolean hasDrought() { return drought; }
     public void setDrought( boolean drought ) { this.drought = drought; }
-
     public boolean hasPlague() { return plague; }
     public void setPlague( boolean plague ) { this.plague = plague; }
-
     public boolean hasFrost() { return frost; }
     public void setFrost( boolean frost ) { this.frost = frost; }
-
     public ClimateType getClimate() {
         return climate;
     }
     public void setClimate( ClimateType climate) {
         this.climate = climate;
     }
-
 
     public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
 
@@ -185,7 +126,7 @@ public class Region implements Serializable {
 
     public ArrayList<Integer> getEnemyRegions( ArrayList<Integer> ownedRegionsByID ) {
         ArrayList<Integer> enemyRegions = new ArrayList<Integer> ();
-        boolean [] isEnemy;
+        boolean[] isEnemy;
         isEnemy = new boolean[42];
 
         for( int i = 0; i < 42; i++ ){
@@ -202,30 +143,6 @@ public class Region implements Serializable {
         }
 
         return enemyRegions;
-    }
-
-
-    public void printRegion() {
-
-        System.out.println();
-        System.out.println("regionID: " + regionID);
-        System.out.println("regionName: " + regionName);
-        System.out.println("continentID: " + continentID);
-        System.out.println("ownerID: " + ownerID);
-        System.out.println("numTroops: " + numTroops);
-        System.out.println("hasCommander: " + hasCommander);
-        System.out.println("hasGoldMine: " + hasGoldMine);
-        System.out.println("troopMotivation: " + motivation);
-        System.out.println("climate: " + climate);
-        System.out.println("continent: " + continentID);
-        System.out.println("locX: " + locX);
-        System.out.println("locY: " + locY);
-
-        System.out.print("neighbors: ");
-        for (int neighbor : neighbors) {
-            System.out.print(neighbor + ", ");
-        }
-        System.out.println();
     }
 
     public void motivate() {

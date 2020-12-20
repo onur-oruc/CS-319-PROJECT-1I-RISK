@@ -918,6 +918,13 @@
             <CheckBox layoutX="180.0" layoutY="186.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="16.0" />
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="winnerPanel" layoutX="818.0" layoutY="295.0" prefHeight="338.0" prefWidth="292.0" styleClass="playerpanel" stylesheets="@../CSSFiles/GameMapBackground.css" visible="false">
+         <children>
+            <Label layoutX="110.0" layoutY="31.0" prefHeight="35.0" prefWidth="72.0" text="WINNER" />
+            <ImageView fx:id="winnerImage" fitHeight="186.0" fitWidth="154.0" layoutX="65.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" />
+            <Button layoutX="252.0" layoutY="2.0" mnemonicParsing="false" onMouseClicked="#onBackClicked" prefHeight="23.0" prefWidth="30.0" styleClass="buttonExit" />
+         </children>
+      </AnchorPane>
    </children>
    <cursor>
       <Cursor fx:constant="DEFAULT" />
