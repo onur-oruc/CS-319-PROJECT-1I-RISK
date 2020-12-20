@@ -473,6 +473,28 @@ public class GameMapController {
         }
     }
 
+    public void updateRegionsAfterAttack( Scene sc)
+    {
+        Player p = gm.getPlayers()[gm.getWhoseTurn()];
+        Region[] all = gm.getRegions();
+
+        for( int i = 0; i < all.length; i++)
+        {
+            if( !p.hasRegion(i))
+            {
+                SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                region.setDisable(true);
+            }
+            else {
+                if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                {
+                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region.setDisable(true);
+                }
+            }
+        }
+    }
+
     /**
      * This method listens for the actions on the attack buttons
      * There are three different attack buttons in the game which are
@@ -549,24 +571,7 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
-            p = gm.getPlayers()[gm.getWhoseTurn()];
-            all = gm.getRegions();
-
-            for( int i = 0; i < all.length; i++)
-            {
-                if( !p.hasRegion(i))
-                {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                    region.setDisable(true);
-                }
-                else {
-                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                }
-            }
+            updateRegionsAfterAttack(sc);
 
             if( regionToAttack.getOwnerID() == p.getId()){
 
@@ -604,24 +609,7 @@ public class GameMapController {
 
                 setVisibilityTroopNumber(true);
 
-                p = gm.getPlayers()[gm.getWhoseTurn()];
-                all = gm.getRegions();
-
-                for( int i = 0; i < all.length; i++)
-                {
-                    if( !p.hasRegion(i))
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                    else {
-                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                        {
-                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                            region.setDisable(true);
-                        }
-                    }
-                }
+                updateRegionsAfterAttack(sc);
             }
         }
         else if( e.getSource() == attackButton2 )
@@ -684,24 +672,7 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
-            p = gm.getPlayers()[gm.getWhoseTurn()];
-            all = gm.getRegions();
-
-            for( int i = 0; i < all.length; i++)
-            {
-                if( !p.hasRegion(i))
-                {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                    region.setDisable(true);
-                }
-                else {
-                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                }
-            }
+            updateRegionsAfterAttack(sc);
             if( regionToAttack.getOwnerID() == p.getId()){
 
 
@@ -737,24 +708,7 @@ public class GameMapController {
                 troopNo.setValue(""+troopNumMin);
                 troopLabel.setText("" + (troopNumMax- troopNumMin));
 
-                p = gm.getPlayers()[gm.getWhoseTurn()];
-                all = gm.getRegions();
-
-                for( int i = 0; i < all.length; i++)
-                {
-                    if( !p.hasRegion(i))
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                    else {
-                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                        {
-                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                            region.setDisable(true);
-                        }
-                    }
-                }
+                updateRegionsAfterAttack(sc);
 
                 setVisibilityTroopNumber(true);
             }
@@ -822,24 +776,7 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
-            p = gm.getPlayers()[gm.getWhoseTurn()];
-            all = gm.getRegions();
-
-            for( int i = 0; i < all.length; i++)
-            {
-                if( !p.hasRegion(i))
-                {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                    region.setDisable(true);
-                }
-                else {
-                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                }
-            }
+            updateRegionsAfterAttack(sc);
 
             if( regionToAttack.getOwnerID() == p.getId()){
 
@@ -875,24 +812,8 @@ public class GameMapController {
                 troopNo.setValue(""+troopNumMin);
                 troopLabel.setText("" + (troopNumMax- troopNumMin));
 
-                p = gm.getPlayers()[gm.getWhoseTurn()];
-                all = gm.getRegions();
 
-                for( int i = 0; i < all.length; i++)
-                {
-                    if( !p.hasRegion(i))
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                    else {
-                        if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                        {
-                            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                            region.setDisable(true);
-                        }
-                    }
-                }
+                updateRegionsAfterAttack(sc);
 
                 setVisibilityTroopNumber(true);
             }
@@ -1357,24 +1278,7 @@ public class GameMapController {
             lbl = (Label)sc.lookup("#lbl"+regionToAttack.getRegionID());
             lbl.setText(""+regionToAttack.getNumTroops());
 
-            Player p = gm.getPlayers()[gm.getWhoseTurn()];
-            Region[] all = gm.getRegions();
-
-            for( int i = 0; i < all.length; i++)
-            {
-                if( !p.hasRegion(i))
-                {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                    region.setDisable(true);
-                }
-                else {
-                    if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
-                    {
-                        SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                        region.setDisable(true);
-                    }
-                }
-            }
+            updateRegionsAfterAttack(sc);
 
             pauseButton.setVisible(true);
         }
