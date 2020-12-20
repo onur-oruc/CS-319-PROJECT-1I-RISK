@@ -11,6 +11,12 @@ public class Dice {
     // constructors
 
     // methods
+    /**
+     * This method is used to roll dices and save the rolling results.
+     * @param numDice This is the first paramter to rollDice method to denote how many times dice rolled
+     * @param mLevel  This is the second parameter to denote motivation level of troops
+     * @return ArrayList which denotes the results of rollings
+     */
     public static ArrayList<Integer> rollDice(int numDice, MotivationLevel mLevel ) {
 
         int numMotivatedDice;
@@ -45,7 +51,11 @@ public class Dice {
 
         return output;
     }
-
+    /**
+     * This method is used to roll one dice and return the result
+     * @param motivated This is the first paramter which denotes whether die is motivated or not.
+     * @return int which denotes the results of rolling.
+     */
     private static int rollDie( boolean motivated ) {
         double random = Math.random();
 
@@ -58,7 +68,12 @@ public class Dice {
             return value + 1;
         }
     }
-
+    /**
+     * This method is used to compare dices of attacker side and defender side.
+     * @param attacker This is the first paramter to compareDice method which denotes the results of rollings of attacker side
+     * @param defender  This is the second parameter to compareDice method which denotes  the results of rollings of defender side
+     * @return int[]  which denotes how many times attacker side succeed and how many times defender side succeed
+     */
     public static int[] compareDice(ArrayList<Integer> attacker, ArrayList<Integer> defender) {
 
         int counter = 0;

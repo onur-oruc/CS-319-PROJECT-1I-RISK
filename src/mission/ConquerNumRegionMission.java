@@ -24,6 +24,7 @@ public class ConquerNumRegionMission implements Mission {
     }
 
     // methods
+
     @Override
     public boolean isCompleted (Challenger challenger) {
         int regionCount = challenger.getRegionCount();

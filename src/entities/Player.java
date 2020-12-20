@@ -30,7 +30,9 @@ public class Player extends Challenger{
             allies[i] = false;
         }
     }
-
+    /**
+     * This method is used to update the alies of player.
+     */
     public void updateAlly( boolean[] allies ) {
         for( int i = 0; i < allies.length; i++){
             this.allies[i] = allies[i];

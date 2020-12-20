@@ -54,7 +54,6 @@ public class Region {
     }
 
     // methods
-
     public void setRegionID(int regionID) {this.regionID = regionID;}
 
     public int getRegionID() {return regionID;}
@@ -147,7 +146,12 @@ public class Region {
         this.climate = climate;
     }
 
-
+    /**
+     * This method is used to find connected regions of one player from one determined region.
+     * @param allRegions This is the first parameter to this method that stores info of all regions.
+     * @param ownedRegionsByID  This is the second parameter to this method that stores the id of owned regions for one player.
+     * @return ArrayList that stores ids of all regions which are connected to this region with one path in the list.
+     */
     public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
 
         ArrayList<Integer> connectedOwnedRegions = new ArrayList<Integer>();
@@ -182,7 +186,11 @@ public class Region {
         }
         return connectedOwnedRegions;
     }
-
+    /**
+     * This method is used to roll dices and save the rolling results.
+     * @param ownedRegionsByID  This is the second parameter to this method that stores the id of owned regions for one player.
+     * @return ArrayList that stores ids of all regions which are  neighbour to to this region and enemies( owned by another player) of this region.
+     */
     public ArrayList<Integer> getEnemyRegions( ArrayList<Integer> ownedRegionsByID ) {
         ArrayList<Integer> enemyRegions = new ArrayList<Integer> ();
         boolean [] isEnemy;
@@ -204,6 +212,9 @@ public class Region {
         return enemyRegions;
     }
 
+    /**
+     * This method is used to print info of region.
+     */
 
     public void printRegion() {
 

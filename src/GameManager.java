@@ -53,7 +53,9 @@ public class GameManager {
     }
 
     // methods
-
+    /**
+     * This method is used to initialize a game.
+     */
 
     public void startGame() throws Exception {
 
@@ -71,6 +73,13 @@ public class GameManager {
 
     }
 
+    public boolean isLast( Player player ){
+        int idOfLastPlayer;
+        for( int i = 0; i < numPlayers; i++)
+            if( !players[i].isEliminated())
+                idOfLastPlayer = i;
+        return idOfLastPlayer == player.getId() ;
+    }
     public void turns() {
 
         while ( winnerID < 0 ) {
@@ -102,7 +111,9 @@ public class GameManager {
             turnCount++;
         }
     }
-
+    /**
+     * This method is used to update the season periodically.
+     */
     public void nextSeason() {
 
         if ( season == SeasonType.SPRING )
@@ -114,7 +125,10 @@ public class GameManager {
         else // if ( season == SeasonType.WINTER )
             season = SeasonType.SPRING;
     }
-
+    /**
+     * This method is used to write the money of each player to array.
+     * @return int[] which denotes the money of players
+     */
     public int[] getMoneyOfAll() {
         int[] moneys = new int[numPlayers];
 
@@ -123,7 +137,10 @@ public class GameManager {
         }
         return moneys;
     }
-
+    /**
+     * This method is used to write the information for having goldmine for each region into an array.
+     * @return boolean[] which stores the attribute hasGoldMine for each region.
+     */
     public boolean[] getGoldMineOfAll() {
         boolean[] goldMines = new boolean[regions.length];
 

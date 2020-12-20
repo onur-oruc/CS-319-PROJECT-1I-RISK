@@ -265,6 +265,13 @@ public class MapManager {
         return continents;
     }
 
+    /**
+     * This method is used to roll dices and save the rolling results.
+     * @param secretMission This is the first parameter to giveMissions method that stores whether player has secretMission or not, for now.
+     * @param players  This is the second parameter to giveMissions method stores info of players.
+     * @param regions  This is the third parameter to giveMissions method stores info of regions.
+     * @param continents  This is the fourth parameter to giveMissions method stores of info of continents.
+     */
     private void giveMissions( boolean secretMission, Player[] players, Region[] regions, Continent[] continents) {
 
         if ( secretMission ) {
