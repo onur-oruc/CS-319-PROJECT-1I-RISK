@@ -65,7 +65,7 @@ public class GameMapController {
     @FXML
     Button attackExit, buyExit, distribute, climateButton, motivationButton;
     @FXML
-    ImageView playerImg1, playerImg2,playerImg3, playerImg4;
+    ImageView playerImg1, playerImg2,playerImg3, playerImg4, imageTurn;
     @FXML
     Label infoLabel1, infoLabel2,infoLabel3,infoLabel4,playerMoney, troopCard1, troopCard2, troopCard3, troopCard4,missionLabel;
     @FXML
@@ -167,10 +167,10 @@ public class GameMapController {
             if( p.getMoney() < 5)
                 eventButton.setDisable(true);
             eventButton.setVisible(true);
-            playerImg1.setDisable(false);
+            /*playerImg1.setDisable(false);
             playerImg2.setDisable(false);
             playerImg3.setDisable(false);
-            playerImg4.setDisable(false);
+            playerImg4.setDisable(false);*/
         }
         else if( instructionLabel.getText().equals("Select a region to place commander"))
         {
@@ -986,8 +986,12 @@ public class GameMapController {
         troopCard4.setText(""+ type4);
         missionLabel.setText(p.getMission().getMissionName());
 
-        if( !stageLabel.getText().equals("BUY STAGE"))
+        if( stageLabel.getText().equals("BUY STAGE"))
         {
+            hire.setDisable(false);
+            combineButton.setDisable(false);
+        }
+        else{
             hire.setDisable(true);
             combineButton.setDisable(true);
         }
@@ -1049,26 +1053,27 @@ public class GameMapController {
         }
         gm.setInstruction("Select a region to organize event");
         instructionLabel.setText("Select a region to organize event");
-        playerImg1.setDisable(true);
-        playerImg2.setDisable(true);
-        playerImg3.setDisable(true);
-        playerImg4.setDisable(true);
         nextStage.setVisible(false);
         eventButton.setVisible(false);
     }
 
     public void buyProfileExit( ActionEvent e)
     {
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+        Scene sc = window.getScene();
         Button b = (Button)e.getSource();
         if( b == buyExit)
         {
             Player p = gm.getPlayers()[gm.getWhoseTurn()];
+            eventButton.setVisible(true);
             if( p.getMoney() < 5)
                 eventButton.setDisable(true);
             buyPanel.setVisible(false);
             nextStage.setVisible(true);
             if( gm.getStageString().equals("BUY STAGE"))
                 eventButton.setVisible(true);
+            else
+                eventButton.setVisible(false);
             motivationButton.setVisible(true);
             climateButton.setVisible(true);
         }
@@ -1081,8 +1086,6 @@ public class GameMapController {
             dicePanel.setVisible(false);
             motivationButton.setVisible(true);
             climateButton.setVisible(true);
-            Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
-            Scene sc = window.getScene();
             for( int i = 1 ; i < 6; i++ )
             {
                 ImageView diceImage = (ImageView) sc.lookup("#dice" + i);
@@ -1095,15 +1098,20 @@ public class GameMapController {
         }
         else if( b == exitTurn)
         {
-            nextStage.setVisible(false);
+            nextStage.setVisible(true);
             eventButton.setVisible(true);
             Player p = gm.getPlayers()[gm.getWhoseTurn()];
+            Region[] allRegion = gm.getRegions();
+            for( int i= 0; i < allRegion.length; i++){
+                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
             if( p.getMoney() < 5)
                 eventButton.setDisable(true);
-            playerImg1.setDisable(false);
-            playerImg2.setDisable(false);
-            playerImg3.setDisable(false);
-            playerImg4.setDisable(false);
+            ImageView playerProfileImg = (ImageView) sc.lookup("#playerImg" + (p.getId()+1));
+            playerProfileImg.setDisable(false);
             nextStage.setVisible(true);
             nextTurnPanel.setVisible(false);
             motivationButton.setVisible(true);
@@ -1174,14 +1182,16 @@ public class GameMapController {
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
         Scene sc = window.getScene();
         if( stageLabel.getText().equals("BUY STAGE"))
+
         {   Player p = gm.getPlayers()[gm.getWhoseTurn()];
             Region[] all = gm.getRegions();
             for( int i = 0; i < all.length; i++)
             {
-                if( !p.hasRegion(i))
+                SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                region.setDisable(true);
+                if( p.hasRegion(i))
                 {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
-                    region.setDisable(true);
+                    region.setDisable(false);
                 }
             }
             TurnManager tm = gm.getTm();
@@ -1244,8 +1254,74 @@ public class GameMapController {
         {
             Player[] players = gm.getPlayers();
             Player p = players[gm.getWhoseTurn()];
+            Region[] allRegion = gm.getRegions();
+
+            if( gm.isLast(p) ){
+                gm.operationsAfterLastPlayer(allRegion, gm.getTurnCount());
+                gm.setTurnCount(gm.getTurnCount() + 1);
+            }
+
+            gm.nextTurn();
+
+            Player p2 = gm.getPlayers()[gm.getWhoseTurn()];
 
 
+            File imageFile = new File(p2.getImageUrl().substring(6));
+            Image image = new Image(imageFile.toURI().toString());
+            imageTurn.setImage(image);
+            ImageView playerTurnImage = (ImageView) sc.lookup("#turn" + (p.getId() + 1)  );
+            playerTurnImage.setVisible(false);
+
+            playerImg1.setDisable(true);
+            playerImg2.setDisable(true);
+            playerImg3.setDisable(true);
+            playerImg4.setDisable(true);
+
+            for(int i = 0; i <players.length; i++)
+            {
+                if( i == 0){
+                    if( 0 == gm.getWhoseTurn())
+                    {
+                        turn1.setVisible(true);
+                    }
+                    if( players[0].isEliminated())
+                    {
+                        elim1.setVisible(true);
+                    }
+                }
+                else if( i == 1){
+                    if( 1 == gm.getWhoseTurn())
+                    {
+                        turn2.setVisible(true);
+                    }
+                    if( players[1].isEliminated())
+                    {
+                        elim2.setVisible(true);
+                    }
+                }
+                else if( i == 2){
+                    if( 2 == gm.getWhoseTurn())
+                    {
+                        turn3.setVisible(true);
+                    }
+                    if( players[2].isEliminated())
+                    {
+                        elim3.setVisible(true);
+                    }
+                }
+                else if( i == 3){
+                    if( 3 == gm.getWhoseTurn())
+                    {
+                        turn3.setVisible(true);
+                    }
+                    if( players[3].isEliminated())
+                    {
+                        elim3.setVisible(true);
+                    }
+                }
+            }
+
+            gm.setStageString("BUY STAGE");
             stageLabel.setText("BUY STAGE");
             gm.setInstruction("Click on your avatar to buy or organize event");
             instructionLabel.setText("Click on your avatar to buy or organize event");

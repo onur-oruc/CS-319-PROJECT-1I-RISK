@@ -29,6 +29,7 @@ public class GameManager {
 
     private boolean secretMission;
     private SeasonType season;
+
     private int turnCount;
     private int winnerID;
     private String stageString;
@@ -122,6 +123,14 @@ public class GameManager {
         return stageString;
     }
 
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    public void setTurnCount(int turnCount) {
+        this.turnCount = turnCount;
+    }
+
     public void setStageString(String stageString) {
         this.stageString = stageString;
     }
@@ -187,5 +196,30 @@ public class GameManager {
         if ( turnCount % SEASON_PERIOD == 0) {
             nextSeason();
         }
+    }
+
+    public void nextTurn() {
+        for ( int i = whoseTurn +1; i < players.length; i++) {
+            if (!players[i].isEliminated()) {
+                whoseTurn =i;
+                tm = new TurnManager(players[whoseTurn],players,regions,continents,plague,weather,season,turnCount);
+                return;
+            }
+        }
+        for ( int i = 0; i < whoseTurn; i++) {
+            if(!players[i].isEliminated()) {
+                whoseTurn = i;
+                tm = new TurnManager(players[whoseTurn],players,regions,continents,plague,weather,season,turnCount);
+                return;
+            }
+        }
+    }
+
+    public boolean isLast( Player player ){
+        int idOfLastPlayer = 0;
+        for( int i = 0; i < numPlayers; i++)
+            if( !players[i].isEliminated())
+                idOfLastPlayer = i;
+        return idOfLastPlayer == player.getId() ;
     }
 }
