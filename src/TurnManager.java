@@ -554,6 +554,26 @@ public class TurnManager {
         }
     }
     
+    // methods
+
+    /**
+     * This method resets drought and frost in the whole map
+     * Updates the season in the region according to season
+     * change period
+     * @param regions in the whole game
+     * @param turnCount of the game incremented by one after the last challenger played.
+     */
+    public void operationsAfterLastPlayer( Region[] regions, int turnCount) {
+        for ( Region region : regions) {
+            region.setDrought(false);
+            region.setFrost(false);
+        }
+        
+        // update season
+        if ( turnCount % SEASON_PERIOD == 0) {
+            nextSeason();
+        }
+    }
     public void moveCommander() {
         // todo
     }
