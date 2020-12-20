@@ -508,7 +508,52 @@ public class TurnManager {
         return numTroops; // troops that arrived at the destination
     }
 
+    /**
+     * This method checks whether a player can combine three different cards
+     * or three identical cards.
+     *
+     * @param cardsToCombine
+     */
+    public void combineCards(ArrayList<TroopCardType> cardsToCombine) {
+        // new arraylist to store different type of troop cards
+        ArrayList<TroopCardType> possibleCombination = new ArrayList<>();
 
+        // check whether three different cards can be combined
+        for (TroopCardType card : cardsToCombine) {
+            if (!possibleCombination.contains(card))
+                possibleCombination.add(card);
+        }
+        if (possibleCombination.size() == 3) {
+            additionalTroops += 8;
+            // remove combined cards from players' troop cards.
+            for (TroopCardType cardToRemove : possibleCombination) {
+                player.removeCard(cardToRemove);
+            }
+            return;
+        }
+
+        // check whether three identical cards can be combined
+        possibleCombination = new ArrayList<>();
+        for (TroopCardType troopCard: cardsToCombine) {
+            int numSameCard = 0;
+            for (TroopCardType card : cardsToCombine) {
+                if (troopCard == card) {
+                    possibleCombination.add(card);
+                    numSameCard++;
+                }
+                if (numSameCard == 3) {
+                    additionalTroops += 8;
+                }
+            }
+        }
+        if (possibleCombination.size() == 3) {
+            // remove combined cards from players' troop cards.
+            for (TroopCardType card: possibleCombination) {
+                player.removeCard(card);
+            }
+        }
+    }
+    
     public void moveCommander() {
         // todo
     }
