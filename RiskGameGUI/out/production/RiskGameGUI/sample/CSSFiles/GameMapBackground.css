@@ -42,3 +42,8 @@
     -fx-background-image: url('../Images/ok.jpeg');
     -fx-background-size: 100% 100%;
 }
+
+.pauseButton{
+    -fx-background-image: url('../Images/pause.png');
+    -fx-background-size: 100% 100%;
+}
