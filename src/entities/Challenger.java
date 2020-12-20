@@ -97,7 +97,11 @@ public abstract class Challenger {
 
         return false;
     }
-
+    
+    public void removeCard(TroopCardType troop) {
+        troopCards.remove(troop);
+    }
+    
     /**
      * This methods checks whether the enemy with enemyID
      * was eliminated by the challenger
