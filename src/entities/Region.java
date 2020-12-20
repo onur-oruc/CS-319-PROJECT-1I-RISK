@@ -147,6 +147,28 @@ public class Region {
         this.climate = climate;
     }
 
+    public void motivate() {
+        MotivationLevel mot = getMotivation();
+
+        if ( mot == MotivationLevel.NONE )
+            setMotivation( MotivationLevel.LOW );
+        else if ( mot == MotivationLevel.LOW )
+            setMotivation( MotivationLevel.NORMAL );
+        else if ( mot == MotivationLevel.NORMAL )
+            setMotivation( MotivationLevel.HIGH );
+    }
+
+    public void demotivate() {
+        MotivationLevel mot = getMotivation();
+
+        if ( mot == MotivationLevel.LOW )
+            setMotivation( MotivationLevel.NONE );
+        else if ( mot == MotivationLevel.NORMAL )
+            setMotivation( MotivationLevel.LOW );
+        else if ( mot == MotivationLevel.HIGH )
+            setMotivation( MotivationLevel.NORMAL );
+    }
+
 
     public ArrayList<Integer> getConnectedOwnedRegions( Region[] allRegions,  List<Integer> ownedRegionsByID ) {
 

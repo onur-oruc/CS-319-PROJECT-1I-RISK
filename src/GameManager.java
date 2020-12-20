@@ -1,6 +1,7 @@
 import entities.Continent;
 import entities.Player;
 import entities.Region;
+import enums.ClimateType;
 import enums.SeasonType;
 import mission.Mission;
 
@@ -14,6 +15,9 @@ public class GameManager {
     private final int NUMBER_OF_REGIONS = 42;
     private boolean gameContinues = false;
     private int SEASON_PERIOD = 2;
+    private double WEATHER_HIGH_PROB = 0.20;
+    private double WEATHER_MED_PROB  = 0.08;
+    private double WEATHER_LOW_PROB  = 0.03;
 
     private int numPlayers;
     private String[] playerNames;
@@ -131,6 +135,67 @@ public class GameManager {
             goldMines[i] = regions[i].hasGoldMine();
         }
         return goldMines;
+    }
+
+    /**
+     * This method will be used to change region weathers
+     *
+     */
+    public void emergeWeather() {
+        if (season == SeasonType.WINTER) {
+            for (Region region : regions) {
+                ClimateType climate = region.getClimate();
+                // calculate frost possibility
+                if (climate == ClimateType.COLD) { // % 20
+                    if (Math.random() < WEATHER_HIGH_PROB) {
+                        region.setFrost(true);
+                    }
+                } else if (climate == ClimateType.WARM) { // % 8
+                    if (Math.random() < WEATHER_MED_PROB) {
+                        region.setFrost(true);
+                    }
+                } else if (climate == ClimateType.HOT) { // % 3
+                    if (Math.random() < WEATHER_LOW_PROB) {
+                        region.setFrost(true);
+                    }
+                }
+            }
+        }
+        else if (season == SeasonType.SUMMER) {
+            for (Region region : regions) {
+                ClimateType climate = region.getClimate();
+                // calculate drought possibility
+                if (climate == ClimateType.HOT) { // % 20
+                    if (Math.random() < WEATHER_HIGH_PROB) {
+                        region.setDrought(true);
+                    }
+                } else if (climate == ClimateType.WARM) { // % 8
+                    if (Math.random() < WEATHER_MED_PROB) {
+                        region.setDrought(true);
+                    }
+                } else if (climate == ClimateType.COLD) { // % 3
+                    if (Math.random() < WEATHER_LOW_PROB) {
+                        region.setDrought(true);
+                    }
+                }
+            }
+        }
+        else { // SPRING and FALL
+            for (Region region : regions) {
+                ClimateType climate = region.getClimate();
+                // calculate frost and drought possibilities
+                if (climate == ClimateType.COLD) { // % 3
+                    if (Math.random() <= WEATHER_LOW_PROB ) {
+                        region.setFrost(true);
+                    }
+                }
+                else if (climate == ClimateType.HOT) { // % 3
+                    if (Math.random() <= WEATHER_LOW_PROB) {
+                        region.setDrought(true);
+                    }
+                }
+            }
+        }
     }
 
     /*public static void main(String[] args) throws Exception {

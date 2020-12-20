@@ -104,6 +104,10 @@ public abstract class Challenger {
         return false;
     }
 
+    public boolean hasRegion( int regionID ) {
+        return regionIds.contains(regionID);
+    }
+
     /**
      * This methods checks whether the enemy with enemyID
      * was eliminated by the challenger

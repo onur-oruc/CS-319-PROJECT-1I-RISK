@@ -2,6 +2,8 @@
 import entities.Continent;
 import entities.Player;
 import entities.Region;
+import enums.ClimateType;
+import enums.MotivationLevel;
 import mission.*;
 
 import java.io.BufferedReader;
@@ -62,6 +64,17 @@ public class MapManager {
 
         distributeRegions(regions,players);
         distributeTroops(regions,players);
+
+        for ( Region region : regions ) {
+            region.setMotivation(MotivationLevel.LOW);
+
+            if ( Math.random() < 0.34 )
+                region.setClimate(ClimateType.WARM);
+            else if ( Math.random() < 0.50 )
+                region.setClimate(ClimateType.COLD);
+            else
+                region.setClimate(ClimateType.HOT);
+        }
 
         arr.add(regions);
         arr.add(continents);
@@ -153,13 +166,14 @@ public class MapManager {
 
             for (Integer integer : list) {
                 // calculate the number of troops in a way that each
-                // region will have the same number of troops (if possible)
+                // region will have the same number of troops (or close as possible)
                 numTroopsToPlace = remainingNumTroops / numEmptyRegions;
                 regions[integer].setNumTroops(numTroopsToPlace);
                 remainingNumTroops -= numTroopsToPlace;
                 numEmptyRegions--;
             }
         }
+
     }
 
     /**

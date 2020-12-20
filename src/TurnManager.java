@@ -11,7 +11,7 @@ public class TurnManager {
     // constants
 
     private final int DROUGHT_LIMIT = 5;
-    private final double FROST_AVG_SURVIVING_PROPORTION = 0.5;
+    private final double FROST_AVG_SURVIVING_PROPORTION = 0.7;
 
     private final int MIN_ADDITIONAL_TROOPS = 3;
 
@@ -26,9 +26,7 @@ public class TurnManager {
     private final int PLAGUE_LIMIT = 10;
     private final int PLAGUE_RECOVER_LIMIT = 4;
     private final double PLAGUE_COEFFICIENT = 0.025;
-    private final double HIGH_PROBABILITY = 0.2;
-    private final double MEDIUM_PROBABILITY = 0.08;
-    private final double LOW_PROBABILITY = 0.03;
+    private final double PLAGUE_AVG_SURVIVING_PROPORTION = 0.30;
 
     // properties
     private Player player;
@@ -62,10 +60,6 @@ public class TurnManager {
     // methods
     public void playTurn() {
         beginTurnOps();
-        buy();
-        draft();
-        attack();
-        fortify();
         endTurnOps();
     }
 
@@ -73,13 +67,10 @@ public class TurnManager {
         System.out.println("***BEGIN");
 
         // plague
-        blackDeath();
+        blackDeath();           // todo
         recoverFromPlague();
 
-        // reset weathers in all regions
-
-
-
+        // reset weathers in all regions // done in GameManager ?
 
         // update player's money according to the the gold mined owned
         for ( Integer regionID : player.getRegionIds() ) {
@@ -99,192 +90,98 @@ public class TurnManager {
         System.out.println("BEGIN***\n");
     }
 
-    public void buy() {
+    public void buyMercenaries( int numMercenaries ) {
+        int money = player.getMoney();
+        int cost = numMercenaries * PRICE_OF_MERCENARY;
 
-        System.out.println("***BUY");
-
-        Scanner scan = new Scanner(System.in);
-        int input;
-
-        do {
-
-            int money = player.getMoney();
-            if (money < PRICE_OF_MERCENARY)
-                System.out.println("*mercenary red*");
-
-            if (money < PRICE_OF_ENTERTAINMENT)
-                System.out.println("*entertainment red*");
-
-            input = scan.nextInt();
-
-            if (input == 1) // if clicked on mercenary
-            {
-                if (money < PRICE_OF_MERCENARY)
-                    System.out.println("not enough money for mercenary");
-                else
-                {
-                    additionalTroops++;
-                    player.setMoney(money - PRICE_OF_MERCENARY);
-                }
-
-            }
-            else if (input == 2) // if clicked on entertainment
-            {
-                if (money < PRICE_OF_ENTERTAINMENT)
-                    System.out.println("not enough money for entertainment");
-                else
-                {
-                    regions[scan.nextInt()].setMotivation(MotivationLevel.HIGH);    // todo
-                    player.setMoney(money - PRICE_OF_ENTERTAINMENT);
-                }
-            }
-        } while ( input != 0 );
-
-        stage = StageType.DRAFT;
-        System.out.println("BUY***\n");
-
-    }
-
-    public void draft() {
-        System.out.println("***DRAFT");
-
-        Scanner scan = new Scanner(System.in);
-        Region selectedRegion;
-        int troopsToDraft;
-
-        while (additionalTroops > 0) {
-            System.out.println("There are " + additionalTroops + " troops to draft");
-
-            do {
-                System.out.println("Enter a region ID");
-                selectedRegion = regions[scan.nextInt()];
-            } while ( selectedRegion.getOwnerID() != player.getId() );
-
-            System.out.println("Enter no of troops to draft on the chosen region");
-            troopsToDraft = Math.min(scan.nextInt(), additionalTroops);
-
-            selectedRegion.setNumTroops( selectedRegion.getNumTroops() + troopsToDraft);
-
-            additionalTroops = additionalTroops - troopsToDraft;
+        if (money < cost)
+            System.out.println("not enough money for mercenary");
+        else
+        {
+            additionalTroops += numMercenaries;
+            player.setMoney(money - cost);
         }
-
-        stage = StageType.ATTACK;
-        System.out.println("DRAFT***\n");
-
     }
 
-    public void attack() {
+    public void organizeEntertainment( Region region ) {
+        int money = player.getMoney();
 
-        System.out.println("***ATTACK");
+        if ( money >= PRICE_OF_ENTERTAINMENT ) {
+            region.motivate();
+            player.setMoney(money - PRICE_OF_ENTERTAINMENT);
+        }
+    }
 
-        Scanner scan = new Scanner(System.in);
-        Region attackerRegion;
-        Region defenderRegion;
-        int numAttackerDice;
-        int numDefenderDice;
+    // assumes that the selected region is owned by the player on turn
+    public void draft( Region region, int numTroopsToDraft ) {
 
-        System.out.println("Choose an owned region to attack with or -1 to end");
-        int attackerRegionID = scan.nextInt();
+        if ( additionalTroops > numTroopsToDraft ) {
+            region.setNumTroops( region.getNumTroops() + numTroopsToDraft );
+            additionalTroops -= numTroopsToDraft;
+        }
+    }
 
-
-        while ( attackerRegionID >= 0 && attackerRegionID < regions.length && regions[attackerRegionID].getOwnerID() == player.getId() ) {
-
-            // do whiles are for exceptions
-            System.out.println("Attacking with " + attackerRegionID);
-            attackerRegion = regions[attackerRegionID];
-
-            ArrayList<Integer> closeEnemies = attackerRegion.getEnemyRegions( player.getRegionIds() );
-
-            for ( Integer i : closeEnemies ) {
-                System.out.print(i + ",");
+    public void commanderEffect() {
+        Region region;
+        for ( Integer regionID : player.getRegionIds() ) {
+            region = regions[regionID];
+            if ( region.hasCommander() ) {
+                region.motivate();
+                break;
             }
-            System.out.println();
+        }
+    }
 
-            do {
-                System.out.println("Choose an enemy region by ID");
-                defenderRegion = regions[scan.nextInt()];
-            } while ( !closeEnemies.contains(defenderRegion.getRegionID()) );
+    // use getEnemyRegions() method beforehand
+    // returns an ArrayList<Object> of three which contains attacker's dice, defender's dice, loss of both sides ([0]: attacker's loss, [1]: defender's loss [1])
+    public ArrayList<Object> oneTimeAttack( Region attackerRegion, int numAttackerDice, Region defenderRegion) {
 
-            do {
-                System.out.println("Enter no of dice to use: 1 - " + Math.min(attackerRegion.getNumTroops() - 1, MAX_NUM_ATTACKERS));
-                numAttackerDice = Math.min(attackerRegion.getNumTroops() - 1, scan.nextInt());
-                numDefenderDice = Math.min(defenderRegion.getNumTroops(), MAX_NUM_DEFENDERS);
-                System.out.println("Num troops\t: " + attackerRegion.getNumTroops() + "\t: " + defenderRegion.getNumTroops());
-                System.out.println("Num dice\t: " + numAttackerDice + "\t: " + numDefenderDice);
-            } while ( numAttackerDice > 0 && oneTimeAttack(attackerRegion, numAttackerDice, defenderRegion, numDefenderDice) );
+        int numDefenderDice = Math.min(defenderRegion.getNumTroops(), MAX_NUM_DEFENDERS);
 
-            // conquering case
-            if ( defenderRegion.getNumTroops() <= 0 ) {
-                System.out.println("Enemy region with ID " + defenderRegion.getRegionID() + " is conquered!");
-                System.out.println("How many troops go there? At least " + numAttackerDice + " troops should go." );
+        ArrayList<Object> arr = new ArrayList<Object>();
+        arr.add( Dice.rollDice( numAttackerDice, attackerRegion.getMotivation()));
+        arr.add( Dice.rollDice( numDefenderDice, defenderRegion.getMotivation()));
 
-                Player loser = players[defenderRegion.getOwnerID()];
+        int[] loss = Dice.compareDice( (ArrayList<Integer>) arr.get(0), (ArrayList<Integer>) arr.get(1) );
+        attackerRegion.setNumTroops(attackerRegion.getNumTroops() - loss[0]);
+        defenderRegion.setNumTroops(defenderRegion.getNumTroops() - loss[1]);
 
-                defenderRegion.setOwnerID(player.getId());
-                player.addRegion(defenderRegion.getRegionID());
-                loser.removeRegion(defenderRegion.getRegionID());
+        arr.add(loss);
+
+        // conquering case
+        if ( defenderRegion.getNumTroops() <= 0 ) {
+            Player loser = players[defenderRegion.getOwnerID()];
+            defenderRegion.setOwnerID(player.getId());
+            player.addRegion(defenderRegion.getRegionID());
+            loser.removeRegion(defenderRegion.getRegionID());
+
+            // This segment might become invalid if the rule about commander repeatedly respawning is changed
+            if ( loser.getCommanderLocation() == defenderRegion.getOwnerID() ) {
 
                 if ( loser.isEliminated() )
                 {
                     for ( TroopCardType card : loser.getTroopCards()) {
                         player.addTroopCard(card);
                     }
-
                     loser.setTroopCards(null);
+
+                    defenderRegion.setHasCommander(false);
                 }
-
-                getsCard = true;
-
-                int numTroopsToMove = Math.max(scan.nextInt(),numAttackerDice);    // the troops you attack with have to move to the conquered region
-                moveTroops(attackerRegion,defenderRegion,numTroopsToMove);
-
-                // move commander on this stage todo
+                else {
+                    int destinationID = loser.getRegionIds().get((int) (Math.random() * loser.getRegionCount()));
+                    moveCommander(regions[destinationID]);
+                }
             }
-
-            System.out.println("Choose an owned region to attack with OR enter -1 to quit pattern");
-            attackerRegionID = scan.nextInt();
+            getsCard = true;
         }
-
-        stage = StageType.FORTIFY;
-        System.out.println("ATTACK***\n");
+        return arr;
     }
 
-    public void fortify() {
-
-        System.out.println("***FORTIFY");
-
-        Scanner scan = new Scanner(System.in);
-        Region origin, destination;
-        int numTroopsToMove;
-
-        System.out.println("Choose an owned region to move troops FROM");
-        do {
-            System.out.println("Enter a region ID");
-            origin = regions[scan.nextInt()];
-        } while ( origin.getOwnerID() != player.getId() && (origin.getNumTroops() == 1) );
-
-        System.out.println("Choose an owned connected region to move troops TO");
-        ArrayList<Integer> connectedOwnedRegions;
-
-        do {
-            connectedOwnedRegions = origin.getConnectedOwnedRegions(regions, player.getRegionIds());
-
-            for ( Integer i : connectedOwnedRegions) {
-                System.out.print( i + ",");
-            }
-            System.out.println("\nEnter a region ID from above");
-            destination = regions[scan.nextInt()];
-
-        } while ( !connectedOwnedRegions.contains( destination.getRegionID() ));
-
-        System.out.println("How many troops should be moved? From 1 to " + (origin.getNumTroops() - 1));
-        numTroopsToMove = scan.nextInt();
-
-        moveTroops(origin,destination,numTroopsToMove);
-
-        stage = StageType.END;
-        System.out.println("FORTIFY***\n");
+    // use getConnectedOwnedRegions() method beforehand
+    public void fortify( Region origin, int troopsToMove, Region destination) {
+        moveTroops(origin,troopsToMove,destination);
     }
+
 
     public void endTurnOps() {
         System.out.println("***END TURN");
@@ -292,7 +189,7 @@ public class TurnManager {
         // possible season change
         // possible weather updates
         // possible plague updates
-        spreadPlague();
+        emergePlague();
 
         // possible motivation updates
         // possible gold mine appearances
@@ -304,122 +201,10 @@ public class TurnManager {
     }
 
     /**
-     * This method will be used to change region weathers
-     *
-     */
-    public void emergeWeather() {
-        if (season == SeasonType.WINTER) {
-            for (Region region : regions) {
-                region.setDrought(false);
-                ClimateType climate = region.getClimate();
-
-                // calculate frost possibility
-                if (climate == ClimateType.COLD) { // % 20
-                    if (Math.random() <= HIGH_PROBABILITY ) {
-                        region.setFrost(true);
-                    }
-                }
-                else if (climate == ClimateType.HOT) { // % 3
-                    if (Math.random() <= LOW_PROBABILITY) {
-                        region.setFrost(true);
-                    }
-                }
-                else if (climate == ClimateType.WARM) { // % 8
-                    if (Math.random() <= MEDIUM_PROBABILITY) {
-                        region.setFrost(true);
-                    }
-                }
-            }
-        }
-        else if ( season == SeasonType.SPRING) {
-            for (Region region: regions) {
-                ClimateType climate = region.getClimate();
-
-                if (climate == ClimateType.COLD) {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.75)) {
-                        region.setFrost(true);
-                    }
-                    else if (Math.random() <= MEDIUM_PROBABILITY*(0.25)) {
-                        region.setDrought(true);
-                    }
-                }
-                else if ( climate == ClimateType.HOT) {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.25)) {
-                        region.setFrost(true);
-                    }
-                    else if (Math.random() <= MEDIUM_PROBABILITY*(0.75)) {
-                        region.setDrought(true);
-                    }
-                }
-                else {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.50)) {
-                        region.setFrost(true);
-                    }
-                    else if (Math.random() <= MEDIUM_PROBABILITY*(0.50)) {
-                        region.setDrought(true);
-                    }
-                }
-
-            }
-        }
-        else if (season == SeasonType.SUMMER) {
-            for (Region region : regions) {
-                region.setFrost(false);
-                ClimateType climate = region.getClimate();
-
-                // calculate drought possibility
-                if (climate == ClimateType.COLD) { // % 8
-                    if (Math.random() <= LOW_PROBABILITY ) {
-                        region.setDrought(true);
-                    }
-                }
-                else if (climate == ClimateType.HOT) { // % 3
-                    if (Math.random() <= HIGH_PROBABILITY) {
-                        region.setDrought(true);
-                    }
-                }
-                else if (climate == ClimateType.WARM) { // % 20
-                    if (Math.random() <= MEDIUM_PROBABILITY) {
-                        region.setDrought(true);
-                    }
-                }
-            }
-        }
-        else { // fall
-            for (Region region: regions) {
-                ClimateType climate = region.getClimate();
-
-                if ( climate == ClimateType.COLD) {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.25)) {
-                        region.setDrought(true);
-                    } else if (Math.random() <= MEDIUM_PROBABILITY*(0.75)) {
-                        region.setFrost(true);
-                    }
-                }
-                else if ( climate == ClimateType.HOT) {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.75)) {
-                        region.setDrought(true);
-                    } else if (Math.random() <= MEDIUM_PROBABILITY*(0.25)) {
-                        region.setFrost(true);
-                    }
-                }
-                else {
-                    if (Math.random() <= MEDIUM_PROBABILITY*(0.50)) {
-                        region.setDrought(true);
-                    } else if (Math.random() <= MEDIUM_PROBABILITY*(0.50)) {
-                        region.setFrost(true);
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
      * This method calculates the possibility of occurring
      * plague in the regions with troops more than plague limit
      */
-    private void spreadPlague() {
+    private void emergePlague() {
         int numTroops;
         double plagueRisk;
 
@@ -439,7 +224,16 @@ public class TurnManager {
     }
 
     private void blackDeath() {
+        int numTroops;
+        Region region;
+        for (Integer regionID : player.getRegionIds()) {
+            region = regions[regionID];
 
+            if ( region.hasPlague()) {
+                numTroops = region.getNumTroops();
+                region.setNumTroops( (int)( numTroops * PLAGUE_AVG_SURVIVING_PROPORTION) );
+            }
+        }
     }
 
     /**
@@ -449,12 +243,14 @@ public class TurnManager {
      */
     private void recoverFromPlague() {
         int numTroops;
-
+        Region region;
         for (Integer regionID : player.getRegionIds()) {
-            numTroops = regions[regionID].getNumTroops();
-            if ( regions[regionID].hasPlague()) {
+            region = regions[regionID];
+            if ( region.hasPlague()) {
+                numTroops = region.getNumTroops();
                 if (numTroops <= PLAGUE_RECOVER_LIMIT) {
-                    regions[regionID].setPlague(false);
+                    region.setPlague(false);
+                    region.demotivate();
                 }
             }
         }
@@ -484,26 +280,10 @@ public class TurnManager {
 
 
 
-    // returns false if attacking path is no longer available
-    public boolean oneTimeAttack( Region attacker, int numAttackerDice, Region defender, int numDefenderDice ) {
-
-        int[] loss = Dice.compareDice(  Dice.rollDice( numAttackerDice, attacker.getMotivation()),
-                                        Dice.rollDice( numDefenderDice, defender.getMotivation()));
-
-        attacker.setNumTroops( attacker.getNumTroops() - loss[0] );
-        defender.setNumTroops( defender.getNumTroops() - loss[1] );
-
-        System.out.println("Loss\t\t: -" + loss[0] + "\t: -" + loss[1]);
 
 
-        if ( defender.getNumTroops() <= 0 || attacker.getNumTroops() <= 1 ) // if pattern is unavailable
-            return false;
 
-        return true;
-    }
-
-
-    public int moveTroops( Region origin, Region destination, int numTroops)
+    private int moveTroops( Region origin, int numTroops, Region destination)
     {
         if ( numTroops > 0 )
         {
@@ -513,7 +293,6 @@ public class TurnManager {
                 numTroops = Math.min( numTroops, DROUGHT_LIMIT );   // (EXCEPTION) max no of troops that can be moved from a region with drought
 
             origin.setNumTroops( origin.getNumTroops() - numTroops );   // troops depart from origin
-            System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops are sent.");
 
             if ( origin.hasFrost() )
                 numTroops = (int) (numTroops * FROST_AVG_SURVIVING_PROPORTION); // only a proportion survives the frost
@@ -523,14 +302,9 @@ public class TurnManager {
 
                 if ( origin.hasPlague() ) {
                     destination.setPlague(true);    // plague is spread
-                    System.out.println("Region " + destination.getRegionID() + " has the plague now");
                 }
-
             }
-
         }
-
-        System.out.println("From " + origin.getRegionID() + " to " + destination.getRegionID() + ", " + numTroops + " troops arrived alive");
         return numTroops; // troops that arrived at the destination
     }
 
@@ -539,5 +313,22 @@ public class TurnManager {
         regions[player.getCommanderLocation()].setHasCommander(false);
         destination.setHasCommander(true);
         player.setCommanderLocation(destination.getRegionID());
+    }
+
+    public int getAdditionalTroops() {
+        return additionalTroops;
+    }
+
+    public void nextStage() {
+        if ( stage == StageType.BEGIN )
+            stage = StageType.BUY;
+        else if ( stage == StageType.BUY )
+            stage = StageType.DRAFT;
+        else if ( stage == StageType.DRAFT )
+            stage = StageType.ATTACK;
+        else if ( stage == StageType.ATTACK )
+            stage = StageType.FORTIFY;
+        else if ( stage == StageType.FORTIFY )
+            stage = StageType.END;
     }
 }
