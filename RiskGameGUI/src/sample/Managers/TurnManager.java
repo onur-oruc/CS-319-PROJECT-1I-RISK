@@ -78,6 +78,10 @@ public class TurnManager implements Serializable {
         endTurnOps();
     }*/
 
+    public int getPRICE_OF_MERCENARY() {
+        return PRICE_OF_MERCENARY;
+    }
+
     public void beginTurnOps() {
         System.out.println("***BEGIN");
 

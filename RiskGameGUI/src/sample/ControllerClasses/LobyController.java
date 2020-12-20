@@ -22,7 +22,14 @@ import sample.Entities.*;
 import sample.Managers.*;
 import java.io.*;
 
-
+/**
+ * This class will be used to control loby user interface
+ * From the loby user interface, information about the game is acquired
+ * such as player number, mission, plague and weather selection
+ * By using these as a parameter players and game manager is initialized
+ * Then passed to the GameMapController class
+ * @author Emin Adem Buran
+ */
 public class LobyController {
 
     MediaPlayer music;
@@ -56,6 +63,14 @@ public class LobyController {
     @FXML
     private TextField playerName1, playerName2, playerName3, playerName4;
 
+
+    /**
+     * This method listens for the actions on the back button
+     * When the button is on action new scene is created with
+     * MainMenu fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedBack(ActionEvent event) throws IOException {
         FXMLLoader  loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("MainMenu.fxml"));
@@ -68,6 +83,15 @@ public class LobyController {
         window.show();
     }
 
+
+    /**
+     * This method listens for the actions on the start game button
+     * When the button is on action new scene is created with GameMap fxml file
+     * According to the selection of the player, this method constructs players
+     * and GameManager objects and passes them to the GameMapController class
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void startGameClicked(ActionEvent event) throws Exception {
 
         /*Parent root = FXMLLoader.load(getClass().getResource("GameMap.fxml"));*/
@@ -142,6 +166,13 @@ public class LobyController {
         window.show();
     }
 
+
+    /**
+     * This method initializes required adjustments for the loby controller class
+     * It initializes the combo boxes by fetching the images
+     * This method is public as it is used by other controller classes and fxml file
+     * @param m
+     */
     public void initialize( MediaPlayer m) throws FileNotFoundException {
 
         music = m;
@@ -171,9 +202,16 @@ public class LobyController {
         acb4 = createComboBox(avatars);*/
     }
 
+
+    /**
+     * This method listens for the actions on the player count combo box
+     * It gets the value of selection which is equal to player count
+     * According to the player count this method sets some text fields
+     * and stack panes visible
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void comboAction(ActionEvent event) {
-
-
         if(playerCount.getValue().equals("2"))
         {
             stackPane1.setVisible(true);
@@ -222,6 +260,14 @@ public class LobyController {
 
     }
 
+
+    /**
+     * This method fetches images by using their directories
+     * Creates files accordingly and adds them into the observable list
+     * This method is private as it is an auxiliary method that is needed only in
+     * initialize() method
+     * @return observable list of images
+     */
     private ObservableList<Image> fetchImages() throws FileNotFoundException {
         final ObservableList<Image> data = FXCollections.observableArrayList();
         // icon license: CC Attribution-Noncommercial-Share Alike 3.0
@@ -243,6 +289,15 @@ public class LobyController {
         return data;
     }
 
+
+
+    /**
+     * This method constructs combo box by using images which are passed as a parameter
+     * This method is private as it is an auxiliary method that is needed only in
+     * initialize() method
+     * @param data
+     * @return combo box with images
+     */
     private ComboBox<Image> createComboBox(  ObservableList<Image> data) {
         ComboBox<Image> combo = new ComboBox<>();
         combo.getItems().addAll(data);
@@ -253,6 +308,11 @@ public class LobyController {
     }
 
 
+
+    /**
+     * This class create custom imagelists which contains image
+     * @author Emin Adem Buran
+     */
     class ImageListCell extends ListCell<Image> {
         private final ImageView view;
 
@@ -260,7 +320,6 @@ public class LobyController {
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             view = new ImageView();
         }
-
         @Override protected void updateItem(Image item, boolean empty) {
             super.updateItem(item, empty);
 

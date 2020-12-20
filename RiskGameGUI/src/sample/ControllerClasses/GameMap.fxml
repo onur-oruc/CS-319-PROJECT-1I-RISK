@@ -805,7 +805,7 @@
       <Button fx:id="climateButton" layoutX="1717.0" layoutY="36.0" mnemonicParsing="false" onAction="#showClimate" prefHeight="25.0" prefWidth="106.0" text="Show Climate" visible="false" />
       <AnchorPane fx:id="buyPanel" layoutX="795.0" layoutY="202.0" prefHeight="451.0" prefWidth="381.0" style="-fx-background-color: white;" styleClass="playerpanel" stylesheets="@../CSSFiles/GameMapBackground.css" visible="false">
          <children>
-            <Button fx:id="buyExit" layoutX="357.0" mnemonicParsing="false" onAction="#buyProfileExit" prefHeight="25.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
+            <Button fx:id="buyExit" layoutX="357.0" mnemonicParsing="false" onAction="#panelExit" prefHeight="25.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
             <Button fx:id="hire" layoutX="148.0" layoutY="138.0" mnemonicParsing="false" onAction="#hireClicked" prefHeight="25.0" prefWidth="102.0" text="Hire Mercanery" />
             <Label fx:id="playerMoney" layoutX="192.0" layoutY="29.0" prefHeight="35.0" prefWidth="67.0" text="      $1000" textAlignment="CENTER" />
             <ComboBox fx:id="chooseTroopNumber" layoutX="160.0" layoutY="86.0" prefHeight="35.0" prefWidth="72.0" />
@@ -858,7 +858,7 @@
             <ImageView fx:id="dice3" fitHeight="40.0" fitWidth="41.0" layoutX="93.0" layoutY="273.0" pickOnBounds="true" preserveRatio="true" styleClass="csslabel" />
             <ImageView fx:id="dice4" fitHeight="48.0" fitWidth="49.0" layoutX="265.0" layoutY="129.0" pickOnBounds="true" preserveRatio="true" styleClass="csslabel" />
             <ImageView fx:id="dice5" fitHeight="48.0" fitWidth="52.0" layoutX="267.0" layoutY="212.0" pickOnBounds="true" preserveRatio="true" styleClass="csslabel" />
-            <Button fx:id="attackExit" layoutX="389.0" layoutY="2.0" mnemonicParsing="false" onAction="#buyProfileExit" prefHeight="25.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
+            <Button fx:id="attackExit" layoutX="389.0" layoutY="2.0" mnemonicParsing="false" onAction="#panelExit" prefHeight="25.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
             <Label layoutX="120.0" layoutY="19.0" prefHeight="35.0" prefWidth="176.0" />
             <Button fx:id="attackButton1" layoutX="5.0" layoutY="54.0" mnemonicParsing="false" onAction="#attackClicked" prefHeight="37.0" prefWidth="115.0" text="Attack With 1 Dice" />
             <Button fx:id="attackButton2" layoutX="147.0" layoutY="54.0" mnemonicParsing="false" onAction="#attackClicked" prefHeight="37.0" prefWidth="124.0" text="Attack With 2 Dice" />
@@ -874,7 +874,7 @@
                   <Image url="@../Images/cool_police.png" />
                </image>
             </ImageView>
-            <Button fx:id="exitTurn" layoutX="249.0" layoutY="-1.0" mnemonicParsing="false" onAction="#buyProfileExit" prefHeight="28.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
+            <Button fx:id="exitTurn" layoutX="249.0" layoutY="-1.0" mnemonicParsing="false" onAction="#panelExit" prefHeight="28.0" prefWidth="29.0" styleClass="buttonExit" stylesheets="@../CSSFiles/GameMapBackground.css" />
             <Label layoutX="91.0" layoutY="27.0" prefHeight="26.0" prefWidth="72.0" text="Next Turn" />
          </children>
       </AnchorPane>

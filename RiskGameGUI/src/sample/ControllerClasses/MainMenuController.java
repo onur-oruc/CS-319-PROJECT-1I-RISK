@@ -15,9 +15,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * This class will be used to control main menu user interface
+ * There are six different buttons on the main menu
+ * These are NewGame, Load Game, Rules, Options, Credits, Exit buttons
+ * When these buttons are on clicked, a new scene is initialized
+ * and displayed on the screen
+ * @author Emin Adem Buran
+ */
 public class MainMenuController {
     MediaPlayer music;
 
+    /**
+     * This method listens for the actions on the new game button
+     * When the button is on action new scene is created with
+     * Loby fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedNewGame(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();
@@ -31,6 +46,14 @@ public class MainMenuController {
         window.show();
     }
 
+
+    /**
+     * This method listens for the actions on the options button
+     * When the button is on action new scene is created with
+     * Settings fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedOptions(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();
@@ -44,6 +67,14 @@ public class MainMenuController {
         window.show();
     }
 
+
+    /**
+     * This method listens for the actions on the load game button
+     * When the button is on action new scene is created with
+     * LoadGame fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedLoadGame(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();
@@ -57,6 +88,14 @@ public class MainMenuController {
         window.show();
     }
 
+
+    /**
+     * This method listens for the actions on the rules button
+     * When the button is on action new scene is created with
+     * Rules fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedRules(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();
@@ -70,6 +109,14 @@ public class MainMenuController {
         window.show();
     }
 
+
+    /**
+     * This method listens for the actions on the credits button
+     * When the button is on action new scene is created with
+     * Credits fxml file and displayed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedCredits(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();
@@ -83,6 +130,14 @@ public class MainMenuController {
         window.show();
     }
 
+    /**
+     * This method listens for the actions on the exit button
+     * When the button is on action alert box is created
+     * in order to confirm the exit decision
+     * If the decision confirmed, window is closed
+     * This method is public as it is connected to fxml file
+     * @param event
+     */
     public void onClickedExit(ActionEvent event) throws IOException {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -98,12 +153,16 @@ public class MainMenuController {
         }
     }
 
+
+    /**
+     * This method initializes required adjustments for the main menu class
+     * It assigns the media player to the passed parameter
+     * This method is public as it is used by other controller classes and fxml file
+     * @param m
+     */
     public void initialize( MediaPlayer m )
     {
         music = m;
     }
-
-
-
 
 }
