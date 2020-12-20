@@ -1,6 +1,8 @@
 package sample.Enums;
 
-public enum MotivationLevel {
+import java.io.Serializable;
+
+public enum MotivationLevel  implements Serializable {
     HIGH,
     NORMAL,
     LOW,

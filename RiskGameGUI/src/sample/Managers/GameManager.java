@@ -5,11 +5,12 @@ import sample.Entities.Region;
 import sample.Enums.SeasonType;
 import sample.Mission.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class GameManager {
+public class GameManager implements Serializable {
 
     // properties
     private final int NUMBER_OF_REGIONS = 42;
@@ -49,7 +50,7 @@ public class GameManager {
         this.season = SeasonType.SPRING;
         this.turnCount = 1;
         this.instruction = "Click on distribute regions to start game";
-        this.stageString = "INITIAL STAGE";
+        this.stageString = "BUY STAGE";
         // invalid winner id
         this.winnerID = -1;
         this.whoseTurn = 0;

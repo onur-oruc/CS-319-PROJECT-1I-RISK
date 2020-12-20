@@ -1,6 +1,8 @@
 package sample.Enums;
 
-public enum SeasonType {
+import java.io.Serializable;
+
+public enum SeasonType  implements Serializable {
     WINTER,
     SPRING,
     SUMMER,

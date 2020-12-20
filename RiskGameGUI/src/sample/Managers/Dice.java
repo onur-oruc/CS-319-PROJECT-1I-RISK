@@ -1,10 +1,12 @@
 package sample.Managers;
 
 import sample.Enums.MotivationLevel;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Dice {
+public class Dice implements Serializable {
 
     // properties
 

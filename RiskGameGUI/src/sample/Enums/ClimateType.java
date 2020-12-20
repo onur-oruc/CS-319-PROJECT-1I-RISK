@@ -1,6 +1,8 @@
 package sample.Enums;
 
-public enum ClimateType {
+import java.io.Serializable;
+
+public enum ClimateType implements Serializable {
     COLD,
     WARM,
     HOT

@@ -2,6 +2,8 @@ package sample.Mission;
 
 import sample.Entities.Challenger;
 
+import java.io.Serializable;
+
 /**
  * This class will be used to check whether a challenger
  * eliminated with an enemy with a specific id.
@@ -9,7 +11,7 @@ import sample.Entities.Challenger;
  * @author Onur Oruç
  * @author Ömer Yavuz Öztürk
  */
-public class EliminateColorMission implements Mission {
+public class EliminateColorMission implements Mission, Serializable {
     // property(ies)
     private int playerToBeEliminated;
     private Challenger target;

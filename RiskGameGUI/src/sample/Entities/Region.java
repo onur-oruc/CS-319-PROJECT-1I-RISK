@@ -5,12 +5,13 @@ import sample.Enums.*;
 import java.io.BufferedReader;
         import java.io.FileReader;
         import java.io.IOException;
-        import java.lang.reflect.Array;
+import java.io.Serializable;
+import java.lang.reflect.Array;
         import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Region {
+public class Region implements Serializable {
 
     // properties
     private int continentID;

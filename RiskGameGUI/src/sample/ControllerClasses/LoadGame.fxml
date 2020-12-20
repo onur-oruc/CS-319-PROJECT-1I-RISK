@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="loadGame" prefHeight="1080.0" prefWidth="1920.0" styleClass="bodybg" stylesheets="@../CSSFiles/LoadGameBackground.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ControllerClasses.LoadGameController">
+    <children>
+        <Button fx:id="goBackButton" layoutX="496.0" layoutY="889.0" mnemonicParsing="false" onAction="#backButtonClicked" opacity="0.0" prefHeight="126.0" prefWidth="435.0" text="Go Back">
+            <font>
+                <Font size="36.0" />
+            </font></Button>
+        <ListView fx:id="gamesListView" fixedCellSize="100.0" layoutX="172.0" layoutY="197.0" prefHeight="534.0" prefWidth="1567.0" />
+        <Button fx:id="startGameButton" layoutX="994.0" layoutY="889.0" mnemonicParsing="false" onAction="#onClickedStartGame" opacity="0.0" prefHeight="117.0" prefWidth="427.0" text="Button" />
+    </children>
+</AnchorPane>

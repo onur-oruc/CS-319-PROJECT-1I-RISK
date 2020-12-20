@@ -3,10 +3,11 @@ package sample.Entities;
 import sample.Enums.TroopCardType;
 import sample.Mission.Mission;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public abstract class Challenger {
+public abstract class Challenger implements Serializable {
     // make properties private
     private String imageUrl;
 

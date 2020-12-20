@@ -6,11 +6,12 @@ import sample.Entities.Region;
 import sample.Enums.*;
 
 
+import java.io.Serializable;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class TurnManager {
+public class TurnManager implements Serializable {
     // constants
 
 
@@ -509,23 +510,20 @@ public class TurnManager {
             player.addRegion(defenderRegion.getRegionID());
             loser.removeRegion(defenderRegion.getRegionID());
 
-            // This segment might become invalid if the rule about commander repeatedly respawning is changed
             if ( loser.getCommanderLocation() == defenderRegion.getOwnerID() ) {
-
-                if ( loser.isEliminated() )
-                {
-                    for ( TroopCardType card : loser.getTroopCards()) {
-                        player.addTroopCard(card);
-                    }
-                    loser.setTroopCards(null);
-
-                    defenderRegion.setHasCommander(false);
-                }
-                else {
-                    int destinationID = loser.getRegionIds().get((int) (Math.random() * loser.getRegionCount()));
-                    moveCommander(regions[destinationID]);
-                }
+                //int destinationID = loser.getRegionIds().get((int) (Math.random() * loser.getRegionCount()));
+                //moveCommander(regions[destinationID]);
+                loser.setCommanderLocation(-1);
+                defenderRegion.setHasCommander(false);
             }
+
+            if ( loser.isEliminated() ) {
+                for ( TroopCardType card : loser.getTroopCards()) {
+                    player.addTroopCard(card);
+                }
+                loser.setTroopCards(null);
+            }
+
             getsCard = true;
         }
         return arr;
@@ -559,8 +557,12 @@ public class TurnManager {
 
 
     public void moveCommander( Region destination ) {
-        regions[player.getCommanderLocation()].setHasCommander(false);
-        destination.setHasCommander(true);
-        player.setCommanderLocation(destination.getRegionID());
+        if ( player.getRegionIds().contains( destination.getRegionID() )) {
+            if ( player.getCommanderLocation() >= 0 )
+                regions[player.getCommanderLocation()].setHasCommander(false);
+
+            destination.setHasCommander(true);
+            player.setCommanderLocation(destination.getRegionID());
+        }
     }
 }

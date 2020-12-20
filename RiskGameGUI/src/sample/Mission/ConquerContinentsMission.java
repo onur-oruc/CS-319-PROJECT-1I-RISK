@@ -3,6 +3,9 @@ package sample.Mission;
 import sample.Entities.Challenger;
 import sample.Entities.Continent;
 import sample.Entities.Player;
+
+import java.io.Serializable;
+
 /**
  * This class will be used to assign "conquer continents mission" to a player,
  * and to check whether the mission has been completed.
@@ -20,7 +23,7 @@ import sample.Entities.Player;
  * @author Ömer Yavuz Öztürk
  *
  */
-public class ConquerContinentsMission implements Mission {
+public class ConquerContinentsMission implements Mission, Serializable {
     // constants
     final int[] ASIA_SOUTH_AMERICA = {0, 1};
     final int[] ASIA_AFRICA = {0, 2};

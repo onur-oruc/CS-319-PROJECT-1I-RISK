@@ -1,6 +1,8 @@
 package sample.Enums;
 
-public enum TroopCardType {
+import java.io.Serializable;
+
+public enum TroopCardType implements Serializable {
     ARTILLERY,
     MERCENARY,
     MARINES,

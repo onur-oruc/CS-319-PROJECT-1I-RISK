@@ -25,7 +25,7 @@ public class Main extends Application{
         File file = new File(musicFile);
         Media sound = new Media(file.toURI().toString());
         MediaPlayer music = new MediaPlayer(sound);
-        //music.play();
+        music.play();
         primaryStage.setTitle("RiskGame");
         FXMLLoader  loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("ControllerClasses/MainMenu.fxml"));
@@ -42,7 +42,4 @@ public class Main extends Application{
     {
         launch(args);
     }
-
-
-
 }

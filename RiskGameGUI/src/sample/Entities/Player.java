@@ -4,9 +4,10 @@ import jdk.swing.interop.SwingInterOpUtils;
 import sample.Enums.TroopCardType;
 import sample.Mission.Mission;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player extends Challenger {
+public class Player extends Challenger implements Serializable {
     private boolean [] allies;
     final int STARTING_MONEY = 100;
 

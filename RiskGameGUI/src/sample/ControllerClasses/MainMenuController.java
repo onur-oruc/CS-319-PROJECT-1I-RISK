@@ -44,6 +44,19 @@ public class MainMenuController {
         window.show();
     }
 
+    public void onClickedLoadGame(ActionEvent event) throws IOException {
+
+        FXMLLoader  loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("LoadGame.fxml"));
+        Parent root = loader.load();
+        LoadGameController cc = loader.getController();
+        cc.initialize( music);
+        Scene ng =  new Scene(root);
+        Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        window.setScene(ng);
+        window.show();
+    }
+
     public void onClickedRules(ActionEvent event) throws IOException {
 
         FXMLLoader  loader = new FXMLLoader();

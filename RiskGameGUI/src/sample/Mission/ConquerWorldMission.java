@@ -3,7 +3,9 @@ package sample.Mission;
 import sample.Entities.Challenger;
 import sample.Entities.Player;
 
-public class ConquerWorldMission implements Mission {
+import java.io.Serializable;
+
+public class ConquerWorldMission implements Mission, Serializable {
     private int totalNumRegions;
     private String missionName;
 

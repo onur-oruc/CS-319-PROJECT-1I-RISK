@@ -3,6 +3,8 @@ package sample.Mission;
 import sample.Entities.Challenger;
 import sample.Entities.Region;
 
+import java.io.Serializable;
+
 
 /**
  * This class will be used to check whether a challenger occupied
@@ -10,7 +12,7 @@ import sample.Entities.Region;
  * @author Onur Oruç
  * @author Ömer Yavuz Öztürk
  */
-public class ConquerNumRegionMission implements Mission {
+public class ConquerNumRegionMission implements Mission, Serializable {
     // constants
     private final int NUM_REGION_TO_OCCUPY = 24;
     private final int MIN_NUM_TROOPS_ON_EACH = 1;

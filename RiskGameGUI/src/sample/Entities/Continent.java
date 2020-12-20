@@ -1,6 +1,8 @@
 package sample.Entities;
 
 
+import java.io.Serializable;
+
 /**
  * This class will be used to store name, id, # of regions that the continent has,
  * region ids, and bonus troops that will be given to the continent owner
@@ -10,7 +12,7 @@ package sample.Entities;
  * @author Onur Oruç
  *
  */
-public class Continent {
+public class Continent implements Serializable {
     // Asia, South America, Africa, North America, Australia, Europe
     // id:0,       1            2        3             4         5
 

@@ -1,6 +1,8 @@
 package sample.Enums;
 
-public enum StageType {
+import java.io.Serializable;
+
+public enum StageType implements Serializable {
     BEGIN,
     BUY,
     DRAFT,

@@ -8,10 +8,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +23,7 @@ import sample.Entities.Region;
 import sample.Enums.ClimateType;
 import sample.Enums.MotivationLevel;
 import sample.Enums.TroopCardType;
+import sample.Managers.FileManager;
 import sample.Managers.GameManager;
 import sample.Managers.TurnManager;
 import java.io.File;
@@ -43,9 +41,7 @@ public class GameMapController {
     @FXML
     AnchorPane gamerPanel, dicePanel, nextTurnPanel;
     @FXML
-    AnchorPane buyPanel;
-    @FXML
-    Stage stage;
+    AnchorPane buyPanel, pausePanel, savePanel, settingsPanel;
     @FXML
     Label instructionLabel, attackLabel;
     @FXML
@@ -61,7 +57,7 @@ public class GameMapController {
     @FXML
     Button done;
     @FXML
-    Button eventButton, attackButton1, attackButton2, attackButton3, nextStage, exitTurn, hire, combineButton;
+    Button eventButton, attackButton1, attackButton2, attackButton3, nextStage, exitTurn, hire, combineButton, pauseButton;
     @FXML
     Button attackExit, buyExit, distribute, climateButton, motivationButton;
     @FXML
@@ -74,27 +70,81 @@ public class GameMapController {
     ImageView turn1, turn2, turn3, turn4, elim1, elim2, elim3, elim4;
     @FXML
     ComboBox chooseTroopNumber, troopCardNum1, troopCardNum2, troopCardNum3, troopCardNum4;
+    @FXML
+    TextField saveGameName;
 
     public void distributeClicked( ActionEvent e)
     {
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
         Scene s = window.getScene();
-        instructionLabel.setText("Click on your avatar to buy or organize event");
-        gm.setInstruction("Click on your avatar to buy or organize event");
-        stageLabel.setText("BUY STAGE");
-        gm.setStageString("BUY STAGE");
+        instructionLabel.setText(gm.getInstruction());
+        stageLabel.setText(gm.getStageString());
 
         showMap(s);
         distribute.setVisible(false);
-        nextStage.setVisible(true);
+        Player p = gm.getPlayers()[gm.getWhoseTurn()];
         motivationButton.setVisible(true);
         climateButton.setVisible(true);
-        Player p = gm.getPlayers()[gm.getWhoseTurn()];
+        pauseButton.setVisible(true);
+        TurnManager tm = gm.getTm();
+        playerImg1.setDisable(true);
+        playerImg2.setDisable(true);
+        playerImg3.setDisable(true);
+        playerImg4.setDisable(true);
+        Region[] allRegions = gm.getRegions();
 
-        if( p.getMoney() < 5)
-            eventButton.setDisable(true);
+        if(stageLabel.getText().equals("BUY STAGE"))
+        {
+            nextStage.setVisible(true);
+            eventButton.setVisible(true);
+            if( p.getMoney() < 5)
+                eventButton.setDisable(true);
+            for( int i = 0; i < allRegions.length; i++)
+            {
+                SVGPath svg = (SVGPath) s.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
 
-        eventButton.setVisible(true);
+        }
+        else if(stageLabel.getText().equals("DRAFT STAGE"))
+        {
+            nextStage.setVisible(true);
+            if( tm.getAdditionalTroops() != 0)
+                nextStage.setDisable(true);
+            moveCom.setVisible(true);
+            for( int i = 0; i < allRegions.length; i++)
+            {
+                SVGPath svg = (SVGPath) s.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
+        }
+        else if(stageLabel.getText().equals("ATTACK STAGE"))
+        {
+            nextStage.setVisible(true);
+            for( int i = 0; i < allRegions.length; i++)
+            {
+                SVGPath svg = (SVGPath) s.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
+        }
+        else if(stageLabel.getText().equals("FORTIFY STAGE"))
+        {
+            nextStage.setVisible(true);
+            for( int i = 0; i < allRegions.length; i++)
+            {
+                SVGPath svg = (SVGPath) s.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
+        }
+
         int turn = gm.getWhoseTurn();
         if( turn == 0)
         {
@@ -167,6 +217,7 @@ public class GameMapController {
             if( p.getMoney() < 5)
                 eventButton.setDisable(true);
             eventButton.setVisible(true);
+            pauseButton.setVisible(true);
             /*playerImg1.setDisable(false);
             playerImg2.setDisable(false);
             playerImg3.setDisable(false);
@@ -194,6 +245,7 @@ public class GameMapController {
             instructionLabel.setText("Select a region you want to place troops");
             nextStage.setVisible(true);
             moveCom.setVisible(true);
+            pauseButton.setVisible(true);
         }
 
         else if( instructionLabel.getText().equals("Select a region you want to place troops"))
@@ -224,6 +276,7 @@ public class GameMapController {
             done.setVisible(true);
             nextStage.setVisible(false);
             moveCom.setVisible(false);
+            pauseButton.setVisible(false);
         }
         else if( instructionLabel.getText().equals("Select a region you want to attack from"))
         {
@@ -250,6 +303,7 @@ public class GameMapController {
             instructionLabel.setText("Select a region you want to attack");
             gm.setInstruction("Select a region you want to attack");
             nextStage.setVisible(false);
+            pauseButton.setVisible(false);
         }
         else if( instructionLabel.getText().equals("Select a region you want to attack"))
         {
@@ -275,9 +329,11 @@ public class GameMapController {
             }
             regionToAttack = all[Integer.parseInt(svgname.substring(3))];
             instructionLabel.setText("Select the number of dice");
+            gm.setInstruction("Select the number of dice");
             dicePanel.setVisible(true);
             motivationButton.setVisible(false);
             climateButton.setVisible(false);
+            pauseButton.setVisible(false);
         }
         else if( instructionLabel.getText().equals("Select a region you want to get troop"))
         {
@@ -310,6 +366,7 @@ public class GameMapController {
             gm.setInstruction("Select the number of troops to get");
             instructionLabel.setText("Select the number of troops to get");
             nextStage.setVisible(false);
+            pauseButton.setVisible(false);
         }
         else if( instructionLabel.getText().equals("Select a region you want to add troop"))
         {
@@ -337,6 +394,7 @@ public class GameMapController {
             gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
             nextStage.setVisible(true);
+            pauseButton.setVisible(true);
         }
     }
     public void attackClicked( ActionEvent e)
@@ -738,6 +796,7 @@ public class GameMapController {
             nextStage.setVisible(true);
             instructionLabel.setText("Select a region you want to attack from");
             gm.setInstruction("Select a region you want to attack from");
+            pauseButton.setVisible(true);
         }
         else if( instructionLabel.getText().equals("Select the number of troops you want to place"))
         {
@@ -759,6 +818,7 @@ public class GameMapController {
                 nextStage.setDisable(true);
             nextStage.setVisible(true);
             moveCom.setVisible(true);
+            pauseButton.setVisible(true);
         }
         else if( instructionLabel.getText().equals("Select the number of troops to get"))
         {
@@ -888,12 +948,18 @@ public class GameMapController {
     }
 
     public void onBackClicked(MouseEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("Loby.fxml"));
+        FXMLLoader  loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("MainMenu.fxml"));
+        Parent root = loader.load();
+        MainMenuController mmc = loader.getController();
+        mmc.initialize( music);
         Scene ng =  new Scene(root);
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
         window.setScene(ng);
+        window.setMaximized(true);
         window.show();
     }
+
 
     public void hireClicked(ActionEvent e)
     {
@@ -909,6 +975,7 @@ public class GameMapController {
             eventButton.setDisable(true);
         motivationButton.setVisible(true);
         climateButton.setVisible(true);
+        pauseButton.setVisible(true);
     }
     public void playerProfileClicked( MouseEvent e)
     {
@@ -1000,6 +1067,7 @@ public class GameMapController {
         eventButton.setVisible(false);
         motivationButton.setVisible(false);
         climateButton.setVisible(false);
+        pauseButton.setVisible(false);
     }
 
     public void combineClicked( ActionEvent e)
@@ -1036,6 +1104,7 @@ public class GameMapController {
         eventButton.setVisible(true);
         motivationButton.setVisible(true);
         climateButton.setVisible(true);
+        pauseButton.setVisible(true);
     }
     public void organizeEvent( ActionEvent e)
     {
@@ -1055,6 +1124,7 @@ public class GameMapController {
         instructionLabel.setText("Select a region to organize event");
         nextStage.setVisible(false);
         eventButton.setVisible(false);
+        pauseButton.setVisible(false);
     }
 
     public void buyProfileExit( ActionEvent e)
@@ -1076,6 +1146,7 @@ public class GameMapController {
                 eventButton.setVisible(false);
             motivationButton.setVisible(true);
             climateButton.setVisible(true);
+            pauseButton.setVisible(true);
         }
 
         else if( b == attackExit)
@@ -1095,6 +1166,7 @@ public class GameMapController {
             lbl.setText(""+regionToAttackWith.getNumTroops());
             lbl = (Label)sc.lookup("#lbl"+regionToAttack.getRegionID());
             lbl.setText(""+regionToAttack.getNumTroops());
+            pauseButton.setVisible(true);
         }
         else if( b == exitTurn)
         {
@@ -1116,7 +1188,41 @@ public class GameMapController {
             nextTurnPanel.setVisible(false);
             motivationButton.setVisible(true);
             climateButton.setVisible(true);
+            pauseButton.setVisible(true);
         }
+    }
+
+    public void pauseClicked( ActionEvent e)
+    {
+        pausePanel.setVisible(true);
+    }
+
+    public void saveGameOpened( ActionEvent e)
+    {
+        savePanel.setVisible(true);
+        pausePanel.setVisible(false);
+    }
+
+    public void saveGameClicked( ActionEvent e)
+    {
+        FileManager fm = new FileManager();
+        fm.writeGame( saveGameName.getText(), gm);
+        savePanel.setVisible(false);
+    }
+
+    public void exitPause( ActionEvent e)
+    {
+        pausePanel.setVisible(false);
+    }
+
+    public void changeSettingOpened( ActionEvent e)
+    {
+        pausePanel.setVisible(false);
+        settingsPanel.setVisible(true);
+    }
+    public void closeSetting( ActionEvent e)
+    {
+        settingsPanel.setVisible(false);
     }
 
     public void showClimate( ActionEvent e)
@@ -1204,6 +1310,7 @@ public class GameMapController {
             gm.setInstruction("Select a region you want to place troops");
             moveCom.setVisible(true);
             eventButton.setVisible(false);
+            pauseButton.setVisible(true);
         }
         else if( stageLabel.getText().equals("DRAFT STAGE") )
         {
@@ -1229,6 +1336,7 @@ public class GameMapController {
             gm.setStageString("ATTACK STAGE");
             instructionLabel.setText("Select a region you want to attack from");
             gm.setInstruction("ATTACK STAGE");
+            pauseButton.setVisible(true);
         }
         else if( stageLabel.getText().equals("ATTACK STAGE") )
         {
@@ -1249,6 +1357,7 @@ public class GameMapController {
             stageLabel.setText("FORTIFY STAGE");
             gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
+            pauseButton.setVisible(true);
         }
         else if( stageLabel.getText().equals("FORTIFY STAGE") )
         {
@@ -1329,6 +1438,7 @@ public class GameMapController {
             nextStage.setVisible(false);
             motivationButton.setVisible(false);
             climateButton.setVisible(false);
+            pauseButton.setVisible(false);
         }
     }
 
@@ -1338,6 +1448,7 @@ public class GameMapController {
         moveCom.setVisible(false);
         gm.setInstruction("Select a region to place commander");
         instructionLabel.setText("Select a region to place commander");
+        pauseButton.setVisible(false);
     }
 
     public void motivationClicked( ActionEvent e)

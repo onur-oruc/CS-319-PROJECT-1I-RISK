@@ -6,10 +6,7 @@ import sample.Enums.ClimateType;
 import sample.Enums.MotivationLevel;
 import sample.Mission.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -25,7 +22,7 @@ import java.util.Scanner;
  * date: 16.12.2020
  *
  */
-public class MapManager {
+public class MapManager implements Serializable {
 
     // add non random distribution? todo
 
