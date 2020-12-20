@@ -21,13 +21,7 @@ public class GameManager {
     private Player[] players;
     private Region[] regions;
     private Continent[] continents;
-
-
-
     private boolean plague;
-
-
-
     private boolean weather;
 
 

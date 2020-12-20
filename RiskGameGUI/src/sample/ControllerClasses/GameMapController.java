@@ -198,16 +198,17 @@ public class GameMapController {
 
         else if( instructionLabel.getText().equals("Select a region you want to place troops"))
         {
+
             Region[] all = gm.getRegions();
             TurnManager tm = gm.getTm();
             int totalTroop = tm.getAdditionalTroops();
-            troopLabel.setText(""+(totalTroop-1));
+            troopLabel.setText(""+totalTroop);
             ObservableList<String> numbers = FXCollections.observableArrayList();
             numbers.add("0");
             String svgname = ((SVGPath)event.getSource()).getId();
             regionToPlace = all[Integer.parseInt(svgname.substring(3))];
 
-            for( int i = 1; i <= totalTroop - 1; i++ ){
+            for( int i = 1; i <= totalTroop; i++ ){
                 String numberr = "" + i;
                 numbers.add(numberr);
             }
@@ -293,7 +294,7 @@ public class GameMapController {
                 String numberString = "" + i;
                 numbers.add(numberString);
             }
-            troopLabel.setText(""+(troopNumMax-troopNumMin));
+            troopLabel.setText(""+(troopNumMax-troopNumMin + 1));
             troopNo.setItems(numbers);
             troopNo.setValue("1");
 
@@ -328,7 +329,9 @@ public class GameMapController {
             for( int i = 0; i < allRegion.length ; i++){
                 SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
                 svg.setDisable(true);
-                if( p.hasRegion(i))
+                Region region = allRegion[i];
+                ArrayList<Integer> connectedOwnedRegions = region.getConnectedOwnedRegions(allRegion,p.getRegionIds());
+                if( p.hasRegion(i) && allRegion[i].getNumTroops() > 1 && !(connectedOwnedRegions.size() == 1))
                     svg.setDisable(false);
             }
             gm.setInstruction("Select a region you want to get troop");
@@ -538,8 +541,6 @@ public class GameMapController {
 
             }
             if( regionToAttack.getOwnerID() == p.getId()){
-
-
                 for( int i = 1; i < 6; i++)
                 {
                     Stage g = (Stage) ((Node)e.getSource()).getScene().getWindow();
@@ -752,6 +753,10 @@ public class GameMapController {
             done.setVisible(false);
             instructionLabel.setText("Select a region you want to place troops");
             gm.setInstruction("Select a region you want to place troops");
+            if( tm.getAdditionalTroops() == 0)
+                nextStage.setDisable(false);
+            else
+                nextStage.setDisable(true);
             nextStage.setVisible(true);
             moveCom.setVisible(true);
         }
@@ -1062,7 +1067,8 @@ public class GameMapController {
                 eventButton.setDisable(true);
             buyPanel.setVisible(false);
             nextStage.setVisible(true);
-            eventButton.setVisible(true);
+            if( gm.getStageString().equals("BUY STAGE"))
+                eventButton.setVisible(true);
             motivationButton.setVisible(true);
             climateButton.setVisible(true);
         }
@@ -1178,6 +1184,9 @@ public class GameMapController {
                     region.setDisable(true);
                 }
             }
+            TurnManager tm = gm.getTm();
+            if( tm.getAdditionalTroops() > 0)
+                nextStage.setDisable(true);
             eventButton.setVisible(false);
             stageLabel.setText("DRAFT STAGE");
             gm.setStageString("DRAFT STAGE");
@@ -1220,7 +1229,9 @@ public class GameMapController {
             for( int i = 0; i < allRegion.length ; i++){
                 SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
                 svg.setDisable(true);
-                if( p.hasRegion(i) && allRegion[i].getNumTroops() > 1)
+                Region r = allRegion[i];
+                ArrayList<Integer> connectedOwnedRegions = r.getConnectedOwnedRegions(allRegion,p.getRegionIds());
+                if( p.hasRegion(i) && allRegion[i].getNumTroops() > 1 && !(connectedOwnedRegions.size() == 1))
                     svg.setDisable(false);
             }
 
@@ -1231,7 +1242,12 @@ public class GameMapController {
         }
         else if( stageLabel.getText().equals("FORTIFY STAGE") )
         {
+            Player[] players = gm.getPlayers();
+            Player p = players[gm.getWhoseTurn()];
+
+
             stageLabel.setText("BUY STAGE");
+            gm.setInstruction("Click on your avatar to buy or organize event");
             instructionLabel.setText("Click on your avatar to buy or organize event");
             nextTurnPanel.setVisible(true);
             nextStage.setVisible(false);

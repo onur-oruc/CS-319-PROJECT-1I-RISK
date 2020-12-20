@@ -60,8 +60,8 @@ public class TurnManager {
         this.season = season;
         this.turnCount = turnCount;
 
-        additionalTroops = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
-        //additionalTroops = 3;
+        //additionalTroops = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
+        additionalTroops = 3;
         getsCard = false;
 
         stage = StageType.BEGIN;
@@ -171,10 +171,8 @@ public class TurnManager {
 
     public void draft( Region region, int numTroopsToDraft ) {
 
-        if ( additionalTroops > numTroopsToDraft ) {
             region.setNumTroops( region.getNumTroops() + numTroopsToDraft );
             additionalTroops -= numTroopsToDraft;
-        }
     }
 
     /*public void attack() {
