@@ -347,6 +347,7 @@ public class GameMapController {
                     diceImage.setVisible(true);
                 }
             }
+            
 
             int troops = regionToAttackWith.getNumTroops();
             if( troops == 3){
@@ -371,6 +372,14 @@ public class GameMapController {
 
             }
             if( regionToAttack.getOwnerID() == p.getId()){
+
+                for( int i = 1; i < 6; i++)
+                {
+                    Stage g = (Stage) ((Node)e.getSource()).getScene().getWindow();
+                    Scene fc = g.getScene();
+                    ImageView diceImage = (ImageView) fc.lookup("#dice" + i);
+                    diceImage.setVisible(false);
+                }
 
                 dicePanel.setVisible(false);
                 instructionLabel.setText("Select the number of troops to invade");
@@ -448,6 +457,8 @@ public class GameMapController {
                     diceImage.setVisible(true);
                 }
             }
+
+
             int troops = regionToAttackWith.getNumTroops();
             if( troops == 3){
                 attackButton1.setDisable(false);
@@ -471,6 +482,15 @@ public class GameMapController {
 
             }
             if( regionToAttack.getOwnerID() == p.getId()){
+
+
+                for( int i = 1; i < 6; i++)
+                {
+                    Stage g = (Stage) ((Node)e.getSource()).getScene().getWindow();
+                    Scene fc = g.getScene();
+                    ImageView diceImage = (ImageView) fc.lookup("#dice" + i);
+                    diceImage.setVisible(false);
+                }
 
                 dicePanel.setVisible(false);
                 instructionLabel.setText("Select the number of troops to invade");
@@ -552,6 +572,7 @@ public class GameMapController {
                     diceImage.setVisible(true);
                 }
             }
+
             int troops = regionToAttackWith.getNumTroops();
             if( troops == 3){
                 attackButton1.setDisable(false);
@@ -577,6 +598,13 @@ public class GameMapController {
 
             if( regionToAttack.getOwnerID() == p.getId()){
 
+                for( int i = 1; i < 6; i++)
+                {
+                    Stage g = (Stage) ((Node)e.getSource()).getScene().getWindow();
+                    Scene fc = g.getScene();
+                    ImageView diceImage = (ImageView) fc.lookup("#dice" + i);
+                    diceImage.setVisible(false);
+                }
                 dicePanel.setVisible(false);
                 instructionLabel.setText("Select the number of troops to invade");
                 gm.setInstruction("Select the number of troops to invade");

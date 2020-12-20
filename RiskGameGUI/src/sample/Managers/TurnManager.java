@@ -60,6 +60,7 @@ public class TurnManager {
         this.turnCount = turnCount;
 
         additionalTroops = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
+        //additionalTroops = 3;
         getsCard = false;
 
         stage = StageType.BEGIN;
