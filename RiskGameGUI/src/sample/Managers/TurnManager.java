@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class TurnManager {
     // constants
 
+
     private final int DROUGHT_LIMIT = 5;
     private final double FROST_AVG_SURVIVING_PROPORTION = 0.5;
 
@@ -105,6 +106,10 @@ public class TurnManager {
 
     public int getAdditionalTroops() {
         return additionalTroops;
+    }
+
+    public int getDROUGHT_LIMIT() {
+        return DROUGHT_LIMIT;
     }
 
     public void combineCards(ArrayList<TroopCardType> cardsToCombine) {
@@ -247,7 +252,7 @@ public class TurnManager {
         System.out.println("ATTACK***\n");
     }*/
 
-    public void fortify() {
+    /*public void fortify() {
 
         System.out.println("***FORTIFY");
 
@@ -280,7 +285,7 @@ public class TurnManager {
 
         stage = StageType.END;
         System.out.println("FORTIFY***\n");
-    }
+    }*/
 
     public void endTurnOps() {
         System.out.println("***END TURN");
@@ -475,6 +480,10 @@ public class TurnManager {
             else
                 player.addTroopCard(TroopCardType.INFANTRY);
         }
+    }
+
+    public void fortify( Region origin, int troopsToMove, Region destination) {
+        moveTroops(origin,troopsToMove,destination);
     }
 
 

@@ -38,7 +38,8 @@ public class GameMapController {
     GameManager gm;
     MediaPlayer music;
     String s;
-    Region regionToPlace, regionToAttackWith, regionToAttack;
+    Region regionToPlace, regionToAttackWith, regionToAttack, regionToGetTroop;
+    int troopNumToFortify;
     @FXML
     AnchorPane gamerPanel, dicePanel, nextTurnPanel;
     @FXML
@@ -92,6 +93,7 @@ public class GameMapController {
 
         if( p.getMoney() < 5)
             eventButton.setDisable(true);
+
         eventButton.setVisible(true);
         int turn = gm.getWhoseTurn();
         if( turn == 0)
@@ -141,8 +143,10 @@ public class GameMapController {
     }
 
     public void onRegionClicked( MouseEvent event) throws IOException {
+
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
         Scene sc = window.getScene();
+
         if( instructionLabel.getText().equals("Select a region to organize event"))
         {
             gm.setInstruction("Click on your avatar to buy or organize event");
@@ -276,15 +280,58 @@ public class GameMapController {
         }
         else if( instructionLabel.getText().equals("Select a region you want to get troop"))
         {
+            Region[] allRegion = gm.getRegions();
+            int regionid = Integer.parseInt(((SVGPath)event.getSource()).getId().substring(3));
+            regionToGetTroop = allRegion[regionid];
+
+            ObservableList<String> numbers = FXCollections.observableArrayList();
+
+            int troopNumMin = 1;
+            int troopNumMax = regionToGetTroop.getNumTroops() - 1;
+
+            for( int i = troopNumMin ; i <= troopNumMax; i++ ){
+                String numberString = "" + i;
+                numbers.add(numberString);
+            }
+            troopLabel.setText(""+(troopNumMax-troopNumMin));
+            troopNo.setItems(numbers);
+            troopNo.setValue("1");
+
+            for( int i = 0; i < allRegion.length ; i++){
+                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+                svg.setDisable(true);
+            }
+
             troopImage.setVisible(true);
             troopLabel.setVisible(true);
             troopNo.setVisible(true);
             done.setVisible(true);
+            gm.setInstruction("Select the number of troops to get");
             instructionLabel.setText("Select the number of troops to get");
             nextStage.setVisible(false);
         }
         else if( instructionLabel.getText().equals("Select a region you want to add troop"))
         {
+
+            Region[] allRegion = gm.getRegions();
+            Region r = allRegion[Integer.parseInt((((SVGPath)event.getSource()).getId().substring(3)))];
+            TurnManager tm = gm.getTm();
+            tm.fortify(regionToGetTroop, troopNumToFortify, r);
+
+            Label lbl = (Label) sc.lookup("#lbl" + regionToGetTroop.getRegionID());
+            lbl.setText("" + regionToGetTroop.getNumTroops());
+            lbl = (Label) sc.lookup("#lbl" + r.getRegionID());
+            lbl.setText("" + r.getNumTroops());
+            Player[] players = gm.getPlayers();
+            Player p = players[gm.getWhoseTurn()];
+
+            for( int i = 0; i < allRegion.length ; i++){
+                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i))
+                    svg.setDisable(false);
+            }
+            gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
             nextStage.setVisible(true);
         }
@@ -347,7 +394,7 @@ public class GameMapController {
                     diceImage.setVisible(true);
                 }
             }
-            
+
 
             int troops = regionToAttackWith.getNumTroops();
             if( troops == 3){
@@ -386,7 +433,16 @@ public class GameMapController {
                 gm.setInstruction("Select the number of troops to invade");
                 troopImage.setVisible(true);
 
-                int troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                int troopNumMax;
+                if( gm.isWeather() ) {
+                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
+                        troopNumMax = tm.getDROUGHT_LIMIT();
+                    else
+                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                }
+                else
+                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
+
                 int troopNumMin = 1;
                 ObservableList<String> numbers = FXCollections.observableArrayList();
 
@@ -497,7 +553,15 @@ public class GameMapController {
                 gm.setInstruction("Select the number of troops to invade");
                 troopImage.setVisible(true);
 
-                int troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                int troopNumMax;
+                if( gm.isWeather() ) {
+                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
+                        troopNumMax = tm.getDROUGHT_LIMIT();
+                    else
+                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                }
+                else
+                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
                 int troopNumMin = 2;
                 ObservableList<String> numbers = FXCollections.observableArrayList();
 
@@ -610,7 +674,15 @@ public class GameMapController {
                 gm.setInstruction("Select the number of troops to invade");
                 troopImage.setVisible(true);
 
-                int troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                int troopNumMax;
+                if( gm.isWeather() ) {
+                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
+                        troopNumMax = tm.getDROUGHT_LIMIT();
+                    else
+                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                }
+                else
+                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
                 int troopNumMin = 3;
                 ObservableList<String> numbers = FXCollections.observableArrayList();
 
@@ -662,6 +734,7 @@ public class GameMapController {
             troopLabel.setVisible(false);
             troopNo.setVisible(false);
             done.setVisible(false);
+            nextStage.setVisible(true);
             instructionLabel.setText("Select a region you want to attack from");
             gm.setInstruction("Select a region you want to attack from");
         }
@@ -684,10 +757,24 @@ public class GameMapController {
         }
         else if( instructionLabel.getText().equals("Select the number of troops to get"))
         {
+            Region[] allRegion = gm.getRegions();
+            Player[] players = gm.getPlayers();
+            Player p = players[gm.getWhoseTurn()];
+            ArrayList<Integer> connectedRegions = regionToGetTroop.getConnectedOwnedRegions(allRegion,p.getRegionIds());
+
+            for( int i = 0; i < allRegion.length ; i++){
+                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( connectedRegions.contains(i))
+                    svg.setDisable(false);
+            }
+
+            troopNumToFortify = Integer.parseInt((String)troopNo.getValue());
             troopImage.setVisible(false);
             troopLabel.setVisible(false);
             troopNo.setVisible(false);
             done.setVisible(false);
+            gm.setInstruction("Select a region you want to add troop");
             instructionLabel.setText("Select a region you want to add troop");
         }
     }
@@ -1126,7 +1213,20 @@ public class GameMapController {
         }
         else if( stageLabel.getText().equals("ATTACK STAGE") )
         {
+            Region[] allRegion = gm.getRegions();
+            Player[] players = gm.getPlayers();
+            Player p = players[gm.getWhoseTurn()];
+
+            for( int i = 0; i < allRegion.length ; i++){
+                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+                svg.setDisable(true);
+                if( p.hasRegion(i) && allRegion[i].getNumTroops() > 1)
+                    svg.setDisable(false);
+            }
+
+            gm.setStageString("FORTIFY STAGE");
             stageLabel.setText("FORTIFY STAGE");
+            gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
         }
         else if( stageLabel.getText().equals("FORTIFY STAGE") )

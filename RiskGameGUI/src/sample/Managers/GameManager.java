@@ -21,9 +21,19 @@ public class GameManager {
     private Player[] players;
     private Region[] regions;
     private Continent[] continents;
-    public boolean plague;
-    public boolean weather;
-    public boolean secretMission;
+
+
+
+    private boolean plague;
+
+
+
+    private boolean weather;
+
+
+
+
+    private boolean secretMission;
     private SeasonType season;
     private int turnCount;
     private int winnerID;
@@ -57,7 +67,17 @@ public class GameManager {
     }
 
     // methods
+    public boolean isSecretMission() {
+        return secretMission;
+    }
 
+    public boolean isWeather() {
+        return weather;
+    }
+
+    public boolean isPlague() {
+        return plague;
+    }
 
     public void startGame() throws Exception {
 
