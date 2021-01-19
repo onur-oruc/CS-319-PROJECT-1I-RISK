@@ -17,13 +17,9 @@ public class TurnManager implements Serializable {
 
     private final int DROUGHT_LIMIT = 5;
     private final double FROST_AVG_SURVIVING_PROPORTION = 0.5;
-
     private final int MIN_ADDITIONAL_TROOPS = 3;
-
-
     private final int PRICE_OF_MERCENARY = 3;
     private final int PRICE_OF_ENTERTAINMENT = 5;
-
     private final int GOLD_MINE_GAIN = 10;
     private final int MAX_NUM_ATTACKERS = 3;
     private final int MAX_NUM_DEFENDERS = 2;
@@ -31,6 +27,8 @@ public class TurnManager implements Serializable {
     private final int PLAGUE_RECOVER_LIMIT = 4;
     private final double PLAGUE_COEFFICIENT = 0.025;
     private final double PLAGUE_AVG_SURVIVING_PROPORTION = 0.30;
+
+    private final int MAX_NUM_LINES = 7;
 
     // properties
     private Player player;
@@ -55,7 +53,7 @@ public class TurnManager implements Serializable {
         this.weather = weather;
         this.season = season;
         this.turnCount = turnCount;
-
+        message = "";
         beginTurnOps();
     }
 
@@ -139,7 +137,12 @@ public class TurnManager implements Serializable {
 
     public void beginTurnOps() {
 
-        message = "";
+        // bonus troops
+        int bonusFromReg = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
+        int bonusFromCont = player.calculateBonusTroops(regions,continents);
+
+        additionalTroops = bonusFromReg + bonusFromCont;
+        msgAddition("" + additionalTroops + " bonus troops. " + bonusFromReg + " from " + player.getRegionCount() + " regions, " + bonusFromCont + " from continents.");
 
         // gold
         earnGold();
@@ -147,13 +150,6 @@ public class TurnManager implements Serializable {
         // plague
         blackDeath();
         recoverFromPlague();
-
-        // bonus troops
-        int bonusFromReg = Math.max(player.getRegionCount() / 3, MIN_ADDITIONAL_TROOPS);
-        int bonusFromCont = player.calculateBonusTroops(regions,continents);
-
-        additionalTroops = bonusFromReg + bonusFromCont;
-        message = "" + additionalTroops + " bonus troops. " + bonusFromReg + " from " + player.getRegionCount() + " regions, " + bonusFromCont + " from continents.";
 
         getsCard = false;
     }
@@ -191,7 +187,7 @@ public class TurnManager implements Serializable {
 
             if ( Math.random() < plagueRisk ) {
                 region.setPlague(true);
-                message += "\nPLAGUE: Emerges in " + region.getRegionName() + ".";
+                msgAddition( "\nPLAGUE: Emerges in " + region.getRegionName() + "." );
             }
         }
     }
@@ -204,9 +200,9 @@ public class TurnManager implements Serializable {
 
             if ( region.hasPlague()) {
                 numTroops = region.getNumTroops();
-                message += "\nPLAGUE: Of " + numTroops + " troops in " + region.getRegionName() + ", ";
+                msgAddition( "\nPLAGUE: Of " + numTroops + " troops in " + region.getRegionName() + ", " );
                 region.setNumTroops( (int)( numTroops * PLAGUE_AVG_SURVIVING_PROPORTION) );
-                message += "only " + region.getNumTroops() + " are still alive.";
+                msgAddition( "only " + region.getNumTroops() + " are still alive." );
                 region.demotivate();
             }
         }
@@ -227,7 +223,7 @@ public class TurnManager implements Serializable {
             if ( region.hasPlague()) {
                 if (numTroops <= PLAGUE_RECOVER_LIMIT) {
                     region.setPlague(false);
-                    message += "\nPLAGUE: " + region.getRegionName() + " recovers from the plague!";
+                    msgAddition( "\nPLAGUE: " + region.getRegionName() + " recovers from the plague!" );
                 }
             }
         }
@@ -277,10 +273,14 @@ public class TurnManager implements Serializable {
 
         // conquering case
         if ( defenderRegion.getNumTroops() <= 0 ) {
+
             Player loser = players[defenderRegion.getOwnerID()];
             defenderRegion.setOwnerID(player.getId());
             player.addRegion(defenderRegion.getRegionID());
             loser.removeRegion(defenderRegion.getRegionID());
+
+            if( loser.getRegionCount() == 0)
+                loser.setEliminated(true);
 
             if ( loser.getCommanderLocation() == defenderRegion.getOwnerID() ) {
                 //int destinationID = loser.getRegionIds().get((int) (Math.random() * loser.getRegionCount()));
@@ -305,7 +305,7 @@ public class TurnManager implements Serializable {
     {
         String additionalMsg = "";
 
-        message = "Move " + numTroops + " troops from " + origin.getRegionName() + " to " + destination.getRegionName() + ".";
+        msgAddition( "Move " + numTroops + " troops from " + origin.getRegionName() + " to " + destination.getRegionName() + "." );
 
         if ( numTroops > 0 )
         {
@@ -334,17 +334,24 @@ public class TurnManager implements Serializable {
             }
         }
 
-        message += additionalMsg;
+        msgAddition( additionalMsg );
 
         return numTroops; // troops that arrived at the destination
     }
 
-    public void moveCommander( Region destination ) {
-        if ( player.getRegionIds().contains( destination.getRegionID() )) {
-            if ( player.getCommanderLocation() >= 0 )
-                regions[player.getCommanderLocation()].setHasCommander(false);
+    public void moveCommander(Region destination) {
+        if (player.getRegionIds().contains(destination.getRegionID())) {
+
+            int oldComLoc = player.getCommanderLocation();
+
+            if (oldComLoc >= 0) {
+                Region oldComRegion = regions[oldComLoc];
+                oldComRegion.setHasCommander(false);
+                oldComRegion.demotivate();
+            }
 
             destination.setHasCommander(true);
+            commanderEffect();
             player.setCommanderLocation(destination.getRegionID());
         }
     }
@@ -366,7 +373,7 @@ public class TurnManager implements Serializable {
 
         if ( !randomRegion.hasGoldMine() ) {
             randomRegion.setHasGoldMine(true);
-            message = message + "\nGold mine found in " + randomRegion.getRegionName() + "!";
+            msgAddition( "\nGold mine found in " + randomRegion.getRegionName() + "!" );
         }
     }
 
@@ -379,8 +386,25 @@ public class TurnManager implements Serializable {
             if ( region.hasGoldMine() ) {
                 player.setMoney( player.getMoney() + GOLD_MINE_GAIN );
                 region.setHasGoldMine(false);
-                message += "\nGOLD: Earned " + GOLD_MINE_GAIN + " from " + region.getRegionName() + " gold mines.";
+                msgAddition( "\nGOLD: Earned " + GOLD_MINE_GAIN + " from " + region.getRegionName() + " gold mines." );
             }
         }
+    }
+
+    private void msgShortenExceeding() {
+        String[] allLines = message.split("\n");
+        int numLinesToDelete = allLines.length - MAX_NUM_LINES;
+
+        if ( numLinesToDelete > 0)
+            message = message.split("\n", numLinesToDelete + 1 )[numLinesToDelete];
+    }
+
+    private void msgAddition( String addition ) {
+        message += addition;
+        msgShortenExceeding();
+    }
+
+    public void killMessage() {
+        //message = "";
     }
 }

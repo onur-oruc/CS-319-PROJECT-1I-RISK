@@ -28,11 +28,6 @@ import java.util.List;
  */
 public class LoadGameController {
 
-    String fileNameToLoad;
-    @FXML
-    Button button;
-    @FXML
-    private Pane gamePane;
     @FXML
     ListView<String> gamesListView;
 

@@ -36,10 +36,10 @@ public class Main extends Application{
         primaryStage.setMaximized(true);
         primaryStage.initStyle( StageStyle.UNDECORATED);
         primaryStage.show();
-
     }
     public static void main( String[] args)
     {
         launch(args);
     }
+
 }

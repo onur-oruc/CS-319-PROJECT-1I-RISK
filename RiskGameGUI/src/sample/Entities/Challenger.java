@@ -10,7 +10,7 @@ import java.util.*;
 public abstract class Challenger implements Serializable {
 
     // make properties private
-    private final int STARTING_MONEY = 600;
+    private final int STARTING_MONEY = 26;
     private String imageUrl;
     private int money;
     private ArrayList<TroopCardType> troopCards;
@@ -145,7 +145,7 @@ public abstract class Challenger implements Serializable {
         this.money = money;
     }
     public int getRegionCount() {
-        return regionCount;
+        return regionIds.size();
     }
     public void setRegionCount (int regionCount) {
         this.regionCount = regionCount;

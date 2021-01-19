@@ -36,6 +36,7 @@ public class GameManager implements Serializable {
     private int winnerID;
     private String stageString;
     private int whoseTurn;
+
     private String message;
 
     private TurnManager tm;
@@ -57,6 +58,7 @@ public class GameManager implements Serializable {
         this.winnerID = -1;
         this.whoseTurn = 0;
         tm = null;
+        message = "";
     }
 
 
@@ -122,6 +124,10 @@ public class GameManager implements Serializable {
         return regions;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public int getWinnerID() {
         return winnerID;
     }
@@ -141,6 +147,18 @@ public class GameManager implements Serializable {
             nextSeason();
         }
         emergeWeather();
+    }
+
+    public String getSeasonName()
+    {
+        if( season == SeasonType.FALL)
+            return "FALL";
+        else if( season == SeasonType.SPRING)
+            return "SPRING";
+        else if( season == SeasonType.SUMMER)
+            return "SUMMER";
+        else
+            return "WINTER";
     }
 
     public void nextTurn() {

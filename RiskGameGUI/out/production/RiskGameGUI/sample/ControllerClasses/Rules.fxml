@@ -5,6 +5,6 @@
 
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="bodybg" stylesheets="@../CSSFiles/RulesBackground.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ControllerClasses.RulesController">
    <children>
-      <Button fx:id="button" layoutX="1812.0" layoutY="14.0" mnemonicParsing="false" onAction="#backButtonClicked" opacity="0.0" prefHeight="93.0" prefWidth="94.0" text="Button" />
+      <Button fx:id="button" layoutX="1839.0" layoutY="14.0" mnemonicParsing="false" onAction="#backButtonClicked" opacity="0.0" prefHeight="67.0" prefWidth="68.0" text="Button" />
    </children>
 </AnchorPane>

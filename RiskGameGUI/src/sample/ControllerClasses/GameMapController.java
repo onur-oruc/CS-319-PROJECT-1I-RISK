@@ -1,4 +1,6 @@
 package sample.ControllerClasses;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,13 +34,15 @@ public class GameMapController {
 
     GameManager gm;
     MediaPlayer music;
-    Region regionToPlace, regionToAttackWith, regionToAttack, regionToGetTroop;
+    Region regionToPlace, regionToAttackWith, regionToAttack, regionToGetTroop, commanderFirstPlace;
+    boolean isNormal, isMotivation, isRegion, isClimate;
     int troopNumToFortify;
     @FXML
     AnchorPane gamerPanel, dicePanel, nextTurnPanel, buyPanel, pausePanel, savePanel, settingsPanel, winnerPanel;
     @FXML
-    Label instructionLabel, attackLabel, stageLabel, troopLabel,troopCard2, troopCard3,
-            troopCard4,missionLabel, infoLabel1, infoLabel2,infoLabel3,infoLabel4,playerMoney, troopCard1;
+    Label instructionLabel, attackLabel, stageLabel, troopLabel,troopCard2, troopCard3, name1, name2, name3, name4,
+            troopCard4,missionLabel, infoLabel1, infoLabel2,infoLabel3,infoLabel4, nextTurnName,
+            seasonName,gameMessage,playerMoney, troopCard1, winnerName, infoLabel5, infoLabel6;
     @FXML
     ImageView troopImage, playerImg1, playerImg2,playerImg3, playerImg4, imageTurn, winnerImage,
             turn1, turn2, turn3, turn4, elim1, elim2, elim3, elim4, dice1, dice2, dice3, dice4, dice5;
@@ -46,14 +50,20 @@ public class GameMapController {
     ChoiceBox troopNo;
     @FXML
     Button moveCom, done, eventButton, attackButton1, attackButton2, attackButton3,
-            nextStage, exitTurn, hire, combineButton, pauseButton
+            nextStage, exitTurn, hire, combineButton, pauseButton, showRegionButton
             , attackExit, buyExit, distribute, climateButton, motivationButton;
     @FXML
-    Rectangle info1, info2, info3, info4;
+    Rectangle info1, info2, info3, info4, info5, info6;
     @FXML
     ComboBox chooseTroopNumber, troopCardNum1, troopCardNum2, troopCardNum3, troopCardNum4;
     @FXML
     TextField saveGameName;
+    @FXML
+    Rectangle color1, color2, color3, color4;
+    @FXML
+    CheckBox muteBox;
+    @FXML
+    Slider volumeLevel;
 
     /**
      * This method update the disability of player profile images
@@ -103,8 +113,10 @@ public class GameMapController {
         showMap(s);
         distribute.setVisible(false);
         Player p = gm.getPlayers()[gm.getWhoseTurn()];
+        showRegionButton.setVisible(true);
         motivationButton.setVisible(true);
-        climateButton.setVisible(true);
+        if(gm.isWeather())
+            climateButton.setVisible(true);
         pauseButton.setVisible(true);
         TurnManager tm = gm.getTm();
         playerImageDisable(true,true,true,true);
@@ -130,12 +142,21 @@ public class GameMapController {
         else if(stageLabel.getText().equals("ATTACK STAGE"))
         {
             nextStage.setVisible(true);
-            enableRegions(p,allRegions,s);
+            //enableRegions(p,allRegions,s);
+            updateRegionsAfterAttack(s);
         }
         else if(stageLabel.getText().equals("FORTIFY STAGE"))
         {
             nextStage.setVisible(true);
-            enableRegions(p,allRegions,s);
+            //enableRegions(p,allRegions,s);
+            for( int i = 0; i < allRegions.length ; i++){
+                SVGPath svg = (SVGPath) s.lookup("#svg" + i);
+                svg.setDisable(true);
+                Region r = allRegions[i];
+                ArrayList<Integer> connectedOwnedRegions = r.getConnectedOwnedRegions(allRegions,p.getRegionIds());
+                if( p.hasRegion(i) && allRegions[i].getNumTroops() > 1 && !(connectedOwnedRegions.size() == 1))
+                    svg.setDisable(false);
+            }
         }
 
         int turn = gm.getWhoseTurn();
@@ -186,6 +207,164 @@ public class GameMapController {
         }
     }
 
+    private void showMotivation( Scene sv)
+    {
+        Region[] allregion = gm.getRegions();
+
+        //update the view of the game according to motivation of troops
+        for( int i = 0 ; i < allregion.length; i++ )
+        {
+            MotivationLevel ml= allregion[i].getMotivation();
+            SVGPath svg = (SVGPath) sv.lookup("#svg" + i);
+
+            if( ml == MotivationLevel.HIGH)
+                svg.setFill(Paint.valueOf( "#21b09f"));
+
+            if( ml == MotivationLevel.NORMAL)
+                svg.setFill(Paint.valueOf( "#a4cf23"));
+
+            if( ml == MotivationLevel.LOW)
+                svg.setFill(Paint.valueOf( "#eba234"));
+
+            if( ml == MotivationLevel.NONE)
+                svg.setFill(Paint.valueOf("#eb4c34"));
+            if( gm.isPlague())
+            {
+                if( allregion[i].hasPlague() )
+                    svg.setFill(Paint.valueOf("#c6c9bf"));
+            }
+
+
+            Label lbl = (Label) sv.lookup("#lbl" + i);
+            String s = "" +allregion[i].getNumTroops();
+            lbl.setText(s);
+            lbl.setVisible(true);
+
+            ImageView gold = (ImageView) sv.lookup( "#gold" + i);
+            gold.setVisible(false);
+
+            ImageView com = (ImageView) sv.lookup( "#com" + i);
+            if( allregion[i].hasCommander() )
+                com.setVisible(true);
+            else
+                com.setVisible(false);
+        }
+
+        updateInfoView(infoLabel4, info4, true, true,"Unmotivated", "#eb4c34");
+
+        updateInfoView(infoLabel3, info3, true, true,"Low Motivated", "#eba234");
+
+        updateInfoView(infoLabel2, info2, true, true,"Normal Motivated", "#a4cf23");
+
+        updateInfoView(infoLabel1, info1, true, true,"High Motivated", "#21b09f");
+
+        if( gm.isPlague())
+            updateInfoView(infoLabel5, info5, true, true, "Plague", "#c6c9bf" );
+    }
+
+    public void showContinent( Scene sv)
+    {
+        Region[] allregion = gm.getRegions();
+
+        //update the view of the game according to motivation of troops
+        for( int i = 0 ; i < allregion.length; i++ )
+        {
+            int continentID = allregion[i].getContinentID();
+            SVGPath svg = (SVGPath) sv.lookup("#svg" + i);
+
+            if( continentID == 0)
+                svg.setFill(Paint.valueOf("#49c71c"));
+
+            if( continentID == 1)
+                svg.setFill(Paint.valueOf( "#f59b42"));
+
+            if( continentID == 2)
+                svg.setFill(Paint.valueOf( "#428df5"));
+
+            if( continentID == 3)
+                svg.setFill(Paint.valueOf( "#a8b00e"));
+
+            if( continentID == 4)
+                svg.setFill(Paint.valueOf("#e01907"));
+
+            if( continentID == 5 )
+                svg.setFill(Paint.valueOf("#a431eb"));
+
+            Label lbl = (Label) sv.lookup("#lbl" + i);
+            String s = "" +allregion[i].getRegionName();
+            lbl.setText(s.substring(1,s.length()-1));
+            lbl.setVisible(true);
+
+            ImageView gold = (ImageView) sv.lookup( "#gold" + i);
+            gold.setVisible(false);
+
+            ImageView com = (ImageView) sv.lookup( "#com" + i);
+            com.setVisible(false);
+        }
+
+        updateInfoView(infoLabel4, info4, true, true,"North America (5)", "#a8b00e");
+
+        updateInfoView(infoLabel3, info3, true, true,"Africa (3)", "#428df5");
+
+        updateInfoView(infoLabel2, info2, true, true,"South America (2)", "#f59b42");
+
+        updateInfoView(infoLabel1, info1, true, true,"Asia (7)", "#49c71c");
+
+        updateInfoView(infoLabel5, info5, true, true, "Australia (2)", "#e01907" );
+
+        updateInfoView(infoLabel6, info6, true, true, "Europe (5)", "#a431eb" );
+
+    }
+
+    public void showClimate( Scene sv)
+    {
+        Region[] allregion = gm.getRegions();
+
+        //make map view according to climates of region
+        for( int i = 0 ; i < allregion.length; i++ )
+        {
+            ClimateType ct = allregion[i].getClimate();
+            SVGPath svg = (SVGPath) sv.lookup("#svg" + i);
+
+            if( ct == ClimateType.COLD)
+            {
+                svg.setFill(Paint.valueOf("#175ba3"));
+            }
+            if( ct == ClimateType.WARM )
+            {
+                svg.setFill(Paint.valueOf("#bf8b22"));
+            }
+            if( ct == ClimateType.HOT)
+            {
+                svg.setFill(Paint.valueOf("#c41910"));
+            }
+            if( allregion[i].hasDrought())
+            {
+                svg.setFill(Paint.valueOf("#eff542"));
+            }
+            if( allregion[i].hasFrost())
+            {
+                svg.setFill(Paint.valueOf("#dbdad5"));
+            }
+
+            Label lbl = (Label) sv.lookup("#lbl" + i);
+            lbl.setVisible(false);
+
+            ImageView gold = (ImageView) sv.lookup( "#gold" + i);
+            gold.setVisible(false);
+
+            ImageView com = (ImageView) sv.lookup( "#com" + i);
+            com.setVisible(false);
+
+        }
+
+        updateInfoView( infoLabel1, info1, true, true, "Hot", "#c41910");
+        updateInfoView(infoLabel2,info2,true,true,"Warm", "#bf8b22");
+        updateInfoView(infoLabel3, info3, true, true, "Cold","#175ba3" );
+        updateInfoView(infoLabel4, info4, true, true, "Drought", "#eff542" );
+        updateInfoView(infoLabel5, info5, true, true, "Frost", "#dbdad5");
+    }
+
     /**
      * This method make all regions clickable
      * This method is public as it is connected to fxml file
@@ -200,6 +379,20 @@ public class GameMapController {
         }
     }
 
+    public void updateRegionsAccordingToMapSelection( Scene sc)
+    {
+        if(isNormal)
+            showMap(sc);
+        else if( isClimate) {
+            if( gm.isWeather())
+                showClimate(sc);
+        }
+        else if( isMotivation)
+            showMotivation(sc);
+        else if( isRegion)
+            showContinent(sc);
+
+    }
     /**
      * This method listens for the actions on the regions
      * When the region is clicked, different operations are
@@ -222,11 +415,18 @@ public class GameMapController {
 
             Player p = gm.getPlayers()[gm.getWhoseTurn()];
             Region[] all = gm.getRegions();
+
             TurnManager tm = gm.getTm();
+            tm.killMessage();
 
             String svgname = ((SVGPath)event.getSource()).getId();
             Region r = all[Integer.parseInt(svgname.substring(3))];
             tm.organizeEntertainment(r);
+
+            updateRegionsAccordingToMapSelection(sc);
+
+
+            gameMessage.setText(tm.getMessage());
             setEnabledAllRegions(all,sc);
 
             if( p.getMoney() < 5)
@@ -248,13 +448,18 @@ public class GameMapController {
             com.setVisible(false);
 
             TurnManager tm = gm.getTm();
+            tm.killMessage();
             tm.moveCommander(r);
+
+            gameMessage.setText(tm.getMessage());
 
             com = (ImageView) sc.lookup("#com" + r.getRegionID());
             com.setVisible(true);
 
             gm.setInstruction("Select a region you want to place troops");
             instructionLabel.setText("Select a region you want to place troops");
+
+            updateRegionsAccordingToMapSelection(sc);
 
             nextStage.setVisible(true);
             moveCom.setVisible(true);
@@ -265,6 +470,7 @@ public class GameMapController {
 
             Region[] all = gm.getRegions();
             TurnManager tm = gm.getTm();
+            tm.killMessage();
             int totalTroop = tm.getAdditionalTroops();
             troopLabel.setText(""+totalTroop);
             ObservableList<String> numbers = FXCollections.observableArrayList();
@@ -289,6 +495,11 @@ public class GameMapController {
             nextStage.setVisible(false);
             moveCom.setVisible(false);
             pauseButton.setVisible(false);
+
+            updateRegionsAccordingToMapSelection(sc);
+
+
+            gameMessage.setText(tm.getMessage());
         }
         else if( instructionLabel.getText().equals("Select a region you want to attack from"))
         {
@@ -312,10 +523,13 @@ public class GameMapController {
                 svg.setDisable(false);
             }
 
+            
+
             instructionLabel.setText("Select a region you want to attack");
             gm.setInstruction("Select a region you want to attack");
             nextStage.setVisible(false);
             pauseButton.setVisible(false);
+
         }
         else if( instructionLabel.getText().equals("Select a region you want to attack"))
         {
@@ -339,13 +553,18 @@ public class GameMapController {
                 attackButton2.setDisable(true);
                 attackButton3.setDisable(true);
             }
+
+            updateRegionsAccordingToMapSelection(sc);
+
             regionToAttack = all[Integer.parseInt(svgname.substring(3))];
             instructionLabel.setText("Select the number of dice");
             gm.setInstruction("Select the number of dice");
             dicePanel.setVisible(true);
             motivationButton.setVisible(false);
+            showRegionButton.setVisible(false);
             climateButton.setVisible(false);
             pauseButton.setVisible(false);
+
         }
         else if( instructionLabel.getText().equals("Select a region you want to get troop"))
         {
@@ -371,6 +590,8 @@ public class GameMapController {
                 svg.setDisable(true);
             }
 
+            updateRegionsAccordingToMapSelection(sc);
+
             troopImage.setVisible(true);
             troopLabel.setVisible(true);
             troopNo.setVisible(true);
@@ -379,6 +600,8 @@ public class GameMapController {
             instructionLabel.setText("Select the number of troops to get");
             nextStage.setVisible(false);
             pauseButton.setVisible(false);
+
+
         }
         else if( instructionLabel.getText().equals("Select a region you want to add troop"))
         {
@@ -386,7 +609,10 @@ public class GameMapController {
             Region[] allRegion = gm.getRegions();
             Region r = allRegion[Integer.parseInt((((SVGPath)event.getSource()).getId().substring(3)))];
             TurnManager tm = gm.getTm();
-            tm.fortify(regionToGetTroop, troopNumToFortify, r);
+
+            tm.killMessage();
+
+            tm.moveTroops(regionToGetTroop, troopNumToFortify, r);
 
             Label lbl = (Label) sc.lookup("#lbl" + regionToGetTroop.getRegionID());
             lbl.setText("" + regionToGetTroop.getNumTroops());
@@ -403,10 +629,14 @@ public class GameMapController {
                 if( p.hasRegion(i) && allRegion[i].getNumTroops() > 1 && !(connectedOwnedRegions.size() == 1))
                     svg.setDisable(false);
             }
+
+            updateRegionsAccordingToMapSelection(sc);
+
             gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
             nextStage.setVisible(true);
             pauseButton.setVisible(true);
+            gameMessage.setText(tm.getMessage());
         }
     }
 
@@ -469,6 +699,10 @@ public class GameMapController {
             File f = new File( p.getImageUrl().substring(6));
             Image a = new Image(f.toURI().toString());
             winnerImage.setImage(a);
+            if(!p.getName().equals(""))
+                winnerName.setText(p.getName());
+            else
+                winnerName.setText("Player "+ (p.getId() +1));
             winnerPanel.setVisible(true);
         }
     }
@@ -480,15 +714,17 @@ public class GameMapController {
 
         for( int i = 0; i < all.length; i++)
         {
+            SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+            region.setDisable(false);
             if( !p.hasRegion(i))
             {
-                SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                region = (SVGPath) sc.lookup("#svg" + i);
                 region.setDisable(true);
             }
             else {
-                if( all[i].getNumTroops() < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
+                if( all[i].getNumTroops()  < 2 || all[i].hasPlague() || all[i].getEnemyRegions(p.getRegionIds()).size() == 0)
                 {
-                    SVGPath region = (SVGPath) sc.lookup("#svg" + i);
+                    region = (SVGPath) sc.lookup("#svg" + i);
                     region.setDisable(true);
                 }
             }
@@ -520,7 +756,9 @@ public class GameMapController {
             Player[] players = gm.getPlayers();
             Player p = players[gm.getWhoseTurn()];
             TurnManager tm = gm.getTm();
+            tm.killMessage();
             ArrayList<Object> returns = tm.oneTimeAttack( regionToAttackWith, 1,regionToAttack);
+            updateRegionsAccordingToMapSelection(sc);
             ArrayList<Integer> attackersDice = (ArrayList<Integer>) returns.get(0);
             ArrayList<Integer> defenderDice = (ArrayList<Integer>) returns.get(1);
             int[] lostTroops =  (int[]) returns.get(2);
@@ -529,9 +767,12 @@ public class GameMapController {
 
             updateDiceView( all, sc, p, players);
 
+
             attackLabel.setText("Attacker lost: " + lostTroops[0] + " companion(s) Defender lost: " + lostTroops[1] + " companion(s)");
+            attackLabel.setVisible(true);
 
             setDıceImageUnvisible();
+
 
             int defenderDiceNum = defenderDice.size();
 
@@ -573,43 +814,16 @@ public class GameMapController {
 
             updateRegionsAfterAttack(sc);
 
+            gameMessage.setText(tm.getMessage());
+
             if( regionToAttack.getOwnerID() == p.getId()){
 
                 checkGameOver();
-
-                setDıceImageUnvisible();
-
-                dicePanel.setVisible(false);
-
-                instructionLabel.setText("Select the number of troops to invade");
-                gm.setInstruction("Select the number of troops to invade");
-
-                int troopNumMax;
-                if( gm.isWeather() ) {
-                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
-                        troopNumMax = tm.getDROUGHT_LIMIT();
-                    else
-                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
-                }
-                else
-                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
-
-                int troopNumMin = 1;
-
-                ObservableList<String> numbers = FXCollections.observableArrayList();
-
-                for( int i = troopNumMin ; i <= troopNumMax; i++ ){
-                    String numberString = "" + i;
-                    numbers.add(numberString);
-                }
-
-                troopNo.setItems(numbers);
-                troopNo.setValue(""+troopNumMin);
-                troopLabel.setText("" + (troopNumMax- troopNumMin));
-
-                setVisibilityTroopNumber(true);
-
                 updateRegionsAfterAttack(sc);
+
+                gameMessage.setText(tm.getMessage());
+
+                setAttackButtonsAbility(true,true,true);
             }
         }
         else if( e.getSource() == attackButton2 )
@@ -617,19 +831,24 @@ public class GameMapController {
             Player[] players = gm.getPlayers();
             Player p = players[gm.getWhoseTurn()];
             TurnManager tm = gm.getTm();
+            tm.killMessage();
 
             ArrayList<Object> returns = tm.oneTimeAttack( regionToAttackWith, 2,regionToAttack);
+
+            updateRegionsAccordingToMapSelection(sc);
 
             ArrayList<Integer> attackersDice = (ArrayList<Integer>) returns.get(0);
             ArrayList<Integer> defenderDice = (ArrayList<Integer>) returns.get(1);
             int[] lostTroops =  (int[]) returns.get(2);
             attackLabel.setText("Attacker lost: " + lostTroops[0] + " companion(s) Defender lost: " + lostTroops[1] + " companion(s)");
+            attackLabel.setVisible(true);
 
             Region[] all = gm.getRegions();
 
             updateDiceView( all, sc,  p,  players);
 
             setDıceImageUnvisible();
+
 
             int defenderDiceNum = defenderDice.size();
 
@@ -672,45 +891,18 @@ public class GameMapController {
                 setAttackButtonsAbility(true,true,true);
             }
 
+            gameMessage.setText(tm.getMessage());
+
             updateRegionsAfterAttack(sc);
             if( regionToAttack.getOwnerID() == p.getId()){
 
-
-                checkGameOver();
-
-                setDıceImageUnvisible();
-
-                dicePanel.setVisible(false);
-                instructionLabel.setText("Select the number of troops to invade");
-
-                gm.setInstruction("Select the number of troops to invade");
-
-                int troopNumMax;
-                if( gm.isWeather() ) {
-                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
-                        troopNumMax = tm.getDROUGHT_LIMIT();
-                    else
-                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
-                }
-                else
-
-                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
-                int troopNumMin = 2;
-
-                ObservableList<String> numbers = FXCollections.observableArrayList();
-
-                for( int i = troopNumMin ; i <= troopNumMax; i++ ){
-                    String numberString = "" + i;
-                    numbers.add(numberString);
-                }
-
-                troopNo.setItems(numbers);
-                troopNo.setValue(""+troopNumMin);
-                troopLabel.setText("" + (troopNumMax- troopNumMin));
-
                 updateRegionsAfterAttack(sc);
 
-                setVisibilityTroopNumber(true);
+
+                checkGameOver();
+                gameMessage.setText(tm.getMessage());
+
+                setAttackButtonsAbility(true,true,true);
             }
 
 
@@ -720,20 +912,26 @@ public class GameMapController {
             Player[] players = gm.getPlayers();
             Player p = players[gm.getWhoseTurn()];
             TurnManager tm = gm.getTm();
+            tm.killMessage();
 
             ArrayList<Object> returns = tm.oneTimeAttack(regionToAttackWith, 3, regionToAttack);
+
+            updateRegionsAccordingToMapSelection(sc);
+
             ArrayList<Integer> attackersDice = (ArrayList<Integer>) returns.get(0);
             ArrayList<Integer> defenderDice = (ArrayList<Integer>) returns.get(1);
 
             int[] lostTroops = (int[]) returns.get(2);
 
             attackLabel.setText("Attacker lost: " + lostTroops[0] + " companion(s) Defender lost: " + lostTroops[1] + " companion(s)");
+            attackLabel.setVisible(true);
 
             Region[] all = gm.getRegions();
 
             updateDiceView(  all, sc,  p, players);
 
             setDıceImageUnvisible();
+
 
             int defenderDiceNum = defenderDice.size();
 
@@ -777,45 +975,17 @@ public class GameMapController {
             }
 
             updateRegionsAfterAttack(sc);
+            gameMessage.setText(tm.getMessage());
 
             if( regionToAttack.getOwnerID() == p.getId()){
 
                 checkGameOver();
 
-                setDıceImageUnvisible();
-
-                dicePanel.setVisible(false);
-
-                instructionLabel.setText("Select the number of troops to invade");
-                gm.setInstruction("Select the number of troops to invade");
-
-
-
-                int troopNumMax;
-                if( gm.isWeather() ) {
-                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
-                        troopNumMax = tm.getDROUGHT_LIMIT();
-                    else
-                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
-                }
-                else
-                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
-                int troopNumMin = 3;
-
-                ObservableList<String> numbers = FXCollections.observableArrayList();
-
-                for( int i = troopNumMin ; i <= troopNumMax; i++ ){
-                    String numberString = "" + i;
-                    numbers.add(numberString);
-                }
-                troopNo.setItems(numbers);
-                troopNo.setValue(""+troopNumMin);
-                troopLabel.setText("" + (troopNumMax- troopNumMin));
-
-
                 updateRegionsAfterAttack(sc);
 
-                setVisibilityTroopNumber(true);
+                gameMessage.setText(tm.getMessage());
+
+                setAttackButtonsAbility(true,true,true);
             }
         }
 
@@ -865,7 +1035,10 @@ public class GameMapController {
             int troopNumberToPlace = Integer.parseInt(troopNoString);
 
             TurnManager tm = gm.getTm();
+            tm.killMessage();
             tm.moveTroops(regionToAttackWith, troopNumberToPlace, regionToAttack);
+
+            updateRegionsAccordingToMapSelection(sc);
 
             SVGPath svg = (SVGPath) sc.lookup("#svg" + regionToAttack.getRegionID());
             svg.setFill(Paint.valueOf(players[regionToAttack.getOwnerID()].getColor()));
@@ -886,6 +1059,12 @@ public class GameMapController {
             instructionLabel.setText("Select a region you want to attack from");
             gm.setInstruction("Select a region you want to attack from");
 
+            gameMessage.setText(tm.getMessage());
+
+            updateRegionsAfterAttack(sc);
+
+            checkGameOver();
+
         }
         else if( instructionLabel.getText().equals("Select the number of troops you want to place"))
         {
@@ -893,7 +1072,10 @@ public class GameMapController {
             int troopNumberToPlace = Integer.parseInt(troopNoString);
 
             TurnManager tm = gm.getTm();
+            tm.killMessage();
             tm.draft( regionToPlace, troopNumberToPlace);
+
+            updateRegionsAccordingToMapSelection(sc);
 
             Label lbl = (Label) sc.lookup("#lbl" + regionToPlace.getRegionID());
             lbl.setText( ""+regionToPlace.getNumTroops());
@@ -902,6 +1084,7 @@ public class GameMapController {
 
             instructionLabel.setText("Select a region you want to place troops");
             gm.setInstruction("Select a region you want to place troops");
+
             if( tm.getAdditionalTroops() == 0)
                 nextStage.setDisable(false);
             else
@@ -910,6 +1093,7 @@ public class GameMapController {
             nextStage.setVisible(true);
             moveCom.setVisible(true);
             pauseButton.setVisible(true);
+            gameMessage.setText(tm.getMessage());
         }
         else if( instructionLabel.getText().equals("Select the number of troops to get"))
         {
@@ -959,6 +1143,11 @@ public class GameMapController {
         //System.out.println(g);
         Player[] pl = gm.getPlayers();
 
+        isClimate = false;
+        isMotivation = false;
+        isNormal = true;
+        isRegion = false;
+
         for(int i = 0; i <pl.length; i++)
         {
             if( i == 0){
@@ -967,6 +1156,12 @@ public class GameMapController {
                 if( pl[0].isEliminated())
                     elim1.setVisible(true);
                 playerImageDone(playerImg1, pl[0] );
+                color1.setVisible(true);
+                if( !pl[0].getName().equals(""))
+                    name1.setText(pl[0].getName());
+                else
+                    name1.setText("Player 1");
+                name1.setVisible(true);
             }
 
             else if( i == 1){
@@ -975,6 +1170,12 @@ public class GameMapController {
                 if( pl[1].isEliminated())
                     elim2.setVisible(true);
                 playerImageDone(playerImg2, pl[1] );
+                color2.setVisible(true);
+                if( !pl[0].getName().equals(""))
+                    name2.setText(pl[1].getName());
+                else
+                    name2.setText("Player 2");
+                name2.setVisible(true);
             }
             else if( i == 2){
                 if( 2 == gm.getWhoseTurn())
@@ -982,6 +1183,12 @@ public class GameMapController {
                 if( pl[2].isEliminated())
                     elim3.setVisible(true);
                 playerImageDone(playerImg3,pl[2]);
+                color3.setVisible(true);
+                if( !pl[0].getName().equals(""))
+                    name3.setText(pl[2].getName());
+                else
+                    name3.setText("Player 3");
+                name3.setVisible(true);
             }
             else if( i == 3){
                 if( 3 == gm.getWhoseTurn())
@@ -989,11 +1196,21 @@ public class GameMapController {
                 if( pl[3].isEliminated())
                     elim3.setVisible(true);
                 playerImageDone(playerImg4,pl[3]);
+                color4.setVisible(true);
+                if( !pl[0].getName().equals(""))
+                    name4.setText(pl[3].getName());
+                else
+                    name4.setText("Player 4");
+                name4.setVisible(true);
             }
         }
 
+        TurnManager tm = gm.getTm();
+        seasonName.setText(gm.getSeasonName());
+        gameMessage.setText(gm.getMessage());
         stageLabel.setText(gm.getStageString());
         instructionLabel.setText(gm.getInstruction());
+        attackLabel.setVisible(false);
 
     }
 
@@ -1030,6 +1247,7 @@ public class GameMapController {
         String troopNumberValue = (String)chooseTroopNumber.getValue();
 
         int troopNumber = Integer.parseInt(troopNumberValue);
+        tm.killMessage();
         tm.buyMercenaries(troopNumber);
 
         Player p = gm.getPlayers()[gm.getWhoseTurn()];
@@ -1039,11 +1257,14 @@ public class GameMapController {
 
         //update button after hiring mercenary
         motivationButton.setVisible(true);
-        climateButton.setVisible(true);
+        if( gm.isWeather())
+            climateButton.setVisible(true);
+        showRegionButton.setVisible(true);
         pauseButton.setVisible(true);
         buyPanel.setVisible(false);
         nextStage.setVisible(true);
         eventButton.setVisible(true);
+        gameMessage.setText(tm.getMessage());
     }
 
 
@@ -1077,6 +1298,7 @@ public class GameMapController {
     public void playerProfileClicked( MouseEvent e)
     {
         TurnManager tm = gm.getTm();
+        tm.killMessage();
 
         final int  troopPrice = tm.getPRICE_OF_MERCENARY();
 
@@ -1144,6 +1366,8 @@ public class GameMapController {
         motivationButton.setVisible(false);
         climateButton.setVisible(false);
         pauseButton.setVisible(false);
+        showRegionButton.setVisible(false);
+        gameMessage.setText(tm.getMessage());
     }
 
     /**
@@ -1186,8 +1410,11 @@ public class GameMapController {
         nextStage.setVisible(true);
         eventButton.setVisible(true);
         motivationButton.setVisible(true);
-        climateButton.setVisible(true);
+        if(gm.isWeather())
+            climateButton.setVisible(true);
+        showRegionButton.setVisible(true);
         pauseButton.setVisible(true);
+        gameMessage.setText(tm.getMessage());
     }
 
     /**
@@ -1216,8 +1443,11 @@ public class GameMapController {
             }
         }
 
+        updateRegionsAccordingToMapSelection(sc);
+
         gm.setInstruction("Select a region to organize event");
         instructionLabel.setText("Select a region to organize event");
+
         nextStage.setVisible(false);
         eventButton.setVisible(false);
         pauseButton.setVisible(false);
@@ -1256,8 +1486,11 @@ public class GameMapController {
             else
                 eventButton.setVisible(false);
             motivationButton.setVisible(true);
-            climateButton.setVisible(true);
+            if( gm.isWeather())
+                climateButton.setVisible(true);
             pauseButton.setVisible(true);
+            showRegionButton.setVisible(true);
+
         }
 
         else if( b == attackExit)
@@ -1269,19 +1502,65 @@ public class GameMapController {
             nextStage.setVisible(true);
             dicePanel.setVisible(false);
             motivationButton.setVisible(true);
-            climateButton.setVisible(true);
+            if( gm.isWeather())
+                climateButton.setVisible(true);
+            showRegionButton.setVisible(true);
 
             setDıceImageUnvisible();
+            attackLabel.setVisible(false);
 
             Label lbl = (Label)sc.lookup("#lbl"+regionToAttackWith.getRegionID());
             lbl.setText(""+regionToAttackWith.getNumTroops());
             lbl = (Label)sc.lookup("#lbl"+regionToAttack.getRegionID());
             lbl.setText(""+regionToAttack.getNumTroops());
 
+            updateRegionsAccordingToMapSelection(sc);
             updateRegionsAfterAttack(sc);
 
             pauseButton.setVisible(true);
+
+            Player p = gm.getPlayers()[gm.getWhoseTurn()];
+            TurnManager tm = gm.getTm();
+
+            if( regionToAttack.getOwnerID() == p.getId())
+            {
+                checkGameOver();
+
+                //setDıceImageUnvisible();
+
+                //dicePanel.setVisible(false);
+
+                instructionLabel.setText("Select the number of troops to invade");
+                gm.setInstruction("Select the number of troops to invade");
+
+                int troopNumMax;
+                if( gm.isWeather() ) {
+                    if (regionToAttackWith.hasDrought() && regionToAttackWith.getNumTroops()>tm.getDROUGHT_LIMIT())
+                        troopNumMax = tm.getDROUGHT_LIMIT();
+                    else
+                        troopNumMax = regionToAttackWith.getNumTroops() - 1;
+                }
+                else
+                    troopNumMax = regionToAttackWith.getNumTroops() - 1;
+
+                int troopNumMin = 1;
+
+                ObservableList<String> numbers = FXCollections.observableArrayList();
+
+                for( int i = troopNumMin ; i <= troopNumMax; i++ ){
+                    String numberString = "" + i;
+                    numbers.add(numberString);
+                }
+
+                troopNo.setItems(numbers);
+                troopNo.setValue(""+troopNumMin);
+                troopLabel.setText("" + (troopNumMax- troopNumMin + 1));
+
+                setVisibilityTroopNumber(true);
+                nextStage.setVisible(false);
+            }
         }
+
         else if( b == exitTurn)
         {
             eventButton.setVisible(true);
@@ -1301,13 +1580,18 @@ public class GameMapController {
             ImageView playerProfileImg = (ImageView) sc.lookup("#playerImg" + (p.getId()+1));
 
             playerProfileImg.setDisable(false);
+            updateRegionsAccordingToMapSelection(sc);
 
             nextStage.setVisible(true);
             nextTurnPanel.setVisible(false);
             motivationButton.setVisible(true);
-            climateButton.setVisible(true);
+            if( gm.isWeather())
+                climateButton.setVisible(true);
+            showRegionButton.setVisible(true);
             pauseButton.setVisible(true);
+
         }
+
     }
 
     /**
@@ -1361,6 +1645,19 @@ public class GameMapController {
      */
     public void changeSettingOpened( ActionEvent e)
     {
+        if( music.isMute() )
+            muteBox.setSelected(true);
+        else {
+            muteBox.setSelected(false);
+        }
+
+        volumeLevel.setValue(music.getVolume() * 100);
+        volumeLevel.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                music.setVolume(volumeLevel.getValue() / 100);
+            }
+        });
         pausePanel.setVisible(false);
         settingsPanel.setVisible(true);
     }
@@ -1390,6 +1687,17 @@ public class GameMapController {
         r.setFill(Paint.valueOf(s2));
     }
 
+    public void musicMute( ActionEvent e)
+    {
+        if( muteBox.isSelected() )
+        {
+            music.setMute(true);
+        }
+        else {
+            music.setMute(false);
+        }
+    }
+
     /**
      * This method listens for the actions on show climate/show map button
      * When the show climate button is clicked color of the regions updated
@@ -1399,55 +1707,43 @@ public class GameMapController {
      * This method is public as it is connected to fxml file
      * @param e
      */
-    public void showClimate( ActionEvent e)
+    public void showClimateClicked( ActionEvent e)
     {
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
         Scene sc = window.getScene();
 
         if(((Button)(e.getSource())).getText().equals("Show Climate"))
         {
-            Region[] allregion = gm.getRegions();
-
             //make map view according to climates of region
-            for( int i = 0 ; i < allregion.length; i++ )
-            {
-                ClimateType ct = allregion[i].getClimate();
-                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
+            showClimate(sc);
 
-                if( ct == ClimateType.COLD)
-                {
-                    svg.setFill(Paint.valueOf("#175ba3"));
-                }
-                if( ct == ClimateType.WARM )
-                {
-                    svg.setFill(Paint.valueOf("#bf8b22"));
-                }
-                if( ct == ClimateType.HOT)
-                {
-                    svg.setFill(Paint.valueOf("#c41910"));
-                }
-
-                Label lbl = (Label) sc.lookup("#lbl" + i);
-                String s = "" +allregion[i].getNumTroops();
-                lbl.setText(s);
-                lbl.setVisible(true);
-            }
+            isClimate = true;
+            isNormal = false;
+            isMotivation = false;
+            isRegion = false;
 
             motivationButton.setVisible(false);
-
-            updateInfoView( infoLabel1, info1, true, true, "Hot", "#c41910");
-            updateInfoView(infoLabel2,info2,true,true,"Warm", "#bf8b22");
-            updateInfoView(infoLabel3, info3, true, true, "Cold","#175ba3" );
+            showRegionButton.setVisible(false);
 
             ((Button)(e.getSource())).setText("Show Map");
         }
         else {
+            isClimate = false;
+            isNormal = true;
+            isMotivation = false;
+            isRegion = false;
+
             showMap(sc);
             motivationButton.setVisible(true);
+            showRegionButton.setVisible(true);
+
 
             updateInfoView( infoLabel1, info1, false, false, "Hot", "#c41910");
-            updateInfoView( infoLabel1, info1, false, false, "Hot", "#c41910");
-            updateInfoView( infoLabel1, info1, false, false, "Hot", "#c41910");
+            updateInfoView( infoLabel2, info2, false, false, "Hot", "#c41910");
+            updateInfoView( infoLabel3, info3, false, false, "Hot", "#c41910");
+            updateInfoView( infoLabel4, info4, false, false, "Hot", "#c41910");
+            updateInfoView( infoLabel5, info5, false, false, "Hot", "#c41910");
+            updateInfoView( infoLabel6, info6, false, false, "Hot", "#c41910");
             ((Button)(e.getSource())).setText("Show Climate");
         }
     }
@@ -1481,9 +1777,12 @@ public class GameMapController {
                     region.setDisable(false);
                 }
             }
+
             TurnManager tm = gm.getTm();
             if( tm.getAdditionalTroops() > 0)
                 nextStage.setDisable(true);
+
+            commanderFirstPlace = all[p.getCommanderLocation()];
 
 
             stageLabel.setText("DRAFT STAGE");
@@ -1492,11 +1791,13 @@ public class GameMapController {
             instructionLabel.setText("Select a region you want to place troops");
             gm.setInstruction("Select a region you want to place troops");
 
+            updateRegionsAccordingToMapSelection(sc);
             //update buttons
             moveCom.setVisible(true);
             eventButton.setVisible(false);
             pauseButton.setVisible(true);
             eventButton.setVisible(false);
+            gameMessage.setText(tm.getMessage());
         }
         else if( stageLabel.getText().equals("DRAFT STAGE") )
         {
@@ -1507,7 +1808,7 @@ public class GameMapController {
             tm.commanderEffect();
 
             //make all regions that player does not have disabled and other regions abled according to attack possibility of a region
-            for( int i = 0; i < all.length; i++)
+            /*for( int i = 0; i < all.length; i++)
             {
                 if( !p.hasRegion(i))
                 {
@@ -1521,16 +1822,20 @@ public class GameMapController {
                         region.setDisable(true);
                     }
                 }
-            }
+            }*/
+            updateRegionsAfterAttack(sc);
+            updateRegionsAccordingToMapSelection(sc);
 
 
             stageLabel.setText("ATTACK STAGE");
             gm.setStageString("ATTACK STAGE");
+
             instructionLabel.setText("Select a region you want to attack from");
-            gm.setInstruction("ATTACK STAGE");
+            gm.setInstruction("Select a region you want to attack from");
 
             moveCom.setVisible(false);
             pauseButton.setVisible(true);
+            gameMessage.setText(tm.getMessage());
         }
         else if( stageLabel.getText().equals("ATTACK STAGE") )
         {
@@ -1547,12 +1852,17 @@ public class GameMapController {
                     svg.setDisable(false);
             }
 
+            updateRegionsAccordingToMapSelection(sc);
+
             gm.setStageString("FORTIFY STAGE");
             stageLabel.setText("FORTIFY STAGE");
+
             gm.setInstruction("Select a region you want to get troop");
             instructionLabel.setText("Select a region you want to get troop");
 
+
             pauseButton.setVisible(true);
+
         }
         else if( stageLabel.getText().equals("FORTIFY STAGE") )
         {
@@ -1565,13 +1875,14 @@ public class GameMapController {
             TurnManager tm = gm.getTm();
             tm.endTurnOps();
 
+            gameMessage.setText(tm.getMessage());
+
             //if player is the last player in a turn update game logic
             if( gm.isLast(p) ){
                 gm.operationsBeforeFirstPlayer(allRegion, gm.getTurnCount());
                 gm.setTurnCount(gm.getTurnCount() + 1);
+                seasonName.setText(gm.getSeasonName());
             }
-
-
 
             //the turns of the player changes
             gm.nextTurn();
@@ -1584,6 +1895,10 @@ public class GameMapController {
             imageTurn.setImage(image);
             ImageView playerTurnImage = (ImageView) sc.lookup("#turn" + (p.getId() + 1)  );
             playerTurnImage.setVisible(false);
+            if( !p2.getName().equals(""))
+                nextTurnName.setText(p2.getName());
+            else
+                nextTurnName.setText("Player" + (p2.getId() + 1));
 
             playerImg1.setDisable(true);
             playerImg2.setDisable(true);
@@ -1612,21 +1927,25 @@ public class GameMapController {
                 }
                 else if( i == 3){
                     if( 3 == gm.getWhoseTurn())
-                        turn3.setVisible(true);
+                        turn4.setVisible(true);
                     if( players[3].isEliminated())
-                        elim3.setVisible(true);
+                        elim4.setVisible(true);
                 }
             }
 
             gm.setStageString("BUY STAGE");
             stageLabel.setText("BUY STAGE");
+
             gm.setInstruction("Click on your avatar to buy or organize event");
             instructionLabel.setText("Click on your avatar to buy or organize event");
+
+            updateRegionsAccordingToMapSelection(sc);
 
             //updatebuttons
             nextTurnPanel.setVisible(true);
             nextStage.setVisible(false);
             motivationButton.setVisible(false);
+            showRegionButton.setVisible(false);
             climateButton.setVisible(false);
             pauseButton.setVisible(false);
         }
@@ -1643,6 +1962,7 @@ public class GameMapController {
     {
         nextStage.setVisible(false);
         moveCom.setVisible(false);
+
         gm.setInstruction("Select a region to place commander");
         instructionLabel.setText("Select a region to place commander");
         pauseButton.setVisible(false);
@@ -1663,45 +1983,61 @@ public class GameMapController {
         Scene sc = window.getScene();
         if(((Button)(e.getSource())).getText().equals("Show Motivation"))
         {
-            Region[] allregion = gm.getRegions();
-
-            //update the view of the game according to motivation of troops
-            for( int i = 0 ; i < allregion.length; i++ )
-            {
-                MotivationLevel ml= allregion[i].getMotivation();
-                SVGPath svg = (SVGPath) sc.lookup("#svg" + i);
-
-                if( ml == MotivationLevel.HIGH)
-                    svg.setFill(Paint.valueOf( "#21b09f"));
-
-                if( ml == MotivationLevel.NORMAL)
-                    svg.setFill(Paint.valueOf( "#a4cf23"));
-
-                if( ml == MotivationLevel.LOW)
-                    svg.setFill(Paint.valueOf( "#eba234"));
-
-                if( ml == MotivationLevel.NONE)
-                    svg.setFill(Paint.valueOf("#eb4c34"));
-
-                Label lbl = (Label) sc.lookup("#lbl" + i);
-                String s = "" +allregion[i].getNumTroops();
-                lbl.setText(s);
-                lbl.setVisible(true);
-            }
-
-            updateInfoView(infoLabel4, info4, true, true,"Unmotivated", "#eb4c34");
-
-            updateInfoView(infoLabel3, info3, true, true,"Low Motivated", "#eba234");
-
-            updateInfoView(infoLabel2, info2, true, true,"Normal Motivated", "#a4cf23");
-
-            updateInfoView(infoLabel1, info1, true, true,"High Motivated", "#21b09f");
-
-
+            isNormal = false;
+            isMotivation = true;
+            isRegion = false;
+            isClimate = false;
+            showMotivation(sc);
             climateButton.setVisible(false);
+            showRegionButton.setVisible(false);
             ((Button)(e.getSource())).setText("Show Map");
         }
         else {
+            showMap(sc);
+
+            isNormal = true;
+            isMotivation = false;
+            isRegion = false;
+            isClimate = false;
+
+            updateInfoView(infoLabel4,info4,false,false,"","#eb4c34");
+
+            updateInfoView(infoLabel3,info3,false,false,"","#eb4c34");
+
+            updateInfoView(infoLabel2,info2,false,false,"","#eb4c34");
+
+            updateInfoView(infoLabel1,info1,false,false,"","#eb4c34");
+
+            updateInfoView(infoLabel5,info5,false,false,"","#eb4c34");
+
+            if( gm.isWeather())
+                climateButton.setVisible(true);
+            showRegionButton.setVisible(true);
+            ((Button)(e.getSource())).setText("Show Motivation");
+        }
+    }
+
+    public void showRegionClicked( ActionEvent e)
+    {
+
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+        Scene sc = window.getScene();
+        if(((Button)(e.getSource())).getText().equals("Show Continent"))
+        {
+            isNormal = false;
+            isRegion = true;
+            isMotivation = false;
+            isClimate = false;
+            showContinent(sc);
+            climateButton.setVisible(false);
+            motivationButton.setVisible(false);
+            ((Button)(e.getSource())).setText("Show Map");
+        }
+        else {
+            isRegion = false;
+            isNormal = true;
+            isMotivation = false;
+            isClimate = false;
             showMap(sc);
 
             updateInfoView(infoLabel4,info4,false,false,"","#eb4c34");
@@ -1712,8 +2048,14 @@ public class GameMapController {
 
             updateInfoView(infoLabel1,info1,false,false,"","#eb4c34");
 
-            climateButton.setVisible(true);
-            ((Button)(e.getSource())).setText("Show Motivation");
+            updateInfoView(infoLabel5,info5,false,false,"","#eb4c34");
+
+            updateInfoView(infoLabel6,info6,false,false,"","#eb4c34");
+
+            if( gm.isWeather())
+                climateButton.setVisible(true);
+            motivationButton.setVisible(true);
+            ((Button)(e.getSource())).setText("Show Continent");
         }
     }
 }

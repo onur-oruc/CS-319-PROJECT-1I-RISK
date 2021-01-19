@@ -25,6 +25,7 @@ import java.util.Scanner;
 public class MapManager implements Serializable {
 
     // add non random distribution? todo
+    final private int TROOP_NUMBER = 100;
 
     // create an instance of MapManager
     private static MapManager instance;
@@ -116,7 +117,7 @@ public class MapManager implements Serializable {
                     String[] line = data.split(",");
 
                     // continent ID to which the region belongs is the first number in a row
-                    //regions[counter - 1].setContinentID(Integer.parseInt(line[0]));
+                    regions[counter - 1].setContinentID(Integer.parseInt(line[0]));
 
                     // create neighbor array, between the first element and last three elements in a row
                     int[] neighbors = new int[line.length-4];
@@ -164,7 +165,7 @@ public class MapManager implements Serializable {
             /*If there are two players, each player will have 40 troops
               If there are three players, each player will have 35 troops
               If there are four players, each player will have 30 troops*/
-            remainingNumTroops = 35 - (players.length * 5);
+            remainingNumTroops = TROOP_NUMBER - (players.length * 5);
 
             numEmptyRegions = list.size();
 

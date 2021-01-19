@@ -19,7 +19,7 @@ continentID, neigborIDs, regionName, regionID, climate
 5,14,15,18,20,"Scandinavia",17,cold
 5,15,16,17,19,20,"Northern Europe",18,cold
 5,16,18,20,31,32,"Southern Europe",19,warm
-5,17,18,19,21,22,"Ukraine",20,cold
+5,17,18,19,21,22,31,"Ukraine",20,cold
 0,20,22,23,28,"Ural",21,cold
 0,20,21,28,30,31,"Afghanistan",22,hot
 0,21,24,26,27,28,"Siberia",23,cold
@@ -30,7 +30,7 @@ continentID, neigborIDs, regionName, regionID, climate
 0,21,22,23,27,29,30,"China",28,warm
 0,28,30,39,38,"Siam",29,hot
 0,22,28,29,31,"India",30,hot
-0,19,22,30,32,34,"Middle East",31,hot
+0,19,22,30,32,34,20,"Middle East",31,hot
 2,31,33,34,19,"Egypt",32,hot
 2,11,16,32,34,35,"North Africa",33,hot
 2,31,32,33,35,36,"East Africa",34,hot

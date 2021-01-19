@@ -13,6 +13,8 @@ import java.util.Scanner;
 
 public class Region implements Serializable {
 
+
+
     // properties
     private int continentID;
     private String regionName;
@@ -143,6 +145,14 @@ public class Region implements Serializable {
         }
 
         return enemyRegions;
+    }
+
+    public int getContinentID() {
+        return continentID;
+    }
+
+    public void setContinentID(int continentID) {
+        this.continentID = continentID;
     }
 
     public void motivate() {
